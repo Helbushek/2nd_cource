@@ -9,7 +9,7 @@ void swapInt(int* first, int*second) {
 }
 
 void shakeArray() {
-
+	// check git working 
 
 
 }
