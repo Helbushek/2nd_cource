@@ -9,12 +9,11 @@ void swapInt(int* first, int*second)
 }
 
 int shakeArray(int* array, int length) // generates next position for array, needed for finding every way possible (traveling between cities only once) 
-{ 
-	//1. Find location for 1st from right element that has bigger element right from him, wil be pos1
+{
 
-	int* pos1, * pos2;
+	int* pos1=nullptr, * pos2=nullptr;
 
-	for (int* i = array + length-1, i != arary, i--) 
+	for (int* i = array + length-2; i >= array; i--) 
 	{
 		if (*i < *(i + 1)) {
 			pos1 = i;
@@ -22,9 +21,7 @@ int shakeArray(int* array, int length) // generates next position for array, nee
 		}
 	}
 
-	//2. Find location for 1st from right element that is bigger than the pos1, will be pos2, swap pos1 and pos2
-
-	for (int* j = array + length, j != array, j--)
+	for (int* j = array + length; j >= array; j--)
 	{
 		if (*j > *pos1) {
 			pos2 = j;
@@ -32,16 +29,14 @@ int shakeArray(int* array, int length) // generates next position for array, nee
 		}
 	}
 
+	if (pos1 == nullptr) return(3);
 	swapInt(pos2, pos1);
 
-	//4. Sort all the elements by increasing.
-
-	for (int* k = pos1 + 1 * l = array + length, k < l, k++, l--)
+	for (int* k = pos1 + 1, *l = array + length-1; k < l; k++, l--)
 	{
-		swap(k, l);
+		swapInt(k, l);
 	}
-	return(1);
-
+	
 }
 
 void solveSalesmanByEnumeration() {
