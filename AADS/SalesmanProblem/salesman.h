@@ -21,7 +21,7 @@ int shakeArray(int* array, int length) // generates next position for array, nee
 		}
 	}
 
-	for (int* j = array + length; j >= array; j--)
+	for (int* j = array + length-1; j >= array; j--)
 	{
 		if (*j > *pos1) {
 			pos2 = j;
@@ -29,17 +29,29 @@ int shakeArray(int* array, int length) // generates next position for array, nee
 		}
 	}
 
-	if (pos1 == nullptr) return(3);
+	if (pos1 == nullptr) return(0);
 	swapInt(pos2, pos1);
 
 	for (int* k = pos1 + 1, *l = array + length-1; k < l; k++, l--)
 	{
 		swapInt(k, l);
 	}
-	
+
 }
 
-void solveSalesmanByEnumeration() {
+void solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int startCity) {
+	int* roadMap = new int[numberOfCities+ 1];
 
+	for (int i = 0; i < numberOfCities + 1; i++)
+	{
+		roadMap[i] = i + 1;
+	}
 
+	while (roadMap[0] != startCity)
+	{
+		shakeArray(roadMap, numberOfCities);
+	}
+	roadMap[numberOfCities + 1] = startCity;
+
+	
 }
