@@ -17,7 +17,7 @@ void printDArray(int** doubleArray, int linesNumber, int columnsNumber)
 	for (int i = 0; i < linesNumber; i++)
 	{
 		printArray(doubleArray[i], columnsNumber);
-		std::cout << std::endl;
+		//std::cout << std::endl;
 	}
 }
 
@@ -39,13 +39,46 @@ void generateDoubleArray(int** doubleArray, int numberOfLines, int numberOfColum
 	}
 }
 
+void inputArray(int* array, int length)
+{
+	int temp;
+
+	for (int i = 0; i < length; i++) {
+		std::cin >> temp;
+		array[i] = temp;
+	}
+
+}
+
+void inputDoubleArray(int** doubleArray, int numberOfLines, int numberOfColumns)
+{
+	for (int i = 0; i < numberOfLines; i++)
+	{
+		inputArray(doubleArray[i], numberOfColumns);
+	}
+}
+
 int main() {
 
 	srand(time(0));
-	int length = 4, startCity=2;
 
-	
+	// Work with user, input all variables
+	int length, startCity;
 
+	std::cout << "\t\t\t\t Solving Salesman problem by enumeration" << std::endl << "Input variables: " << std::endl << std::endl << "Number of Cities" << std::endl << "City you want to srart from (Start City) " << std::endl << "Map of distances between cities";
+
+	std::cout << std::endl << std::endl << std::endl << "\t\t Do you want to input Road Price Map by hand or shall it be generated randomly?" << std::endl << "\t\t\t\t\t\tY/N" << std::endl << "\t\t\t\t\tBy Hand/Im too lazy, do it for me" << std::endl;
+
+	char choice;
+
+	std::cin >> choice;
+
+	std::cout << std::endl << "Please input Number of cities: ";
+	std::cin >> length;
+
+
+	std::cout << std::endl << "Please input number of city you want to start from: ";
+	std::cin >> startCity;
 
 	int** doubleArray = new int*[length];
 	for (int i = 0; i < length; i++)
@@ -53,20 +86,27 @@ int main() {
 		doubleArray[i] = new int[length];
 	}
 
-	generateDoubleArray(doubleArray, length, length, 1, 10); // doubleArray - map of distances between cities [i] - start city [j] - end city, is symmetrycal
+	if (choice == 'N')
+	{
+		std::cout << std::endl << "Generating your price map" << std::endl;
+		generateDoubleArray(doubleArray, length, length, 1, 10); // doubleArray - map of distances between cities [i] - start city [j] - end city, is symmetrycal
+	}
+	if (choice == 'Y') 
+	{
+		std::cout << std::endl << "Please input your price map: " << std::endl;
+		inputDoubleArray(doubleArray, length, length);
+	}
+	
 	for (int i = 0; i < length; i++)
 	{
-		for (int j = 0; j < length; j++)
-		{	
-			if (i==j) doubleArray[i][i] = 0;
-			if (i < j) doubleArray[i][j] = doubleArray[j][i];
-		}
-		
+		doubleArray[i][i] = 0;
 	}
+
+	std::cout << "Your final road map:" << std::endl;
 	printDArray(doubleArray, length, length);
 	std::cout << std::endl;
 
-	int* roadMap = new int[length + 1];
+	/*int* roadMap = new int[length + 1];
 
 	for (int i = 0; i < length + 1; i++)
 	{
@@ -82,11 +122,13 @@ int main() {
 		shakeArray(roadMap, length);
 		printArray(roadMap, length+1);
 		std::cout << std::endl;
-	}
+	}*/
+	int* minRoadMap = new int[length];
+	int summDistance;
+	minRoadMap = solveSalesmanByEnumeration(doubleArray, length, startCity, summDistance);
 	
-
-	
-
+	printArray(minRoadMap, length+1);
+	std::cout <<  " summ: " <<summDistance;
 	
 
 	return(0);

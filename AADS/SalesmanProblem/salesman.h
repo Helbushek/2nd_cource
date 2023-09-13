@@ -21,6 +21,8 @@ int shakeArray(int* array, int length) // generates next position for array, nee
 		}
 	}
 
+	if (pos1 == nullptr) return(0);
+
 	for (int* j = array + length-1; j >= array; j--)
 	{
 		if (*j > *pos1) {
@@ -29,7 +31,6 @@ int shakeArray(int* array, int length) // generates next position for array, nee
 		}
 	}
 
-	if (pos1 == nullptr) return(0);
 	swapInt(pos2, pos1);
 
 	for (int* k = pos1 + 1, *l = array + length-1; k < l; k++, l--)
@@ -38,8 +39,12 @@ int shakeArray(int* array, int length) // generates next position for array, nee
 	}
 
 }
-
-void solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int startCity) {
+ 
+int * solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int startCity, int &minDistance) {
+	
+	minDistance=99999;
+	int* minRoadMap = new int[numberOfCities+1];
+	
 	int* roadMap = new int[numberOfCities+ 1];
 
 	for (int i = 0; i < numberOfCities + 1; i++)
@@ -47,11 +52,36 @@ void solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int start
 		roadMap[i] = i + 1;
 	}
 
+	int returned=1;
+	roadMap[numberOfCities] = startCity;
 	while (roadMap[0] != startCity)
 	{
-		shakeArray(roadMap, numberOfCities);
+		returned = shakeArray(roadMap, numberOfCities);
 	}
-	roadMap[numberOfCities + 1] = startCity;
-
 	
+	int currentDistance = 0;
+
+	while (returned!=0)
+	{
+
+		for (int i = 0; i < numberOfCities; i++) 
+		{
+			currentDistance += distanceMap[roadMap[i]-1][roadMap[i+1]-1];
+		}
+
+		if (currentDistance < minDistance)
+		{
+			minDistance = currentDistance;
+			for (int i = 0; i < numberOfCities; i++) 
+			{
+				minRoadMap[i] = roadMap[i];
+			}
+			minRoadMap[numberOfCities] = startCity;
+		}
+
+		currentDistance = 0;
+		returned = shakeArray(roadMap, numberOfCities);
+	}
+	
+	return(minRoadMap);
 }
