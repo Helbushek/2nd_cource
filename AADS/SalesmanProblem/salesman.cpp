@@ -106,23 +106,6 @@ int main() {
 	printDArray(doubleArray, length, length);
 	std::cout << std::endl;
 
-	/*int* roadMap = new int[length + 1];
-
-	for (int i = 0; i < length + 1; i++)
-	{
-		roadMap[i] = i + 1;
-	}
-
-	roadMap[length] = startCity;
-	std::cout << std::endl;
-	printArray(roadMap, length);
-	std::cout << std::endl;
-	while (roadMap[0] != startCity)
-	{
-		shakeArray(roadMap, length);
-		printArray(roadMap, length+1);
-		std::cout << std::endl;
-	}*/
 	int* minRoadMap = new int[length];
 	int summDistance;
 	minRoadMap = solveSalesmanByEnumeration(doubleArray, length, startCity, summDistance);
@@ -130,6 +113,10 @@ int main() {
 	printArray(minRoadMap, length+1);
 	std::cout <<  " summ: " <<summDistance;
 	
-
+	delete minRoadMap;
+	for (int i = 0; i < length; i++) {
+		delete doubleArray[i];
+	}
+	delete doubleArray;
 	return(0);
 }

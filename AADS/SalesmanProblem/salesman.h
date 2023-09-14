@@ -82,6 +82,7 @@ int * solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int star
 		currentDistance = 0;
 		returned = shakeArray(roadMap, numberOfCities);
 	}
-	
+	delete roadMap;
+
 	return(minRoadMap);
 }
