@@ -1,1 +1,0 @@
-Summ fractions without libraries

@@ -38,4 +38,3 @@ Fraction Fraction::miltiplyFractions(const Fraction multiplier)
 
 	return(multiplicator);
 }
-
