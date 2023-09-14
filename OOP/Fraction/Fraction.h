@@ -2,8 +2,10 @@
 
 class Fraction {
 public:
-	Fraction summ_fractions(const Fraction summ_2);
-	Fraction difference_fractions(const Fraction summ_2);
+	Fraction summFractions(const Fraction summ_2);
+	Fraction differenceFractions(const Fraction summ_2);
+	Fraction devideFractions(const Fraction devisor);
+	Fraction miltiplyFractions(const Fraction multiplier);
 	void print();
 
 	int numerator;
