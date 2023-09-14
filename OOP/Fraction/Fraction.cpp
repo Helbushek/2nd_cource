@@ -83,13 +83,13 @@ Fraction Fraction::reduce()
 	Fraction reduced;
 	reduced.numerator = numerator;
 	reduced.denominator = denominator;
-	for (int i=0; i<abs(reduced.numerator) && i<abs(reduced.denominator); i++) 
+	for (int i=2; i<abs(reduced.numerator) && i<abs(reduced.denominator); i++) 
 	{
 		if (reduced.numerator%i==0 && reduced.denominator%i==0) 
 		{
 			reduced.numerator = numerator / i;
 			reduced.denominator = denominator / i;
-			i = 0;
+			i = 2;
 		}
 	}
 	return(reduced);
