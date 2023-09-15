@@ -2,6 +2,7 @@
 #include <iostream>
 #include <random>
 #include <time.h>
+#include <ctime>
 
 
 void printArray(int* array, int length)
@@ -41,11 +42,8 @@ void generateDoubleArray(int** doubleArray, int numberOfLines, int numberOfColum
 
 void inputArray(int* array, int length)
 {
-	int temp;
-
 	for (int i = 0; i < length; i++) {
-		std::cin >> temp;
-		array[i] = temp;
+		std::cin >> array[i];
 	}
 
 }
@@ -59,6 +57,20 @@ void inputDoubleArray(int** doubleArray, int numberOfLines, int numberOfColumns)
 }
 
 int main() {
+
+	int* array = new int[4];
+	for (int i = 0; i < 4; i++) {
+		array[i] = i + 1;
+	}
+	int returned = 1;
+	while (returned != 0) {
+		printArray(array, 4);
+
+		returned=shakeArray(array, 4);
+	}
+
+
+
 
 	srand(time(0));
 
@@ -106,14 +118,44 @@ int main() {
 	printDArray(doubleArray, length, length);
 	std::cout << std::endl;
 
-	int* minRoadMap = new int[length];
-	int summDistance;
-	minRoadMap = solveSalesmanByEnumeration(doubleArray, length, startCity, summDistance);
-	
+	int* minRoadMap = new int[length+1];
+	int* maxRoadMap = new int[length+1];
+
+	unsigned int startClock, endClock, executionTime;
+
+	int bestDistance, worstDistance;
+
+	startClock = clock();
+	minRoadMap = solveSalesmanByEnumeration(doubleArray, length, startCity, bestDistance, worstDistance, maxRoadMap);
+	endClock = clock();
+	executionTime = endClock - startClock;
+
+	std::cout << "Min road map and distance: " << std::endl;
 	printArray(minRoadMap, length+1);
-	std::cout <<  " summ: " <<summDistance;
+	std::cout << " summ: " << bestDistance << std::endl;
+
+	std::cout << std::endl << "Max road map and distance: " << std::endl;
+	printArray(maxRoadMap, length + 1);
+	std::cout << " summ: " << worstDistance << std::endl;
+
+	std::cout << std::endl <<"Time of execution: " << (float)(executionTime/1000) << " sec";
+
+	int bestDistanceHeuristic;
+	startClock = clock();
+	minRoadMap = solveSalesmanByHeuristics(doubleArray, length, startCity, bestDistanceHeuristic);
+	endClock = clock();
+	unsigned int executionTimeHeuristic = endClock - startClock;
+
+	std::cout << std::endl << "Heuristics method solved problem: " << std::endl;
+	printArray(minRoadMap, length + 1);
+	std::cout << " summ: " << bestDistance << std::endl;
+	std::cout << std::endl << "Time of execution: " << (float)(executionTimeHeuristic / 1000) << " sec";
+
+	std::cout << std::endl <<"Hieristic is faster than enumeration by: " << // continue here
+
 	
 	delete minRoadMap;
+	delete maxRoadMap;
 	for (int i = 0; i < length; i++) {
 		delete doubleArray[i];
 	}

@@ -40,9 +40,10 @@ int shakeArray(int* array, int length) // generates next position for array, nee
 
 }
  
-int * solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int startCity, int &minDistance) {
+int * solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int startCity, int &minDistance, int &maxDistance, int* maxRoadMap = nullptr) {
 	
-	minDistance=99999;
+	minDistance = INT_MAX;
+	maxDistance = 0;
 	int* minRoadMap = new int[numberOfCities+1];
 	
 	int* roadMap = new int[numberOfCities+ 1];
@@ -61,7 +62,7 @@ int * solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int star
 	
 	int currentDistance = 0;
 
-	while (returned!=0)
+	while (returned!=0 && roadMap[0] == startCity)
 	{
 
 		for (int i = 0; i < numberOfCities; i++) 
@@ -79,10 +80,68 @@ int * solveSalesmanByEnumeration(int** distanceMap, int numberOfCities, int star
 			minRoadMap[numberOfCities] = startCity;
 		}
 
+		if (currentDistance > maxDistance && maxRoadMap!=nullptr)
+		{
+			maxDistance = currentDistance;
+			for (int i = 0; i < numberOfCities; i++)
+			{
+				maxRoadMap[i] = roadMap[i];
+			}
+			maxRoadMap[numberOfCities] = startCity;
+		}
+
 		currentDistance = 0;
 		returned = shakeArray(roadMap, numberOfCities);
 	}
 	delete roadMap;
+
+	return(minRoadMap);
+}
+
+int findMinInArray(int* array, int length) {
+	int min = INT_MAX, minIndex;
+	for (int i = 0; i < length; i++) {
+		if (min > array[i] && array[i]!=0) {
+			minIndex = i;
+			min = array[i];
+		}
+	}
+	return(minIndex)
+}
+
+void 
+
+int* solveSalesmanByHeuristics(int** distanceMap, int numberOfCities, int startCity, int& minDistance) 
+{
+	int* minRoadMap = new int[numberOfCities + 1];
+	//Choosing the outgoing arc of the minimum cost
+
+	int** copiedDistanceMap = new int[numberOfCities];
+	for (int i = 0; i < numberOfCities; i++) {
+		copiedDistanceMap[i] = new int[numberOfCities];
+	}
+
+	for (int i = 0; i < numberOfCities; i++) {
+		for (int j = 0; j < numberOfCities; j++) {
+			copiedDistanceMap[i][j] = distanceMap[i][j];
+		}
+	}
+
+	int currentCity = startCity;
+	for (int i = 0; i < numberOfCities; i++) {
+		int temp = findMinInArray(copiedDistanceMap[currentCity]);
+		minRoadMap[i] = currentCity;
+
+		minDistance += copiedDistanceMap[currentCity][temp];
+		for (int j = 0; j < numberOfCities; j++) {
+			copiedDistance[j][temp] = 0;
+			copiedDistance[currentCity][j] = 0;
+		}
+		copiedDistanceMap[temp][currentCity] = 0;
+		currentCity = temp;
+	}
+	minRoadMap[numberOfCities] = startCity;
+	
 
 	return(minRoadMap);
 }
