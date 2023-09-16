@@ -56,21 +56,8 @@ void inputDoubleArray(int** doubleArray, int numberOfLines, int numberOfColumns)
 	}
 }
 
+
 int main() {
-
-	int* array = new int[4];
-	for (int i = 0; i < 4; i++) {
-		array[i] = i + 1;
-	}
-	int returned = 1;
-	while (returned != 0) {
-		printArray(array, 4);
-
-		returned=shakeArray(array, 4);
-	}
-
-
-
 
 	srand(time(0));
 
@@ -138,20 +125,24 @@ int main() {
 	printArray(maxRoadMap, length + 1);
 	std::cout << " summ: " << worstDistance << std::endl;
 
-	std::cout << std::endl <<"Time of execution: " << (float)(executionTime/1000) << " sec";
+	std::cout << std::endl << "Time of execution: " << (float)(executionTime / 1000) << " sec" << std::endl << std::endl;
 
-	int bestDistanceHeuristic;
+	int bestDistanceHeuristic=0;
 	startClock = clock();
-	minRoadMap = solveSalesmanByHeuristics(doubleArray, length, startCity, bestDistanceHeuristic);
+	minRoadMap = solveSalesmanByHeuristics(doubleArray, length, startCity, &bestDistanceHeuristic);
 	endClock = clock();
-	unsigned int executionTimeHeuristic = endClock - startClock;
+	int executionTimeHeuristic = endClock - startClock;
 
 	std::cout << std::endl << "Heuristics method solved problem: " << std::endl;
 	printArray(minRoadMap, length + 1);
-	std::cout << " summ: " << bestDistance << std::endl;
+	std::cout << " summ: " << bestDistanceHeuristic << std::endl;
 	std::cout << std::endl << "Time of execution: " << (float)(executionTimeHeuristic / 1000) << " sec";
 
-	std::cout << std::endl <<"Hieristic is faster than enumeration by: " << // continue here
+	int percentTime;
+	if (executionTime != 0) percentTime = ((executionTime - executionTimeHeuristic)  / executionTime) * 100;
+	else percentTime = 0;
+	std::cout << std::endl << "Hieristic is faster than enumeration by: " << percentTime << "%" << std::endl;
+	std::cout << std::endl << "Hieristic`s accuracy is close to best by: " << (bestDistanceHeuristic - bestDistance ) << " which is " << (bestDistanceHeuristic-bestDistance)/bestDistance *100 << "%" << std::endl;
 
 	
 	delete minRoadMap;
