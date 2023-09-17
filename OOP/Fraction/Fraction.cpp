@@ -4,7 +4,7 @@
 
 Fraction::Fraction() 
 {
-	numerator = 0;
+	numerator = 1;
 	denominator = 1;
 }
 
@@ -44,7 +44,7 @@ Fraction Fraction::devide(const Fraction devisor)
 	return(quotient);
 }
 
-Fraction Fraction::miltiply(const Fraction multiplier)
+Fraction Fraction::multiply(const Fraction multiplier)
 {
 	Fraction multiplicator;
 	multiplicator.numerator = numerator * multiplier.numerator;
@@ -78,33 +78,39 @@ char Fraction::compare(const Fraction compared)
 	if (Fraction1 != Fraction2) return('!=');
 }
 
-Fraction Fraction::reduce() 
+void Fraction::reduce() 
 {
 	Fraction reduced;
-	reduced.numerator = numerator;
-	reduced.denominator = denominator;
-	for (int i=2; i<abs(reduced.numerator) && i<abs(reduced.denominator); i++) 
+	for (int i=2; i<=abs(numerator) && i<=abs(denominator); ) 
 	{
-		if (reduced.numerator%i==0 && reduced.denominator%i==0) 
+		if (numerator%i==0 && denominator%i==0) 
 		{
-			reduced.numerator = numerator / i;
-			reduced.denominator = denominator / i;
+			numerator = numerator / i;
+			denominator = denominator / i;
 			i = 2;
+			continue;
 		}
+		i++;
 	}
-	return(reduced);
 }
 
-double Fraction::convertToDouble() 
+float Fraction::convertToFloat() 
 {
-	return(numerator / denominator);
+	float result = 0.0;
+	if (denominator != 0) {
+		result = (numerator*1.0) / denominator;
+	}
+	else result = INT_MIN;
+	return(result);
 }
 
-Fraction Fraction::convertFromDouble(double fraction, int accuracy) 
+Fraction Fraction::convertFromFloat(float fraction, int accuracy) 
 {
+	int accuracy1=1;
+	for (int i = 0; i < accuracy; i++) accuracy1 *= 10;
 	Fraction totalFraction;
-	totalFraction.numerator = (int)fraction * 10 ^ accuracy;
-	totalFraction.denominator = 10 ^ accuracy;
+	totalFraction.numerator = fraction * accuracy1;
+	totalFraction.denominator = accuracy1;
 
 	return(totalFraction);
 

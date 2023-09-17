@@ -7,19 +7,21 @@ public:
 	Fraction summ(const Fraction summ_2);
 	Fraction difference(const Fraction summ_2);
 	Fraction devide(const Fraction devisor);
-	Fraction miltiply(const Fraction multiplier);
-	Fraction reduce();
+	Fraction multiply(const Fraction multiplier);
+	
 
 	char compare(const Fraction compared);
-
+	 
 	int getNumerator();
 	int getDenominator();
+
+	void reduce();
 
 	void print();
 	void set();
 
-	double convertToDouble();
-	Fraction convertFromDouble(double fraction, int accuracy);
+	float convertToFloat();
+	Fraction convertFromFloat(float fraction, int accuracy);
 
 	int numerator;
 	int denominator;
