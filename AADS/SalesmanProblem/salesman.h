@@ -127,14 +127,15 @@ int* solveSalesmanByHeuristics(int** distanceMap, int numberOfCities, int startC
 	}
 
 	int currentCity = startCity;
-	int temp=0;
-	for (int j = 0; j < numberOfCities ; j++) {
+	int temp = 0;
+	for (int j = 0; j < numberOfCities; j++) {
 		copiedDistanceMap[j][startCity - 1] = 0;
 	}
 	for (int i = 0; i < numberOfCities && temp != -1; i++) {
 		temp = findMinInArray(copiedDistanceMap[currentCity - 1], numberOfCities);
-		if (temp == -1) continue;
 		minRoadMap[i] = currentCity;
+		if (temp == -1) continue;
+
 		*minDistance += copiedDistanceMap[currentCity - 1][temp];
 		for (int j = 0; j < numberOfCities; j++) {
 			copiedDistanceMap[j][temp] = 0;
@@ -144,7 +145,7 @@ int* solveSalesmanByHeuristics(int** distanceMap, int numberOfCities, int startC
 		currentCity = temp + 1;
 	}
 	minRoadMap[numberOfCities] = startCity;
-	*minDistance += distanceMap[(minRoadMap[numberOfCities-1])-1][startCity-1];
+	*minDistance += distanceMap[(minRoadMap[numberOfCities - 1]) - 1][startCity - 1]; // 0<MinRoadMap[i]<=numberOfCities; 0<startCity<=numberOfCities; index: -1; 
 
 
 	return(minRoadMap);

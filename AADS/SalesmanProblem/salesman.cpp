@@ -57,6 +57,7 @@ void inputDoubleArray(int** doubleArray, int numberOfLines, int numberOfColumns)
 }
 
 
+
 int main() {
 
 	srand(time(0));
@@ -142,7 +143,8 @@ int main() {
 	if (executionTime != 0) percentTime = ((executionTime - executionTimeHeuristic)  / executionTime) * 100;
 	else percentTime = 0;
 	std::cout << std::endl << "Hieristic is faster than enumeration by: " << percentTime << "%" << std::endl;
-	std::cout << std::endl << "Hieristic`s accuracy is close to best by: " << (bestDistanceHeuristic - bestDistance ) << " which is " << (bestDistanceHeuristic-bestDistance)/bestDistance *100 << "%" << std::endl;
+	std::cout.precision(4);
+	std::cout << std::endl << "Hieristic`s accuracy is close to best by: " << (bestDistanceHeuristic - bestDistance ) << " which is " << ((bestDistanceHeuristic*1.0)-bestDistance)/(bestDistance*1.0) *100.0 << "%" << std::endl;
 
 	
 	delete minRoadMap;
