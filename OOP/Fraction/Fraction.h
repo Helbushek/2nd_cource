@@ -4,16 +4,19 @@ class Fraction {
 public:
 	Fraction();
 
-	Fraction summ(const Fraction summ_2);
-	Fraction difference(const Fraction summ_2);
-	Fraction devide(const Fraction devisor);
-	Fraction multiply(const Fraction multiplier);
+	Fraction sum(const Fraction summ_2);
+	Fraction dif(const Fraction summ_2);
+	Fraction div(const Fraction devisor);
+	Fraction mul(const Fraction multiplier);
 	
 
 	char compare(const Fraction compared);
 	 
 	int getNumerator();
 	int getDenominator();
+
+	void setNumerator();
+	void setDenominator();
 
 	void reduce();
 
@@ -23,6 +26,7 @@ public:
 	float convertToFloat();
 	Fraction convertFromFloat(float fraction, int accuracy);
 
+private:
 	int numerator;
 	int denominator;
 

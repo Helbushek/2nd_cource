@@ -8,26 +8,65 @@ Fraction::Fraction()
 	denominator = 1;
 }
 
-Fraction Fraction::summ	(const Fraction summ_2) 
+Fraction Fraction::sum	(const Fraction summ_2) 
 {
 	Fraction summ;
-	summ.numerator = (numerator * summ_2.denominator) + (summ_2.numerator * denominator);
-	summ.denominator = denominator * summ_2.denominator;
+	if (denominator != summ_2.denominator) 
+	{
+		summ.numerator = (numerator * summ_2.denominator) + (summ_2.numerator * denominator);
+		summ.denominator = denominator * summ_2.denominator;
+		return(summ);
+	}
+	summ.numerator = numerator + summ_2.numerator;
+	summ.denominator = denominator;
+	if (summ.denominator == 0)
+	{
+		std::cerr << "Fatal error in::Fraction, denominator cannot be 0; Division by 0";
+		exit;
+	}
+	return(summ);
+	
+}
+
+Fraction Fraction::dif(const Fraction summ_2) 
+{
+	Fraction summ;
+	if (denominator != summ_2.denominator)
+	{
+		summ.numerator = (numerator * summ_2.denominator) - (summ_2.numerator * denominator);
+		summ.denominator = denominator * summ_2.denominator;
+	}
+	else {
+		summ.numerator = numerator - summ_2.numerator;
+		summ.denominator = denominator;
+	}
+	if (summ.denominator == 0) 
+	{
+		std::cerr << "Fatal error in::Fraction, denominator cannot be 0; Division by 0";
+		exit;
+	}
 	return(summ);
 }
 
-Fraction Fraction::difference(const Fraction summ_2) 
-{
-	Fraction summ;
-	summ.numerator = (numerator * summ_2.denominator) - (summ_2.numerator * denominator);
-	summ.denominator = denominator * summ_2.denominator;
-	return(summ);
+void Fraction::setNumerator() {
+	std::cin >> numerator;
 }
 
+
+void Fraction::setDenominator() {
+	int temp;
+	std::cin >> temp;
+	if (temp == 0) {
+		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
+		exit;
+	}
+	denominator = temp;
+}
 
 void Fraction::set() 
 {
-	std::cin >> numerator >> denominator;
+	setNumerator();
+	setDenominator();
 }
 
 void Fraction::print() 
@@ -35,18 +74,28 @@ void Fraction::print()
 	std::cout << numerator << "/" << denominator;
 }
 
-Fraction Fraction::devide(const Fraction devisor) 
+Fraction Fraction::div(const Fraction devisor) 
 {
 	Fraction quotient;
+	if (devisor.numerator == 0 ) 
+	{
+		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
+		exit;
+	}
 	quotient.numerator = numerator * devisor.denominator;
 	quotient.denominator = denominator * devisor.numerator;
 
 	return(quotient);
 }
 
-Fraction Fraction::multiply(const Fraction multiplier)
+Fraction Fraction::mul(const Fraction multiplier)
 {
 	Fraction multiplicator;
+	if (denominator*multiplier.denominator==0) 
+	{
+		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
+		exit;
+	}
 	multiplicator.numerator = numerator * multiplier.numerator;
 	multiplicator.denominator = denominator* multiplier.denominator;
 
@@ -115,3 +164,4 @@ Fraction Fraction::convertFromFloat(float fraction, int accuracy)
 	return(totalFraction);
 
 }
+

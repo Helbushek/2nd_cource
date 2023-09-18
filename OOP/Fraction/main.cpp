@@ -18,10 +18,10 @@ void main() {
 	std::cout << a.getNumerator() << " "  << a.getDenominator() << std::endl;
 
 	Fraction summ, mult, divis, diff;
-	summ = a.summ(b);
-	diff = a.difference(b);
-	mult = a.multiply(b);
-	divis = a.devide(b);
+	summ = a.sum(b);
+	diff = a.dif(b);
+	mult = a.mul(b);
+	divis = a.div(b);
 
 	std::cout << "a+b= "; summ.print(); std::cout << std::endl;
 
