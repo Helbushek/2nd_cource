@@ -13,7 +13,47 @@ Fraction:: Fraction(int numerator, int denominator) {
 	Fraction::denominator = denominator;
 }
 
-Fraction Fraction::sum	(const Fraction summ_2) 
+
+void Fraction::setNumerator() {
+	std::cin >> numerator;
+}
+
+
+void Fraction::setDenominator() {
+	int temp;
+	std::cin >> temp;
+	if (temp == 0) {
+		std::cerr << "Fatal error in Fraction::setDenominator, denominator cannot be 0; Division by 0";
+	}
+	denominator = temp;
+}
+
+int Fraction::getNumerator()
+{
+	return(numerator);
+}
+
+
+int Fraction::getDenominator()
+{
+	return(denominator);
+}
+
+
+void Fraction::set()
+{
+	setNumerator();
+	setDenominator();
+}
+
+void Fraction::print()
+{
+	std::cout << numerator << "/" << denominator;
+}
+
+
+
+Fraction Fraction::sum	(const Fraction &summ_2) 
 {
 	Fraction summ;
 	if (denominator != summ_2.denominator) 
@@ -26,14 +66,13 @@ Fraction Fraction::sum	(const Fraction summ_2)
 	summ.denominator = denominator;
 	if (summ.denominator == 0)
 	{
-		std::cerr << "Fatal error in::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::sum, denominator cannot be 0; Division by 0";
 	}
 	return(summ);
 	
 }
 
-Fraction Fraction::dif(const Fraction summ_2) 
+Fraction Fraction::dif(const Fraction &summ_2) 
 {
 	Fraction summ;
 	if (denominator != summ_2.denominator)
@@ -47,45 +86,18 @@ Fraction Fraction::dif(const Fraction summ_2)
 	}
 	if (summ.denominator == 0) 
 	{
-		std::cerr << "Fatal error in::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::dif, denominator cannot be 0; Division by 0";
 	}
 	return(summ);
 }
 
-void Fraction::setNumerator() {
-	std::cin >> numerator;
-}
 
-
-void Fraction::setDenominator() {
-	int temp;
-	std::cin >> temp;
-	if (temp == 0) {
-		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
-		exit;
-	}
-	denominator = temp;
-}
-
-void Fraction::set() 
-{
-	setNumerator();
-	setDenominator();
-}
-
-void Fraction::print() 
-{
-	std::cout << numerator << "/" << denominator;
-}
-
-Fraction Fraction::div(const Fraction devisor) 
+Fraction Fraction::div(const Fraction &devisor) 
 {
 	Fraction quotient;
 	if (devisor.numerator == 0 ) 
 	{
-		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::div, denominator cannot be 0; Division by 0";
 	}
 	quotient.numerator = numerator * devisor.denominator;
 	quotient.denominator = denominator * devisor.numerator;
@@ -93,13 +105,12 @@ Fraction Fraction::div(const Fraction devisor)
 	return(quotient);
 }
 
-Fraction Fraction::mul(const Fraction multiplier)
+Fraction Fraction::mul(const Fraction &multiplier)
 {
 	Fraction multiplicator;
 	if (denominator*multiplier.denominator==0) 
 	{
-		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::mul, denominator cannot be 0; Division by 0";
 	}
 	multiplicator.numerator = numerator * multiplier.numerator;
 	multiplicator.denominator = denominator* multiplier.denominator;
@@ -107,29 +118,35 @@ Fraction Fraction::mul(const Fraction multiplier)
 	return(multiplicator);
 }
 
-int Fraction::getNumerator() 
-{
-	return(numerator);
-}
-
-
-int Fraction::getDenominator() 
-{
-	return(denominator);
-}
-
-
 
 char Fraction::compare(const Fraction compared) 
 {
-	double Fraction1, Fraction2;
-	Fraction1 = numerator / denominator;
-	Fraction2 = compared.numerator / compared.denominator;
+	float Fraction1, Fraction2;
+	Fraction1 = (numerator +.0)/ denominator;
+	Fraction2 = (compared.numerator+ .0) / compared.denominator;
 
 	if (Fraction1 > Fraction2) return('>');
 	if (Fraction1 < Fraction2) return('<');
 	if (Fraction1 == Fraction2) return('=');
 	if (Fraction1 != Fraction2) return('!=');
+}
+
+
+bool Fraction::operator <(const Fraction &compare) {
+	if (this->compare(compare) == '<') return(true);
+	return(false);
+}
+bool Fraction::operator >(const Fraction &compare) {
+	if (this->compare(compare) == '>') return(true);
+	return(false);
+}
+bool Fraction::operator ==(const Fraction &compare) {
+	if (this->compare(compare) == '=') return(true);
+	return(false);
+}
+bool Fraction::operator !=(const Fraction &compare) {
+	if (this->compare(compare) == '!=') return(true);
+	return(false);
 }
 
 void Fraction::reduce() 
@@ -161,7 +178,8 @@ float Fraction::convertToFloat()
 Fraction Fraction::convertFromFloat(float fraction, int accuracy) 
 {
 	int accuracy1=1;
-	for (int i = 0; i < accuracy; i++) accuracy1 *= 10;
+	for (int i = 0; i < accuracy; i++)
+		accuracy1 *= 10;
 	Fraction totalFraction;
 	totalFraction.numerator = fraction * accuracy1;
 	totalFraction.denominator = accuracy1;
@@ -170,7 +188,7 @@ Fraction Fraction::convertFromFloat(float fraction, int accuracy)
 
 }
 
-Fraction& Fraction::operator+(const Fraction summ_2) {
+Fraction Fraction::operator+(const Fraction &summ_2) {
 	Fraction summ;
 	if (denominator != summ_2.denominator)
 	{
@@ -183,13 +201,12 @@ Fraction& Fraction::operator+(const Fraction summ_2) {
 	}
 	if (summ.denominator == 0)
 	{
-		std::cerr << "Fatal error in::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::operator+, denominator cannot be 0; Division by 0";
 	}
 	return(summ);
 
 }
-Fraction& Fraction::operator-(const Fraction summ_2) {
+Fraction Fraction::operator-(const Fraction &summ_2) {
 	Fraction summ;
 	if (denominator != summ_2.denominator)
 	{
@@ -202,29 +219,26 @@ Fraction& Fraction::operator-(const Fraction summ_2) {
 	}
 	if (summ.denominator == 0)
 	{
-		std::cerr << "Fatal error in::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::operator-, denominator cannot be 0; Division by 0";
 	}
 	return(summ);
 }
-Fraction& Fraction::operator*(const Fraction multiplier) {
+Fraction Fraction::operator*(const Fraction &multiplier) {
 	Fraction multiplicator;
 	if (denominator * multiplier.denominator == 0)
 	{
-		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::operator*, denominator cannot be 0; Division by 0";
 	}
 	multiplicator.numerator = numerator * multiplier.numerator;
 	multiplicator.denominator = denominator * multiplier.denominator;
 
 	return(multiplicator);
 }
-Fraction& Fraction::operator/(const Fraction devisor) {
+Fraction Fraction::operator/(const Fraction &devisor) {
 	Fraction quotient;
 	if (devisor.numerator == 0)
 	{
-		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::operator/, denominator cannot be 0; Division by 0";
 	}
 	quotient.numerator = numerator * devisor.denominator;
 	quotient.denominator = denominator * devisor.numerator;
@@ -232,7 +246,7 @@ Fraction& Fraction::operator/(const Fraction devisor) {
 	return(quotient);
 }
 
-void Fraction::operator+=(const Fraction summ_2) {
+Fraction& Fraction::operator+=(const Fraction &summ_2) {
 	if (denominator != summ_2.denominator)
 	{
 		numerator = (numerator * summ_2.denominator) + (summ_2.numerator * denominator);
@@ -244,13 +258,12 @@ void Fraction::operator+=(const Fraction summ_2) {
 	}
 	if (denominator == 0)
 	{
-		std::cerr << "Fatal error in::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::operator+=, denominator cannot be 0; Division by 0";
 	}
 	
-
+	return(*this);
 }
-void Fraction::operator-=(const Fraction summ_2) {
+Fraction& Fraction::operator-=(const Fraction &summ_2) {
 	if (denominator != summ_2.denominator)
 	{
 		numerator = (numerator * summ_2.denominator) - (summ_2.numerator * denominator);
@@ -262,28 +275,25 @@ void Fraction::operator-=(const Fraction summ_2) {
 	}
 	if (denominator == 0)
 	{
-		std::cerr << "Fatal error in::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::operator-=, denominator cannot be 0; Division by 0";
 	}
-	
+	return(*this);
 }
-void Fraction::operator*=(const Fraction multiplier) {
+Fraction& Fraction::operator*=(const Fraction &multiplier) {
 	if (denominator * multiplier.denominator == 0)
 	{
-		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::operator*=, denominator cannot be 0; Division by 0";
 	}
 	numerator = numerator * multiplier.numerator;
 	denominator = denominator * multiplier.denominator;
-
+	return(*this);
 }
-void Fraction::operator/=(const Fraction devisor) {
+Fraction& Fraction::operator/=(const Fraction &devisor) {
 	if (devisor.numerator == 0)
 	{
-		std::cerr << "Fatal error in ::Fraction, denominator cannot be 0; Division by 0";
-		exit;
+		std::cerr << "Fatal error in Fraction::operator/=, denominator cannot be 0; Division by 0";
 	}
 	numerator = numerator * devisor.denominator;
 	denominator = denominator * devisor.numerator;
-
+	return(*this);
 }

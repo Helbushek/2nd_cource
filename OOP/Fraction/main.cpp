@@ -41,6 +41,11 @@ void main() {
 
 	std::cout << "a/b= "; divis.print(); divis = a / b;  std::cout << " "; divis.print(); std::cout << std::endl;
 
+
+	Fraction  ABA =  (a+=b)+ a;
+	std::cout << std::endl << "A + A+= B = ";
+	ABA.print();
+
 	summ.reduce();
 	diff.reduce();
 	mult.reduce();
@@ -56,22 +61,21 @@ void main() {
 
 	std::cout << "a/b= "; divis.print(); std::cout << std::endl;
 
-	Fraction num1, num2;
-
 	std::cout << "Input 2 fractions for comparison " << std::endl;
-	num1.set();
-	num2.set();
+	a.set();
+	b.set();
 
-	std::cout << num1.compare(num2) << std::endl;
+	std::cout << "A<B: " << char((a<b) + '0') << std::endl << "A>B: " << char((a>b)+'0') << std::endl << "A==B: " << char((a == b)+'0') << std::endl << "A!=B: " << char((a != b) + '0') << std::endl;
+	std::cout << "A^B: " << a.compare(b);
 
 	std::cout << "Input 1 fraction for convertion to double and backward" << std::endl;
 	Fraction foo;
 	foo.set();
 
-	float fooDouble = foo.convertToFloat(); 
-	foo = foo.convertFromFloat(fooDouble, 3);
+	float fooFloat = foo.convertToFloat(); 
+	foo = foo.convertFromFloat(fooFloat, 3);
 	std::cout.precision(4);
-	std::cout << fooDouble << std::endl;
+	std::cout << fooFloat << std::endl;
 	foo.print();
 
 }
