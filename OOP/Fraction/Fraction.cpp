@@ -8,6 +8,11 @@ Fraction::Fraction()
 	denominator = 1;
 }
 
+Fraction:: Fraction(int numerator, int denominator) {
+	Fraction::numerator = numerator;
+	Fraction::denominator = denominator;
+}
+
 Fraction Fraction::sum	(const Fraction summ_2) 
 {
 	Fraction summ;

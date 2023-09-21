@@ -2,6 +2,17 @@
 #include "Fraction.h";
 
 void main() {
+	std::cout << "Constructors: ";
+	Fraction def = Fraction() , par = Fraction(3, 4);
+	
+	std::cout << "def: ";
+	def.print();
+	std::cout << std::endl;
+
+	std::cout << "par: ";
+	par.print();
+	std::cout << std::endl;
+
 	Fraction a = Fraction(), b = Fraction();
 	std::cout << "Input 2 fractions (without '/') for summ, multipication, division and difference" << std::endl;
 	a.set();
@@ -14,8 +25,6 @@ void main() {
 	std::cout << "B: ";
 	b.print();
 	std::cout << std::endl;
-
-	std::cout << a.getNumerator() << " "  << a.getDenominator() << std::endl;
 
 	Fraction summ, mult, divis, diff;
 	summ = a.sum(b);

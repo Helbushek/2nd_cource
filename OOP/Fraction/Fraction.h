@@ -3,13 +3,12 @@
 class Fraction {
 public:
 	Fraction();
-
+	Fraction(int numerator, int denominator);
 	Fraction sum(const Fraction summ_2);
 	Fraction dif(const Fraction summ_2);
 	Fraction div(const Fraction devisor);
 	Fraction mul(const Fraction multiplier);
 	
-
 	char compare(const Fraction compared);
 	 
 	int getNumerator();
