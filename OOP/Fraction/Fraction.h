@@ -8,6 +8,18 @@ public:
 	Fraction dif(const Fraction summ_2);
 	Fraction div(const Fraction devisor);
 	Fraction mul(const Fraction multiplier);
+
+	// Overloads: 
+
+	Fraction & operator +(const Fraction summ_2);
+	Fraction & operator -(const Fraction summ_2);
+	Fraction & operator *(const Fraction multiplier);
+	Fraction & operator /(const Fraction devisor);
+
+	void operator +=(const Fraction summ_2);
+	void operator -=(const Fraction summ_2);
+	void operator *=(const Fraction multiplier);
+	void operator /=(const Fraction devisor);
 	
 	char compare(const Fraction compared);
 	 

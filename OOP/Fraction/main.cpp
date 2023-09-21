@@ -26,19 +26,20 @@ void main() {
 	b.print();
 	std::cout << std::endl;
 
-	Fraction summ, mult, divis, diff;
-	summ = a.sum(b);
-	diff = a.dif(b);
-	mult = a.mul(b);
-	divis = a.div(b);
+	Fraction summ=a, mult=a, divis=a, diff=a;
+	summ += b;
+	diff -= b;
+	mult *= b;
+	divis /= b;
 
-	std::cout << "a+b= "; summ.print(); std::cout << std::endl;
 
-	std::cout << "a-b= "; diff.print(); std::cout << std::endl;
+	std::cout << "a+b= "; summ.print(); summ = a + b;  std::cout << " "; summ.print(); std::cout << std::endl;
+
+	std::cout << "a-b= "; diff.print(); diff = a - b;  std::cout << " "; diff.print(); std::cout << std::endl;
 	
-	std::cout << "a*b= "; mult.print(); std::cout << std::endl;
+	std::cout << "a*b= "; mult.print(); mult = a * b; std::cout << " "; mult.print(); std::cout << std::endl;
 
-	std::cout << "a/b= "; divis.print(); std::cout << std::endl;
+	std::cout << "a/b= "; divis.print(); divis = a / b;  std::cout << " "; divis.print(); std::cout << std::endl;
 
 	summ.reduce();
 	diff.reduce();
