@@ -149,10 +149,15 @@ bool Fraction::operator !=(const Fraction &compare) {
 	return(false);
 }
 
+float max(float first, float second) {
+	if (first > second) return(first);
+	return(second);
+}
+
 void Fraction::reduce() 
 {
-	Fraction reduced;
-	for (int i=2; i<=abs(numerator) && i<=abs(denominator); ) 
+	if (numerator == denominator) { numerator = 1; denominator = 1; }
+	for (int i=2; i<=abs(numerator) && i<=abs(denominator) && i<=max(numerator, denominator)/2; ) 
 	{
 		if (numerator%i==0 && denominator%i==0) 
 		{
