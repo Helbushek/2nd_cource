@@ -73,8 +73,8 @@ int main() {
 
 	std::cin >> choice;
 
-	std::cout << std::endl << "Please input Number of cities: ";
-	std::cin >> length;
+	/*std::cout << std::endl << "Please input Number of cities: ";
+	std::cin >> length;*/
 
 
 	std::cout << std::endl << "Please input number of city you want to start from: ";
@@ -82,7 +82,10 @@ int main() {
 
 	std::cout << std::endl << "Input number of repeats you want to run the programm: ";
 	std::cin >> numberOfRepeats;
-
+	if (numberOfRepeats > 20) {
+		numberOfRepeats = 20;
+		std::cout << "Time of running will be too long, repeats reset to 20 (progress from 4 to 13 including)" << std::endl;
+	}
 	std::ofstream statistic("statistic.txt");
 
 	if (statistic.is_open()) std::cout << std::endl << "File created";
@@ -93,8 +96,12 @@ int main() {
 
 	int summOfTime=0, summOfAccuracy = 0;
 
-	for (int i = 0; i < numberOfRepeats; i++) {
+	length = 4; 
+	int count = 1;
 
+	for (int i = 0; i < numberOfRepeats; i++) {
+		if (count % 4 == 0) length += 2;
+		count++;
 		int** doubleArray = new int* [length];
 		for (int i = 0; i < length; i++)
 		{
@@ -150,7 +157,7 @@ int main() {
 			statistic << minRoadMap[i] << ' ';
 		}
 
-		statistic << std::endl << "Best distance " << bestDistance << std::endl << "Time of execution: " << (float)(executionTime / 1000) << std::endl;
+		statistic << std::endl << "Best distance " << bestDistance << std::endl << "Worst distance: " << worstDistance << std::endl << "Time of execution: " << (float)(executionTime / 1000) << std::endl;
 
 		int bestDistanceHeuristic = 0;
 		startClock = clock();
@@ -168,7 +175,7 @@ int main() {
 		else percentTime = 0;
 		std::cout << std::endl << "Hieristic is faster than enumeration by: " << percentTime << "%" << std::endl;
 		std::cout.precision(4);
-		std::cout << std::endl << "Hieristic`s accuracy is close to best by: " << (bestDistanceHeuristic - bestDistance) << " which is " << ((bestDistanceHeuristic * 1.0) - bestDistance) / (bestDistance * 1.0) * 100.0 << "%" << std::endl;
+		std::cout << std::endl << "Hieristic`s accuracy is close to best by: " << (bestDistanceHeuristic - bestDistance) << " which is " << 100-((bestDistanceHeuristic*1.0 - bestDistance) *100/(worstDistance*1.0-bestDistance)) << "%" << std::endl;
 
 		statistic << "Heuristic method: " << std::endl << "Roadmap: ";
 		for (int i = 0; i < length; i++) {
@@ -176,9 +183,9 @@ int main() {
 		}
 
 		statistic << std::endl << "Best distance " << bestDistanceHeuristic << std::endl << "Time of execution: " << (float)(executionTimeHeuristic / 1000) << std::endl;
-		statistic << "Speed difference: " << percentTime << "%" << std::endl << "Precision difference: " << ((bestDistanceHeuristic * 1.0) - bestDistance) / (bestDistance * 1.0) * 100.0 << "%" << std::endl << std::endl;
+		statistic << "Speed difference: " << percentTime << "%" << std::endl << "Precision : " << 100-((bestDistanceHeuristic*1.0 - bestDistance) * 100 / (worstDistance*1.0 - bestDistance)) << "%" << std::endl << std::endl;
 		
-		summOfAccuracy += ((bestDistanceHeuristic * 1.0) - bestDistance) / (bestDistance * 1.0) * 100.0;
+		summOfAccuracy += 100 - ((bestDistanceHeuristic*1.0 - bestDistance) * 100 / (worstDistance*1.0 - bestDistance));
 		summOfTime += percentTime;
 
 		delete minRoadMap;
@@ -189,6 +196,6 @@ int main() {
 		delete doubleArray;
 	}
 
-	statistic << std::endl <<"Arithmetic mean of time difference: " << summOfTime / numberOfRepeats << "%" << std::endl << "Arithmeric mean of prescision difference: " << summOfAccuracy / numberOfRepeats << "%";
+	statistic << std::endl <<"Arithmetic mean of time difference: " << summOfTime / numberOfRepeats << "%" << std::endl << "Arithmeric mean of prescision: " << summOfAccuracy / numberOfRepeats << "%";
 	return(0);
 }
