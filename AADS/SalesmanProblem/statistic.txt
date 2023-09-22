@@ -1,0 +1,14 @@
+Enumeration method: 
+Roadmap: 9 11 1 4 7 13 6 12 3 5 2 10 8 
+Best distance 22
+Time of execution: 75
+Heuristic method: 
+Roadmap: 9 11 1 4 7 13 6 10 8 12 3 5 2 
+Best distance 25
+Time of execution: 0
+Speed difference: 100%
+Precision difference: 13.6364%
+
+
+Arithmetic mean of time difference: 100%
+Arithmeric mean of prescision difference: 13%
