@@ -28,5 +28,7 @@ int main() {
 		std::cout << includes[i] << ' ';
 	}
 	std::cout << std::endl;
+
+	std::cout << "First encounter: " << searchByBmFirst(string, stringToSearch);
 	return(0);
 }
