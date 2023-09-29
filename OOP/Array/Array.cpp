@@ -15,7 +15,7 @@ Array::~Array() {
 Array::Array() {
 	m_array = new int[1];
 }
-Array::Array(int size = 0, int fillNumber) {
+Array::Array(int size, int fillNumber) {
 	if (size == 0) {
 		m_array = nullptr;
 		m_size = 0;
@@ -49,7 +49,7 @@ Array::Array(const Array& array)
 
 
 int& Array::operator[] (const int index) {
-	assert(index<0 && index >m_size);
+	if (index<0 || index>m_size) assert(index<0 || index>m_size);
 	return(m_array[index]);
 }
 Array &Array::operator= (const Array other) {
@@ -69,14 +69,24 @@ Array &Array::operator= (const Array other) {
 
 }
 void Array::operator+=(int numberToAdd) {
-	m_array = new int[m_size + 1]; // оч сомнительно, не должно работать 
-	m_size++;
+	Array temp = Array(m_size + 1);
+	delete[] temp.m_array;
+	temp.m_array = new int[m_size + 1];
+	for (int i = 0; i < m_size; i++) {
+		temp.m_array[i] = m_array[i];
+	}
+
+	*this = temp;
 	m_array[m_size-1] = numberToAdd;
 }
 Array Array::operator + (int numberToAdd) {
 	Array newArray = *this;
-	newArray.m_array = new int[m_size + 1];
-	newArray.m_size += 1;
+	Array temp = Array(newArray.m_size + 1);
+	delete[] temp.m_array;
+	temp.m_array = new int[newArray.m_size + 1];
+	for (int i = 0; i < newArray.m_size; i++) {
+		temp.m_array[i] = newArray.m_array[i];
+	}
 	newArray.m_array[m_size-1] = numberToAdd;
 	return(newArray);
 }
@@ -120,42 +130,59 @@ void Array::set() {
 		std::cin >> m_array[i];
 	}
 }
-void Array::generate(int startOfDiaposone, int endOfDiaposone) {	
+
+
+void Array::sort() {
+	int countForSwap = 1;
+	while (countForSwap != 0) {
+		countForSwap = 0;
+		for (int i = 0; i < m_size - 1; i++) {
+
+			if (m_array[i] > m_array[i + 1]) {
+				swap(m_array[i], m_array[i + 1]);
+				countForSwap++;
+			}
+		}
+	}
+}
+
+void Array::sortDecrease() {
+	int countForSwap = 1;
+	while (countForSwap != 0) {
+		countForSwap = 0;
+		for (int i = 0; i < m_size - 1; i++) {
+
+			if (m_array[i] < m_array[i + 1]) {
+				swap(m_array[i], m_array[i + 1]);
+				countForSwap++;
+			}
+		}
+	}
+}
+
+void Array::generate(int startOfDiaposone, int endOfDiaposone) {
 	srand(time(0));
 	for (int i = 0; i < m_size; i++) {
-		m_array[i] = rand() % (endOfDiaposone - startOfDiaposone) + startOfDiaposone;
+		m_array[i] = rand() % (endOfDiaposone - startOfDiaposone+1) + startOfDiaposone;
 	}
 }
 void Array::generateByIncrease(int startOfDiaposone, int endOfDiaposone) {
-
+	generate();
+	sort();
 }
 void Array::generateByDecrease(int startOfDiaposone, int endOfDiaposone) {
-	
-}
-
-void Array::sort() {
-	int lastSwapLeft = 0, lastSwapRight = m_size-1;
-	while (lastSwapLeft < lastSwapRight) {
-		for (int i = lastSwapLeft; i < lastSwapRight; i++) {
-			if (m_array[i] > m_array[i + 1]) {
-				swap(m_array[i], m_array[i + 1]);
-				lastSwapRight = i;
-			}
-		}
-		for (int i = lastSwapRight; i > lastSwapLeft; i--) {
-			if (m_array[i] > m_array[i + 1]) {
-				swap(m_array[i], m_array[i + 1]);
-				lastSwapLeft = i;
-			}
-		}
-	}
+	generate();
+	sortDecrease();
 }
 
 bool Array::deleteFirst(int numberToDelete) {
 	for (int i = 0; i < m_size; i++) {
 		if (m_array[i] == numberToDelete) {
-			m_array[i] = INT_MIN;
-			return 1;
+			for (int j = i; j < m_size - 1; j++) {
+				m_array[j] = m_array[j + 1];
+			}
+			m_size--;
+			return(1);
 		}
 	}
 	return(false);

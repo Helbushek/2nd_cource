@@ -25,6 +25,7 @@ public:
 	void generateByDecrease(int startOfDiaposone=0, int endOfDiaposone=100);
 
 	void sort();
+	void sortDecrease();
 
 	bool deleteFirst(int numberToDelete);
 	void deleteAll(int numberToDelete);
