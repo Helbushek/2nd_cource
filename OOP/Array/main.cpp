@@ -50,7 +50,11 @@ int main() {
 	std::cout << std::endl;
 
 	std::cout << "Max in array: " << array[array.findMax()] << std::endl << "Min in array: " << array[array.findMin()];
-	
+	array.deleteIndex(0);
+	array[1] = 909;
+	std::cout << std::endl << "After deleting [0] in array and [1] = 909: ";
+	array.print();
+
 
 	return(0);
 }

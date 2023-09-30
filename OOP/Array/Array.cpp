@@ -3,7 +3,7 @@
 #include <random>
 #include <time.h>
 
-void swap(int& first, int& second) {
+void swapInt(int& first, int& second) {
 	int temp = first;
 	first = second; 
 	second = temp;
@@ -47,6 +47,16 @@ Array::Array(const Array& array)
 	}
 }
 
+void Array::swap(Array other) {
+	int* temp = m_array; // temp looks at this
+	m_array = other.m_array; // this now looks at other
+	other.m_array = temp; // other now looks at temp which was looking at memory of previous this, which is now looking at other
+
+	int tempSize = m_size; 
+	m_size = other.m_size;
+	other.m_size = tempSize;
+
+}
 
 int& Array::operator[] (const int index) {
 	if (index<0 || index>m_size) assert(index<0 || index>m_size);
@@ -68,39 +78,35 @@ Array &Array::operator= (const Array other) {
 	return (*this);
 
 }
-void Array::operator+=(int numberToAdd) {
-	Array temp = Array(m_size + 1);
-	delete[] temp.m_array;
-	temp.m_array = new int[m_size + 1];
+
+Array Array::operator+(const Array &arrayForConcatenation) {
+	Array temp(m_size + arrayForConcatenation.m_size);
 	for (int i = 0; i < m_size; i++) {
 		temp.m_array[i] = m_array[i];
 	}
-
-	*this = temp;
-	m_array[m_size-1] = numberToAdd;
+	for (int j = m_size; j < temp.m_size; j++) {
+		temp.m_array[j] = arrayForConcatenation.m_array[j-m_size];
+	}
+	return(temp);
 }
+
+Array Array::operator+=(const Array &arrayForConcatenation) {
+	(*this).swap(*this + arrayForConcatenation);
+	return *this;
+}
+
 Array Array::operator + (int numberToAdd) {
-	Array newArray = *this;
-	Array temp = Array(newArray.m_size + 1);
-	delete[] temp.m_array;
-	temp.m_array = new int[newArray.m_size + 1];
-	for (int i = 0; i < newArray.m_size; i++) {
-		temp.m_array[i] = newArray.m_array[i];
-	}
-	newArray.m_array[m_size-1] = numberToAdd;
-	return(newArray);
+	Array temp(1, numberToAdd);
+	return(*this + temp);
 }
-void Array::operator+=(Array arrayForConcatenation) {
-	m_array = new int[m_size + arrayForConcatenation.m_size];
-	for (int i = m_size; i < m_size + arrayForConcatenation.m_size; i++) {
-		m_array[i] = arrayForConcatenation.m_array[i - arrayForConcatenation.m_size];
-	}
-	m_size += arrayForConcatenation.m_size;
-}
-Array Array::operator+(Array arrayForConcatenation) {
-	Array newArray = *this;
 
+Array Array::operator+=(int numberToAdd) {
+	Array temp(1, numberToAdd);
+	(*this).swap(*this+temp);
+	return *this;
 }
+
+
 
 int Array::size() {
 	return(m_size);
@@ -133,7 +139,7 @@ void Array::sort() {
 		for (int i = 0; i < m_size - 1; i++) {
 
 			if (m_array[i] > m_array[i + 1]) {
-				swap(m_array[i], m_array[i + 1]);
+				swapInt(m_array[i], m_array[i + 1]);
 				countForSwap++;
 			}
 		}
@@ -147,7 +153,7 @@ void Array::sortDecrease() {
 		for (int i = 0; i < m_size - 1; i++) {
 
 			if (m_array[i] < m_array[i + 1]) {
-				swap(m_array[i], m_array[i + 1]);
+				swapInt(m_array[i], m_array[i + 1]);
 				countForSwap++;
 			}
 		}
@@ -176,7 +182,7 @@ bool Array::deleteFirst(int numberToDelete) {
 				m_array[j] = m_array[j + 1];
 			}
 			m_size--;
-			return(1);
+			return(true);
 		}
 	}
 	return(false);
@@ -184,6 +190,18 @@ bool Array::deleteFirst(int numberToDelete) {
 void Array::deleteAll(int numberToDelete) {
 	while (deleteFirst(numberToDelete) != false);
 }
+
+void Array::deleteIndex(int indexToDelete) {
+	if (indexToDelete < 0 || indexToDelete >= m_size) {
+		std::cerr << "Invalid index in Array::deleteIndex, will not be deleted... ";
+		return;
+	}
+	for (int i = indexToDelete; i < m_size+1; i++) {
+		m_array[i] = m_array[i + 1];
+	}
+	m_size--;
+}
+
 
 int Array::findMax() {
 	int max = INT_MIN, maxIndex = -1;;

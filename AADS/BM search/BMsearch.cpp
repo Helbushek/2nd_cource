@@ -1,4 +1,5 @@
 #include <iostream>
+static const int TabSize = 256;
 
 int* searchByBmOnce(char* stringOfText, char* stringToSearch, int startDiaposon, int endDiaposon) {
 	int lenOfText = strlen(stringOfText);
@@ -6,8 +7,8 @@ int* searchByBmOnce(char* stringOfText, char* stringToSearch, int startDiaposon,
 	int posForFounded=0, *foundedPos = new int[255];
 	if (endDiaposon == -1) endDiaposon = lenOfText;
 
-	int* TAB = new int[255];
-	for (int i = 0; i < 255; i++) TAB[i] = lenOfStr;
+	int* TAB = new int[256];
+	for (int i = 0; i < 256; i++) TAB[i] = lenOfStr;
 
 	for (int i = 0; i < lenOfStr; i++) {
 		TAB[stringToSearch[i]]=lenOfStr-i-1;
