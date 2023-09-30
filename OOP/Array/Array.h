@@ -7,11 +7,13 @@ public:
 	~Array();
 	Array(const Array &array);
 
+	void swap(Array other);
+
 	int& operator[] (const int index);
 	Array& operator= (const Array arrayToEqualize);
-	void operator+=(int numberToAdd);
+	Array operator+=(int numberToAdd);
 	Array operator + (int numberToAdd);
-	void operator+=(Array arrayForConcatenation);
+	Array operator+=(Array arrayForConcatenation);
 	Array operator+(Array arrayForConcatenation);
 
 	int size();
@@ -29,6 +31,7 @@ public:
 
 	bool deleteFirst(int numberToDelete);
 	void deleteAll(int numberToDelete);
+	void deleteByIndex(int indexToDelete);
 
 	int findMax();
 	int findMin();

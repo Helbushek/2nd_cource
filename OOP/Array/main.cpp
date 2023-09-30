@@ -50,6 +50,12 @@ int main() {
 	std::cout << std::endl;
 
 	std::cout << "Max in array: " << array[array.findMax()] << std::endl << "Min in array: " << array[array.findMin()];
+
+	std::cout << std::endl << "Array with [0] deleted and after [1] = 999: " << std::endl;
+	array.deleteByIndex(0); 
+	array[1] = 999;
+	array.print();
+
 	
 
 	return(0);
