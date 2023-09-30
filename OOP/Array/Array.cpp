@@ -100,12 +100,6 @@ void Array::operator+=(Array arrayForConcatenation) {
 Array Array::operator+(Array arrayForConcatenation) {
 	Array newArray = *this;
 
-	newArray.m_array = new int[newArray.m_size + arrayForConcatenation.m_size];
-	for (int i = newArray.m_size; i < newArray.m_size + arrayForConcatenation.m_size; i++) {
-		newArray.m_array[i] = arrayForConcatenation.m_array[i - arrayForConcatenation.m_size];
-	}
-	newArray.m_size = arrayForConcatenation.m_size;
-	return(newArray);
 }
 
 int Array::size() {
