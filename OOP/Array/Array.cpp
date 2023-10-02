@@ -108,6 +108,21 @@ Array Array::operator+=(int numberToAdd) {
 	return(*this);
 }
 
+bool Array::operator==(const Array& other) {
+	if (m_size != other.m_size) return(false);
+	if (m_size == other.m_size) {
+		for (int i = 0; i < m_size; i++) {
+			if (m_array[i] != other.m_array[i]) {
+				return(false);
+			}
+		}
+	}
+	return(true);	
+}
+bool Array::operator!=(const Array& other) {
+	return(!(*this == other));
+}
+
 
 int Array::size() {
 	return(m_size);
@@ -214,7 +229,7 @@ int Array::findMax() {
 	return(maxIndex);
 }
 int Array::findMin() {
-	int min = INT_MAX, minIndex = -1;;
+	int min = INT_MAX, minIndex = -1;
 	for (int i = 0; i < m_size; i++) {
 		if (m_array[i] <min) {
 			min = m_array[i];
@@ -222,4 +237,89 @@ int Array::findMin() {
 		}
 	}
 	return(minIndex);
+}
+
+
+
+Array::Iterator::Iterator(Array* array, const int pos) {
+	m_array = array;
+	m_pos = pos;
+}
+
+int& Array::Iterator::operator*() {
+	return((*m_array)[m_pos]);
+}
+Array::Iterator& Array::Iterator::operator++() {
+	m_pos++;
+	return(*this);
+}
+Array::Iterator Array::Iterator::operator++(int) {
+	Array::Iterator temp = *this;
+	m_pos++;
+	return(temp);
+}
+Array::Iterator& Array::Iterator::operator--() {
+	m_pos--;
+	return(*this);
+}
+Array::Iterator Array::Iterator::operator--(int) {
+	Array::Iterator temp = *this;
+	m_pos--;
+	return(temp);
+}
+
+bool Array::Iterator::hasNext() const {
+	return(m_pos < (*m_array).m_size);
+}
+
+bool Array::Iterator::operator==(const Iterator& other) const{
+	return(m_array == other.m_array && m_pos == other.m_pos);
+}
+bool Array::Iterator::operator!=(const Iterator& other) const {
+	return(!(*this == other));
+}
+
+
+Array::Iterator Array::begin() {
+	return Iterator(this, 0);
+
+}
+Array::Iterator Array::end() {
+	return Iterator(this, size());
+}
+
+Array::Iterator Array::Iterator::operator+(int number) {
+	for (int i = 0; i < number; i++) {
+		(*this)++;
+	}
+	return(*this);
+
+}
+
+Array::Iterator Array::Iterator::operator-(int number) {
+	for (int i = 0; i < number; i++) {
+		(*this)--;
+	}
+	return(*this);
+
+}
+
+int Array::Iterator::getPos() {
+	return(m_pos);
+}
+
+void Array::deleteDiaposon(int startDiaposone, int endDiaposone) {
+	if (startDiaposone<0 || startDiaposone>m_size || endDiaposone<0 || endDiaposone>m_size) {
+		std::cerr << "Invalid index of diaposon in Array::deleteDiaposon, will be executed from method... ";
+		return;
+	}
+	if (startDiaposone >= endDiaposone) {
+		std::cerr << "Invalid diaposone, start>=end in Array::deleteDiaposon, will be swapped... ";
+		swapInt(startDiaposone, endDiaposone);
+	}
+	int deleteCount = 0;
+	for (Array::Iterator i = begin()+(endDiaposone-startDiaposone); i != begin()+endDiaposone+1; ++i) {
+		deleteByIndex(i.getPos()-deleteCount);
+		deleteCount++;
+	}
 }

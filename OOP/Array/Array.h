@@ -2,6 +2,11 @@
 #include <iostream>
 class Array {
 public:
+	class Iterator;
+
+public:
+
+
 	Array();
 	Array(int size=0, int fillNumber = INT_MAX);
 	~Array();
@@ -15,6 +20,8 @@ public:
 	Array operator + (int numberToAdd);
 	Array operator+=(Array arrayForConcatenation);
 	Array operator+(Array arrayForConcatenation);
+	bool operator==(const Array& other);
+	bool operator!=(const Array & other);
 
 	int size();
 
@@ -36,7 +43,36 @@ public:
 	int findMax();
 	int findMin();
 
+
+	Iterator begin();
+	Iterator end();
+	void deleteDiaposon(int startDiaposone, int endDiaposone);
+
 private:
 	int* m_array;
 	int m_size;
+};
+
+
+class Array::Iterator {
+public:
+	Iterator(Array* array, const int pos);
+	int& operator*();
+	Iterator& operator++();
+	Iterator operator++(int);
+	Iterator& operator--();
+	Iterator operator--(int);
+	Iterator operator+(int numeber);
+	Iterator operator-(int numeber);
+
+	bool hasNext() const;
+
+	int getPos();
+
+	bool operator==(const Iterator& other) const;
+	bool operator!=(const Iterator& other) const;
+
+private:
+	Array* m_array = nullptr;
+	int m_pos = 0;
 };

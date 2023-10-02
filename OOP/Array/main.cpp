@@ -56,7 +56,11 @@ int main() {
 	array[1] = 999;
 	array.print();
 
-	
+	array.deleteDiaposon(2, 4);
+
+	std::cout << std::endl << "Array after deleting diaposon (2, 4): " << std::endl;
+	array.print();
+
 
 	return(0);
 }

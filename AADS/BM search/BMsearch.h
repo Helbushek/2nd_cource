@@ -1,6 +1,4 @@
 #pragma once
+#include <vector>
 
-
-int* searchByBmOnce(char* stringOfText, char* stringToSearch, int startDiaposon = 0, int endDiaposon = -1);
-
-int searchByBmFirst(char* stringOfText, char* stringToSearch);
+std::vector<int> searchByBm(std::string stringOfText, std::string stringToSearch, const char type='once', int startDiaposon = 0, int endDiaposon = -1);
