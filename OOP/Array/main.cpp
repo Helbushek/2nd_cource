@@ -61,6 +61,9 @@ int main() {
 	std::cout << std::endl << "Array after deleting diaposon (2, 4): " << std::endl;
 	array.print();
 
-
+	std::cout << std::endl;
+	Array::Iterator temp(&array, 2);
+	array.insertByIterator(888, temp);
+	array.print();
 	return(0);
 }

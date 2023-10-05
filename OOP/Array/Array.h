@@ -11,8 +11,9 @@ public:
 	Array(int size=0, int fillNumber = INT_MAX);
 	~Array();
 	Array(const Array &array);
+	Array(Array&& other);
 
-	void swap(Array other);
+	void swap(Array &other);
 
 	int& operator[] (const int index);
 	Array& operator= (const Array arrayToEqualize);
@@ -43,10 +44,12 @@ public:
 	int findMax();
 	int findMin();
 
+	void increaseSize();
 
 	Iterator begin();
 	Iterator end();
 	void deleteDiaposon(int startDiaposone, int endDiaposone);
+	void insertByIterator(int numberToInsert, Array::Iterator iter);
 
 private:
 	int* m_array;
