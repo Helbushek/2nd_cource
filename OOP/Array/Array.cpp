@@ -10,67 +10,45 @@ void swapInt(int& first, int& second) {
 }
 
 Array::~Array() {
-	std::cout << std::endl << "~Array for " << this << std::endl;
 	delete[] m_array;
 }
-Array::Array() {
-	m_array = new int[1];
-	std::cout << std::endl << "Array for " << this << std::endl;
 
+Array::Array(int size)
+{
+	if (size > 0) {
+		m_array = new int[size];
+		m_size = size;
+	}
 }
-Array::Array(int size, int fillNumber) {
-	if (size == 0) {
-		m_array = nullptr;
-		m_size = 0;
-		return;
-	}
-	if (size < 0) {
-		std::cerr << "Array::Array size is negative, destructed";
-		delete[] m_array;
-		m_size = -1;
-		return;
-	}
-	m_array = new int[size];
-	m_size = size;
-	if (fillNumber != INT_MAX) {
-		for (int i = 0; i < m_size; i++) {
-			m_array[i] = fillNumber;
-		}
-		return;
-	}
-	std::cout << std::endl << "Array for " << this << std::endl;
 
+Array::Array(int size, int fillNumber)
+	: Array(size)
+{
+	for (int i = 0; i < m_size; i++) {
+		m_array[i] = fillNumber;
+	}
 }
 
 
 
 Array::Array(const Array& array)
-	: m_size(array.m_size)
+	: Array(array.m_size)
 {
-	m_array = new int[m_size];
-
 	for (int i = 0; i < m_size; i++) {
 		m_array[i] = array.m_array[i];
 	}
-	std::cout << std::endl << "Array for " << this << std::endl;
-
 }
 
 Array::Array(Array&& other) 
 {
 	m_size = other.m_size;
-	m_array = new int[m_size];
-
-	for (int i = 0; i < m_size; i++) {
-		m_array[i] = other.m_array[i];
-	}
-	std::cout << std::endl << "Array for " << &other << std::endl;
+	m_array = other.m_array;
 	other.m_array = nullptr;
 }
 
 
 int& Array::operator[] (const int index) {
-	if (index<0 || index>m_size) assert(index<0 || index>m_size);
+	assert(index>=0 && index<m_size);
 	return(m_array[index]);
 }
 Array &Array::operator= (const Array other) {
@@ -101,7 +79,7 @@ void Array::swap(Array &other) {
 }
 
 
-Array Array::operator+(Array arrayForConcatenation) {
+Array Array::operator+(const Array &arrayForConcatenation) const {
 	Array temp(m_size + arrayForConcatenation.m_size);
 
 	for (int i = 0; i < m_size; i++) {
@@ -113,7 +91,7 @@ Array Array::operator+(Array arrayForConcatenation) {
 
 	return(temp);
 }
-Array Array::operator+=(Array arrayForConcatenation) {
+Array &Array::operator+=(const Array &arrayForConcatenation) {
 	(*this + arrayForConcatenation).swap(*this);
 	return(*this);
 }
@@ -219,7 +197,7 @@ bool Array::deleteFirst(int numberToDelete) {
 				m_array[j] = m_array[j + 1];
 			}
 			m_size--;
-			return(1);
+			return(true);
 		}
 	}
 	return(false);
@@ -300,6 +278,10 @@ bool Array::Iterator::operator!=(const Iterator& other) const {
 	return(!(*this == other));
 }
 
+bool Array::Iterator::isEqual(Array::Iterator& other) {
+	return(m_array == other.m_array);
+}
+
 
 Array::Iterator Array::begin() {
 	return Iterator(this, 0);
@@ -310,18 +292,21 @@ Array::Iterator Array::end() {
 }
 
 Array::Iterator Array::Iterator::operator+(int number) {
+	Array::Iterator temp = *this;
 	for (int i = 0; i < number; i++) {
-		(*this)++;
+		temp++;
 	}
-	return(*this);
+	return(temp);
 
 }
 
 Array::Iterator Array::Iterator::operator-(int number) {
+	Array::Iterator temp = *this;
+
 	for (int i = 0; i < number; i++) {
-		(*this)--;
+		temp--;
 	}
-	return(*this);
+	return(temp);
 
 }
 
@@ -329,41 +314,64 @@ int Array::Iterator::getPos() {
 	return(m_pos);
 }
 
-void Array::deleteDiaposon(int startDiaposone, int endDiaposone) {
-	if (startDiaposone<0 || startDiaposone>m_size || endDiaposone<0 || endDiaposone>m_size) {
+void Array::deleteDiaposon(Array::Iterator start, Array::Iterator end) {
+	if (start.getPos()<0 || start.getPos()>m_size || end.getPos()<0 || end.getPos()>m_size-1) {
 		std::cerr << "Invalid index of diaposon in Array::deleteDiaposon, will be executed from method... ";
 		return;
 	}
-	if (startDiaposone >= endDiaposone) {
-		std::cerr << "Invalid diaposone, start>=end in Array::deleteDiaposon, will be swapped... ";
-		swapInt(startDiaposone, endDiaposone);
+	if (start.getPos() > end.getPos()) {
+		std::cerr << "Invalid diaposone, start>=end in Array::deleteDiaposon, will execute from method... ";
+		return;
+	}
+	if (!start.isEqual(end)) {
+		std::cerr << "Iterators are not on same array, will execute from method... ";
+		return;
 	}
 	int deleteCount = 0;
-	for (Array::Iterator i = begin()+(endDiaposone-startDiaposone); i != begin()+endDiaposone+1; ++i) {
+	for (Array::Iterator i = start; i != end+1; ++i) {
 		deleteByIndex(i.getPos()-deleteCount);
 		deleteCount++;
 	}
 }
 
-void Array::increaseSize() {
-	Array temp(m_size + 1);
-	for (int i = 0; i < m_size; i++) {
-		temp.m_array[i] = m_array[i];
-	}
-	temp.m_array[m_size] = 0;
-	(*this).swap(temp);
-}
 
-void Array::insertByIterator(int numberToInsert, Array::Iterator iter) {
+void Array::insert(int numberToInsert, Array::Iterator iter) {
 	if (iter.getPos()<0 || iter.getPos() > m_size) {
-		std::cerr << "Invalid index in Array::insertByIterator, will not run... \n";
+		std::cerr << "Invalid index in Array::insert, will not run... \n";
 		return;
 	}
 	int posIter = iter.getPos();
-	increaseSize();
-	Array tempArray = (*this);
-	for (Array::Iterator temp(&tempArray, tempArray.m_size); temp.getPos() != iter.getPos(); temp--) {
-		m_array[temp.getPos()] = m_array[temp.getPos()-1];
+
+	{
+		Array temp(m_size + 1);
+		for (int i = 0; i < m_size; i++) {
+			temp.m_array[i] = m_array[i];
+		}
+		(*this).swap(temp);
 	}
+
+	for (Array::Iterator temp = end() - 1; temp!=iter; temp--) {
+		*temp = *(temp-1);
+	} 
 	m_array[posIter] = numberToInsert;
+}
+
+
+void Array::insert(int numberToInsert, int pos) {
+	Array::Iterator iter(this, pos);
+	insert(numberToInsert, iter);
+}
+
+std::ostream &operator<<(std::ostream& out, const Array& array) {
+	for (int i = 0; i < array.m_size; i++) {
+		out << array.m_array[i] << ' ';
+	}
+	return(out);
+}
+
+std::istream& operator>>(std::istream& in, Array& array) {
+	for (int i = 0; i < array.m_size; i++) {
+		in >> array.m_array[i];
+	}
+	return(in);
 }

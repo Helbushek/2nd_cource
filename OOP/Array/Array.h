@@ -3,12 +3,13 @@
 class Array {
 public:
 	class Iterator;
+	class ConstIterator;
 
 public:
 
 
-	Array();
-	Array(int size=0, int fillNumber = INT_MAX);
+	Array(int size = 0);
+	Array(int size, int fillNumber);
 	~Array();
 	Array(const Array &array);
 	Array(Array&& other);
@@ -19,10 +20,13 @@ public:
 	Array& operator= (const Array arrayToEqualize);
 	Array operator+=(int numberToAdd);
 	Array operator + (int numberToAdd);
-	Array operator+=(Array arrayForConcatenation);
+	Array operator+=(Array &arrayForConcatenation);
 	Array operator+(Array arrayForConcatenation);
 	bool operator==(const Array& other);
 	bool operator!=(const Array & other);
+
+	friend std::ostream& operator<<(std::ostream& out, const Array& array);
+	friend std::istream& operator>>(std::istream& out, Array& array);
 
 	int size();
 
@@ -44,16 +48,18 @@ public:
 	int findMax();
 	int findMin();
 
-	void increaseSize();
-
 	Iterator begin();
 	Iterator end();
-	void deleteDiaposon(int startDiaposone, int endDiaposone);
-	void insertByIterator(int numberToInsert, Array::Iterator iter);
+
+	ConstIterator begin() const;
+	ConstIterator end() const;
+	void deleteDiaposon(Array::Iterator begin, Array::Iterator end);
+	void insert(int numberToInsert, Array::Iterator iter);
+	void insert(int numberToInsert, int pos);
 
 private:
-	int* m_array;
-	int m_size;
+	int* m_array = nullptr;
+	int m_size = 0;
 };
 
 
@@ -71,6 +77,7 @@ public:
 	bool hasNext() const;
 
 	int getPos();
+	bool isEqual(Iterator& other);
 
 	bool operator==(const Iterator& other) const;
 	bool operator!=(const Iterator& other) const;
