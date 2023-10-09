@@ -51,7 +51,7 @@ int& Array::operator[] (const int index) {
 	assert(index>=0 && index<m_size);
 	return(m_array[index]);
 }
-Array &Array::operator= (const Array other) {
+Array &Array::operator= (const Array& other) {
 	if (this == &other) return(*this);
 
 	if (m_size != other.m_size) {
@@ -96,12 +96,12 @@ Array &Array::operator+=(const Array &arrayForConcatenation) {
 	return(*this);
 }
 
-Array Array::operator + (int numberToAdd) {
+Array Array::operator + (int numberToAdd) const {
 	Array temp(1, numberToAdd);
 	return(*this + temp);
 }
 
-Array Array::operator+=(int numberToAdd) {
+Array& Array::operator+=(int numberToAdd) {
 	Array temp(1, numberToAdd);
 	(*this + temp).swap(*this);
 	return(*this);

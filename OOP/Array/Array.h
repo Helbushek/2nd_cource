@@ -17,13 +17,13 @@ public:
 	void swap(Array &other);
 
 	int& operator[] (const int index);
-	Array& operator= (const Array arrayToEqualize);
-	Array operator+=(int numberToAdd);
-	Array operator + (int numberToAdd);
-	Array operator+=(Array &arrayForConcatenation);
-	Array operator+(Array arrayForConcatenation);
+	Array& operator= (const Array &arrayToEqualize);
+	Array& operator+=(int numberToAdd);
+	Array operator + (int numberToAdd) const;
+	Array& operator+=(const Array &arrayForConcatenation);
+	Array operator+(const Array &arrayForConcatenation) const;
 	bool operator==(const Array& other);
-	bool operator!=(const Array & other);
+	bool operator!=(const Array& other);
 
 	friend std::ostream& operator<<(std::ostream& out, const Array& array);
 	friend std::istream& operator>>(std::istream& out, Array& array);
