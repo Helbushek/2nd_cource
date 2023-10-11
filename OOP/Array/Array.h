@@ -86,3 +86,7 @@ private:
 	Array* m_array = nullptr;
 	int m_pos = 0;
 };
+
+class Array::ConstIterator {
+
+};
