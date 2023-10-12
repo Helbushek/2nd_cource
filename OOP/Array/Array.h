@@ -17,6 +17,9 @@ public:
 	void swap(Array &other);
 
 	int& operator[] (const int index);
+
+	int operator[] (const int index) const;
+
 	Array& operator= (const Array &arrayToEqualize);
 	Array& operator+=(int numberToAdd);
 	Array operator + (int numberToAdd) const;
@@ -29,6 +32,8 @@ public:
 	friend std::istream& operator>>(std::istream& out, Array& array);
 
 	int size();
+
+	int size() const;
 
 	int find(int numberToFind);
 
@@ -53,6 +58,7 @@ public:
 
 	ConstIterator begin() const;
 	ConstIterator end() const;
+
 	void deleteDiaposon(Array::Iterator begin, Array::Iterator end);
 	void insert(int numberToInsert, Array::Iterator iter);
 	void insert(int numberToInsert, int pos);
@@ -88,5 +94,25 @@ private:
 };
 
 class Array::ConstIterator {
+public:
+	ConstIterator(const Array* array, int pos);
+	int operator*();
+	ConstIterator& operator++();
+	ConstIterator operator++(int);
+	ConstIterator& operator--();
+	ConstIterator operator--(int);
+	ConstIterator operator+(int numeber);
+	ConstIterator operator-(int numeber);
 
+	bool hasNext() const;
+
+	int getPos();
+	bool isEqual(ConstIterator& other) const;
+
+	bool operator==(const ConstIterator& other) const;
+	bool operator!=(const ConstIterator& other) const;
+
+private:
+	const Array* m_array = nullptr;
+	int m_pos = 0;
 };

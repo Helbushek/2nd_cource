@@ -51,6 +51,12 @@ int& Array::operator[] (const int index) {
 	assert(index>=0 && index<m_size);
 	return(m_array[index]);
 }
+
+int Array::operator[] (const int index) const{
+	assert(index >= 0 && index < m_size);
+	return(m_array[index]);
+}
+
 Array &Array::operator= (const Array& other) {
 	if (this == &other) return(*this);
 
@@ -124,6 +130,10 @@ bool Array::operator!=(const Array& other) {
 
 
 int Array::size() {
+	return(m_size);
+}
+
+int Array::size() const{
 	return(m_size);
 }
 
@@ -320,7 +330,7 @@ void Array::deleteDiaposon(Array::Iterator start, Array::Iterator end) {
 		return;
 	}
 	if (start.getPos() > end.getPos()) {
-		std::cerr << "Invalid diaposone, start>=end in Array::deleteDiaposon, will execute from method... ";
+		std::cerr << "Invalid diaposon, start>=end in Array::deleteDiaposon, will execute from method... ";
 		return;
 	}
 	if (!start.isEqual(end)) {
@@ -374,4 +384,78 @@ std::istream& operator>>(std::istream& in, Array& array) {
 		in >> array.m_array[i];
 	}
 	return(in);
+}
+
+Array::ConstIterator::ConstIterator(const Array* array, int pos) {
+	m_array = array;
+	m_pos = pos;
+}
+
+int Array::ConstIterator::operator*() {
+	return((*m_array)[m_pos]);
+}
+Array::ConstIterator& Array::ConstIterator::operator++() {
+	m_pos++;
+	return(*this);
+}
+Array::ConstIterator Array::ConstIterator::operator++(int) {
+	Array::ConstIterator temp = *this;
+	m_pos++;
+	return(temp);
+}
+Array::ConstIterator& Array::ConstIterator::operator--() {
+	m_pos--;
+	return(*this);
+}
+Array::ConstIterator Array::ConstIterator::operator--(int) {
+	Array::ConstIterator temp = *this;
+	m_pos--;
+	return(temp);
+}
+
+bool Array::ConstIterator::hasNext() const {
+	return(m_pos < (*m_array).m_size);
+}
+
+bool Array::ConstIterator::operator==(const ConstIterator& other) const {
+	return(m_array == other.m_array && m_pos == other.m_pos);
+}
+bool Array::ConstIterator::operator!=(const ConstIterator& other) const {
+	return(!(*this == other));
+}
+
+bool Array::ConstIterator::isEqual(Array::ConstIterator& other) const{
+	return(m_array == other.m_array);
+}
+
+
+Array::ConstIterator Array::begin() const{
+	return ConstIterator(this, 0);
+
+}
+Array::ConstIterator Array::end() const{
+	return ConstIterator(this, size());
+}
+
+Array::ConstIterator Array::ConstIterator::operator+(int number) {
+	Array::ConstIterator temp = *this;
+	for (int i = 0; i < number; i++) {
+		temp++;
+	}
+	return(temp);
+
+}
+
+Array::ConstIterator Array::ConstIterator::operator-(int number) {
+	Array::ConstIterator temp = *this;
+
+	for (int i = 0; i < number; i++) {
+		temp--;
+	}
+	return(temp);
+
+}
+
+int Array::ConstIterator::getPos() {
+	return(m_pos);
 }
