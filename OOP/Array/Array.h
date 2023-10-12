@@ -18,7 +18,7 @@ public:
 
 	int& operator[] (const int index);
 
-	int operator[] (const int index) const;
+	const int& operator[] (const int index) const;
 
 	Array& operator= (const Array &arrayToEqualize);
 	Array& operator+=(int numberToAdd);
@@ -30,8 +30,6 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& out, const Array& array);
 	friend std::istream& operator>>(std::istream& out, Array& array);
-
-	int size();
 
 	int size() const;
 
@@ -59,7 +57,7 @@ public:
 	ConstIterator begin() const;
 	ConstIterator end() const;
 
-	void deleteDiaposon(Array::Iterator begin, Array::Iterator end);
+	void deleteDiaposon(Array::Iterator begin, Array::Iterator end); //range
 	void insert(int numberToInsert, Array::Iterator iter);
 	void insert(int numberToInsert, int pos);
 
@@ -96,7 +94,7 @@ private:
 class Array::ConstIterator {
 public:
 	ConstIterator(const Array* array, int pos);
-	int operator*();
+	const int& operator*();
 	ConstIterator& operator++();
 	ConstIterator operator++(int);
 	ConstIterator& operator--();
@@ -107,7 +105,7 @@ public:
 	bool hasNext() const;
 
 	int getPos();
-	bool isEqual(ConstIterator& other) const;
+	bool isEqual(const ConstIterator& other) const;
 
 	bool operator==(const ConstIterator& other) const;
 	bool operator!=(const ConstIterator& other) const;

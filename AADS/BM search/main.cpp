@@ -15,28 +15,28 @@ int main() {
 
 
 	for (auto i : includes) {
-	std:; cout << i << ' ';
+	std:: cout << i << ' ';
 	}
 	
 	std::cout << std::endl << "(17,91): ";
-	includes = searchByBm(string, stringToSearch, 17);
+	includes = searchByBm(string, stringToSearch, BmSearchType::All, 17);
 
 	for (auto i : includes) {
-	std:; cout << i << ' ';
+	std:: cout << i << ' ';
 	}
 	std::cout << std::endl << "(28, 36): ";
-	includes = searchByBm(string, stringToSearch, 28, 36);
+	includes = searchByBm(string, stringToSearch,BmSearchType::All, 28, 36);
 
 	for (auto i : includes) {
-	std:; cout << i << ' ';
+	std:: cout << i << ' ';
 	}
 
 	std::cout << std::endl;
-	includes = searchByBm(string, stringToSearch, 'once');
+	includes = searchByBm(string, stringToSearch, BmSearchType::Once);
 	std::cout << "First encounter: "; 
 
 	for (auto i : includes) {
-	std:; cout << i << ' ';
+	std:: cout << i << ' ';
 	}
 	return(0);
 }

@@ -52,7 +52,7 @@ int& Array::operator[] (const int index) {
 	return(m_array[index]);
 }
 
-int Array::operator[] (const int index) const{
+const int& Array::operator[] (const int index) const{
 	assert(index >= 0 && index < m_size);
 	return(m_array[index]);
 }
@@ -391,7 +391,7 @@ Array::ConstIterator::ConstIterator(const Array* array, int pos) {
 	m_pos = pos;
 }
 
-int Array::ConstIterator::operator*() {
+const int& Array::ConstIterator::operator*() {
 	return((*m_array)[m_pos]);
 }
 Array::ConstIterator& Array::ConstIterator::operator++() {
@@ -424,7 +424,7 @@ bool Array::ConstIterator::operator!=(const ConstIterator& other) const {
 	return(!(*this == other));
 }
 
-bool Array::ConstIterator::isEqual(Array::ConstIterator& other) const{
+bool Array::ConstIterator::isEqual(const ConstIterator& other) const{
 	return(m_array == other.m_array);
 }
 
