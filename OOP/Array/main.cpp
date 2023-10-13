@@ -2,21 +2,23 @@
 #include <iostream>
 
 int main() {
-	Array array = Array(10, 1);
+	Array<int> array = Array<int>(10, 1);
 	array.print();
 	std::cout << std::endl;
 
-	array.generate();
+	//array.generate();
+	std::cout << std::endl << "Input Array: ";
+	array.set();
 	array.print();
 
-	/*array.set();
+	/*
 	array.print();*/
 	std::cout << std::endl;
 
 	std::cout << "Size: " << array.size() << std::endl;
 
-	/*array.sort();
-	array.print();*/
+	array.sort();
+	array.print();
 
 	/*array.generateByIncrease();
 	array.print();
@@ -49,27 +51,27 @@ int main() {
 	array.print();
 	std::cout << std::endl;
 
-	std::cout << "Max in array: " << array[array.findMax()] << std::endl << "Min in array: " << array[array.findMin()];
+	/*std::cout << "Max in array: " << array[array.findMax()] << std::endl << "Min in array: " << array[array.findMin()];
 
 	std::cout << std::endl << "Array with [0] deleted and after [1] = 999: " << std::endl;
 	array.deleteByIndex(0); 
 	array[1] = 999;
 	array.print();
 
-	Array::Iterator start(&array, 2), end(&array, 4);
+	Array<int>::Iterator start(&array, 2), end(&array, 4);
 	array.deleteDiaposon(start, end);
 
 	std::cout << std::endl << "Array after deleting diaposon (2, 4): " << std::endl;
 	array.print();
 
 	std::cout << std::endl;
-	Array::Iterator temp(&array, 2);
+	Array<int>::Iterator temp(&array, 2);
 	array.insert(888, temp);
 	array.insert(0, array.size());
 	std::cout << array;
 
-	/*std::cout << std::endl << "Print you array with size: " << array.size();
+	std::cout << std::endl << "Print you array with size: " << array.size();
 	std::cin >> array;
-	std::cout << std::endl << array;*/
-	return(0);
+	std::cout << std::endl << array;
+	return(0);*/
 }

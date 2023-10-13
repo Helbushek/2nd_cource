@@ -11,7 +11,7 @@ std::vector<int> searchByBm(std::string stringOfText, std::string stringToSearch
 	/*for (int i = 0; i < maxChar; i++) TAB[i] = lenOfStr;*/
 
 	for (int i = 0; i < lenOfStr; i++) {
-		TAB[stringToSearch[i]] = lenOfStr - i - 1;
+		TAB[(unsigned int) stringToSearch[i]] = lenOfStr - i - 1;
 	}
 
 	int k, j;

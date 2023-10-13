@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-//#include "BMsearch.cpp"
+
 enum class BmSearchType
 {
 	Once,
