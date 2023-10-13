@@ -9,4 +9,4 @@ enum class BmSearchType
 	All
 };
 
-std::vector<int> searchByBm(std::string stringOfText, std::string stringToSearch, BmSearchType type = BmSearchType::All, int startDiaposon = 0, int endDiaposon = -1);
+std::vector<int> searchByBm(std::string& stringOfText, std::string& stringToSearch, int startDiaposon = 0, int endDiaposon = -1, BmSearchType type = BmSearchType::All);

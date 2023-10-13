@@ -1,14 +1,13 @@
 #include "BMsearch.h"
 
-std::vector<int> searchByBm(std::string stringOfText, std::string stringToSearch, BmSearchType type, int startDiaposon, int endDiaposon) {
+std::vector<int> searchByBm(std::string& stringOfText, std::string& stringToSearch, int startDiaposon, int endDiaposon, BmSearchType type) {
 	std::vector <int> foundedPos;
 	const int maxChar = 256;
 	int lenOfText = stringOfText.length();
 	int lenOfStr = stringToSearch.length();
 	if (endDiaposon == -1) endDiaposon = lenOfText;
 
-	std::string  TAB(maxChar, lenOfStr);
-	/*for (int i = 0; i < maxChar; i++) TAB[i] = lenOfStr;*/
+	std::vector <int> TAB(maxChar, lenOfStr);
 
 	for (int i = 0; i < lenOfStr; i++) {
 		TAB[(unsigned int) stringToSearch[i]] = lenOfStr - i - 1;
@@ -35,7 +34,6 @@ std::vector<int> searchByBm(std::string stringOfText, std::string stringToSearch
 			}
 		}
 	}
-
 	return(foundedPos);
 }
 
