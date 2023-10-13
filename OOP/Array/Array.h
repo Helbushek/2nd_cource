@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <random>
 #include <time.h>
+#include <limits>
 
 template <typename ItemType>
 class Array {
@@ -15,7 +16,7 @@ public:
 
 
 	Array(int size = 0);
-	Array(int size, ItemType fillNumber);
+	Array(int size, ItemType &fillNumber);
 	~Array();
 	Array(const Array &array);
 	Array(Array&& other);
@@ -27,32 +28,32 @@ public:
 	const ItemType& operator[] (const int index) const;
 
 	Array& operator= (const Array &arrayToEqualize);
-	Array& operator+=(ItemType numberToAdd);
-	Array operator + (ItemType numberToAdd) const;
+	Array& operator+=(ItemType &numberToAdd);
+	Array operator + (ItemType &numberToAdd) const;
 	Array& operator+=(const Array &arrayForConcatenation);
 	Array operator+(const Array &arrayForConcatenation) const;
-	bool operator==(const Array& other);
-	bool operator!=(const Array& other);
+	bool operator==(const Array& other) const;
+	bool operator!=(const Array& other) const;
 
 	friend std::ostream& operator<<(std::ostream& out, const Array& array);
 	friend std::istream& operator>>(std::istream& out, Array& array);
 
 	int size() const;
 
-	int find(ItemType numberToFind);
+	int find(ItemType &numberToFind) const;
 
-	void print();
+	void print() const;
 	void set();
 
 	void sort();
 	void sortDecrease();
 
-	bool deleteFirst(ItemType numberToDelete);
-	void deleteAll(ItemType numberToDelete);
-	void deleteByIndex(ItemType indexToDelete);
+	bool deleteFirst(ItemType &numberToDelete);
+	void deleteAll(ItemType &numberToDelete);
+	void deleteByIndex(ItemType &indexToDelete);
 
-	int findMax();
-	int findMin();
+	int findMax() const;
+	int findMin() const;
 
 	Iterator begin();
 	Iterator end();
@@ -79,13 +80,13 @@ public:
 	TemplateIterator operator++(int);
 	TemplateIterator& operator--();
 	TemplateIterator operator--(int);
-	TemplateIterator operator+(int numeber);
-	TemplateIterator operator-(int numeber);
+	TemplateIterator& operator+(int numeber);
+	TemplateIterator& operator-(int numeber);
 
 	bool hasNext() const;
 
-	int getPos();
-	bool isEqual(TemplateIterator& other);
+	int getPos() const;
+	bool isEqual(TemplateIterator& other) const;
 
 	bool operator==(const TemplateIterator& other) const;
 	bool operator!=(const TemplateIterator& other) const;
@@ -117,7 +118,7 @@ Array<ItemType>::Array(int size)
 }
 
 template <typename ItemType>
-Array<ItemType>::Array(int size, ItemType fillNumber)
+Array<ItemType>::Array(int size, ItemType &fillNumber)
 	: Array(size)
 {
 	for (int i = 0; i < m_size; i++) {
@@ -207,20 +208,20 @@ Array<ItemType>& Array<ItemType>::operator+=(const Array& arrayForConcatenation)
 
 
 template <typename ItemType>
-Array<ItemType> Array<ItemType>::operator + (ItemType numberToAdd) const {
+Array<ItemType> Array<ItemType>::operator + (ItemType &numberToAdd) const {
 	Array temp(1, numberToAdd);
 	return(*this + temp);
 }
 
 template <typename ItemType>
-Array<ItemType>& Array<ItemType>::operator+=(ItemType numberToAdd) {
+Array<ItemType>& Array<ItemType>::operator+=(ItemType &numberToAdd) {
 	Array temp(1, numberToAdd);
 	(*this + temp).swap(*this);
 	return(*this);
 }
 
 template <typename ItemType>
-bool Array<ItemType>::operator==(const Array& other) {
+bool Array<ItemType>::operator==(const Array& other) const{
 	if (m_size != other.m_size) return(false);
 	if (m_size == other.m_size) {
 		for (int i = 0; i < m_size; i++) {
@@ -233,7 +234,7 @@ bool Array<ItemType>::operator==(const Array& other) {
 }
 
 template <typename ItemType>
-bool Array<ItemType>::operator!=(const Array& other) {
+bool Array<ItemType>::operator!=(const Array& other) const{
 	return(!(*this == other));
 }
 
@@ -243,7 +244,7 @@ int Array<ItemType>::size() const{
 }
 
 template <typename ItemType>
-int Array<ItemType>::find(ItemType numberToFind) {
+int Array<ItemType>::find(ItemType &numberToFind) const{
 	for (int i = 0; i < m_size; i++) {
 		if (m_array[i] == numberToFind) return(i);
 	}
@@ -251,7 +252,7 @@ int Array<ItemType>::find(ItemType numberToFind) {
 }
 
 template <typename ItemType>
-void Array<ItemType>::print() {
+void Array<ItemType>::print() const{
 	for (int i = 0; i < m_size; i++) {
 		std::cout << m_array[i] << ' ';
 	}
@@ -295,7 +296,7 @@ void Array<ItemType>::sortDecrease() {
 }
 
 template <typename ItemType>
-bool Array<ItemType>::deleteFirst(ItemType numberToDelete) {
+bool Array<ItemType>::deleteFirst(ItemType &numberToDelete) {
 	for (int i = 0; i < m_size; i++) {
 		if (m_array[i] == numberToDelete) {
 			for (int j = i; j < m_size - 1; j++) {
@@ -309,12 +310,12 @@ bool Array<ItemType>::deleteFirst(ItemType numberToDelete) {
 }
 
 template <typename ItemType>
-void Array<ItemType>::deleteAll(ItemType numberToDelete) {
+void Array<ItemType>::deleteAll(ItemType &numberToDelete) {
 	while (deleteFirst(numberToDelete) != false);
 }
 
 template <typename ItemType>
-void Array<ItemType>::deleteByIndex(ItemType indexToDelete) {
+void Array<ItemType>::deleteByIndex(ItemType &indexToDelete) {
 	if (indexToDelete < 0 || indexToDelete >= m_size) {
 		std::cerr << "Incorrect index in Array::delete, will not be deleted... ";
 		return;
@@ -326,8 +327,8 @@ void Array<ItemType>::deleteByIndex(ItemType indexToDelete) {
 }
 
 template <typename ItemType>
-int Array<ItemType>::findMax() {
-	ItemType max = INT_MIN, maxIndex = -1;;
+int Array<ItemType>::findMax() const{
+	ItemType max = std::numeric_limits<ItemType>::min(), maxIndex = -1;;
 	for (int i = 0; i < m_size; i++) {
 		if (m_array[i] > max) {
 			max = m_array[i];
@@ -338,8 +339,8 @@ int Array<ItemType>::findMax() {
 }
 
 template <typename ItemType>
-int Array<ItemType>::findMin() {
-	ItemType min = INT_MAX, minIndex = -1;
+int Array<ItemType>::findMin() const{
+	ItemType min = std::numeric_limits<ItemType>::max(), minIndex = -1;
 	for (int i = 0; i < m_size; i++) {
 		if (m_array[i] < min) {
 			min = m_array[i];
@@ -412,7 +413,7 @@ bool Array<ItemType>::TemplateIterator<IT, AT>::operator!=(const TemplateIterato
 
 template <typename ItemType>
 template <typename IT, typename AT>
-bool Array<ItemType>::TemplateIterator<IT, AT>::isEqual(Array<ItemType>::TemplateIterator<IT, AT>& other) {
+bool Array<ItemType>::TemplateIterator<IT, AT>::isEqual(Array<ItemType>::TemplateIterator<IT, AT>& other) const{
 	return(m_array == other.m_array);
 }
 
@@ -438,27 +439,21 @@ Array<ItemType>::ConstIterator Array<ItemType>::end() const{
 
 template <typename ItemType>
 template <typename IT, typename AT>
-Array<ItemType>::TemplateIterator<IT, AT> Array<ItemType>::TemplateIterator<IT, AT>::operator+(int number) {
-	Array<ItemType>::TemplateIterator<IT, AT> temp = *this;
-	for (int i = 0; i < number; i++) {
-		temp++;
-	}
-	return(temp);
+Array<ItemType>::TemplateIterator<IT, AT>& Array<ItemType>::TemplateIterator<IT, AT>::operator+(int number) {
+	*this = Array<ItemType>::TemplateIterator<IT, AT>(m_array, m_size + number);
+	return(*this);
 }
 
 template <typename ItemType>
 template <typename IT, typename AT>
-Array<ItemType>::TemplateIterator<IT, AT> Array<ItemType>::TemplateIterator<IT, AT>::operator-(int number) {
-	Array<ItemType>::TemplateIterator<IT, AT> temp = *this;
-	for (int i = 0; i < number; i++) {
-		temp--;
-	}
-	return(temp);
+Array<ItemType>::TemplateIterator<IT, AT>& Array<ItemType>::TemplateIterator<IT, AT>::operator-(int number) {
+	*this = Array<ItemType>::TemplateIterator<IT, AT>(m_array, m_size - number);
+	return(*this);
 }
 
 template <typename ItemType>
 template <typename IT, typename AT>
-int Array<ItemType>::TemplateIterator<IT, AT>::getPos() {
+int Array<ItemType>::TemplateIterator<IT, AT>::getPos() const{
 	return(m_pos);
 }
 

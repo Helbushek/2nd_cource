@@ -73,5 +73,10 @@ int main() {
 	std::cout << std::endl << "Print you array with size: " << array.size();
 	std::cin >> array;
 	std::cout << std::endl << array;
-	return(0);*/
+	*/
+	
+	std::cout << std::endl << "Min: " << array.findMin();
+	std::cout << std::endl << "Max: " << array.findMax();
+
+	return(0);
 }
