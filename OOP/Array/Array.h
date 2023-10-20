@@ -310,7 +310,7 @@ bool Array<ItemType>::deleteFirst(ItemType &numberToDelete) {
 }
 
 template <typename ItemType>
-void Array<ItemType>::deleteAll(ItemType &numberToDelete) {
+void Array<ItemType>::deleteAll(const ItemType &numberToDelete) {
 	while (deleteFirst(numberToDelete) != false);
 }
 
