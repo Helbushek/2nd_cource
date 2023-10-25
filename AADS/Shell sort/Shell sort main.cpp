@@ -66,7 +66,8 @@ double calculateTime(std::vector<long int> &array, int type) {					// 0 - Shell
 	}
 	}
 	end = clock();
-	std::cout << "  sorted:" << ifSorted(array) << "  ";
+	
+	std::cout << "  s:" << ifSorted(array) << "  ";
 	return((end - start)/CLOCKS_PER_SEC);
 }
 
@@ -79,14 +80,16 @@ int main() {
 			std::string file = fileName(arraySize, arrayRange);
 			std::vector<long int> origin;
 			vectorFromFile(file.c_str(), origin);
-			for (int i=0; i<3; i++) {
+			for (int type=0; type<3; type++) {
+			//int type = 2;
 				double sumOfTimes = 0;
 				for (int j=0; j<repeatsNumber; j++) {
 					std::vector<long int> array = origin;
-					sumOfTimes += calculateTime(array, i);
+					sumOfTimes += calculateTime(array, type);
 
 				}
-				std::cout  << "type: " << i << "; repeats: " << repeatsNumber << "; avgSum: " << sumOfTimes / repeatsNumber <<std::endl;
+				
+				std::cout  << "  " << "type: " << type << "; repeats: " << repeatsNumber << "; avgSum: " << sumOfTimes / repeatsNumber << std::endl;
 
 			/*generateFilesForArray(arraySize, arrayRange);*/
 			}

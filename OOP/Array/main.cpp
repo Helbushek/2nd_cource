@@ -2,35 +2,29 @@
 #include <iostream>
 
 int main() {
-	Array<int> array = Array<int>(10, 1);
+	Array<int> array(10, 1);
 	array.print();
 	std::cout << std::endl;
 
 	//array.generate();
-	std::cout << std::endl << "Input Array: ";
-	array.set();
-	array.print();
+	//std::cout << std::endl << "Input Array: ";
+	//array.set();
+	//array.print();
 
 	/*
 	array.print();*/
 	std::cout << std::endl;
 
 	std::cout << "Size: " << array.size() << std::endl;
+	for (auto iter : array) {
+		iter = rand() % 21 - 10;
+	}
 
 	array.sort();
 	array.print();
 
-	/*array.generateByIncrease();
-	array.print();
-	std::cout << std::endl;
-
-
-	array.generateByDecrease();
-	array.print();
-	std::cout << std::endl;*/
-
 	std::cout << "Array[3] = " << array[3] << std::endl;
-	array += 999;
+	array += (int)999;
 	array.print();
 	std::cout << std::endl;
 	std::cout << "999 is in: " << array.find(999) << std::endl;
@@ -51,7 +45,7 @@ int main() {
 	array.print();
 	std::cout << std::endl;
 
-	/*std::cout << "Max in array: " << array[array.findMax()] << std::endl << "Min in array: " << array[array.findMin()];
+	std::cout << "Max in array: " << array[array.findMax()] << std::endl << "Min in array: " << array[array.findMin()];
 
 	std::cout << std::endl << "Array with [0] deleted and after [1] = 999: " << std::endl;
 	array.deleteByIndex(0); 
@@ -73,7 +67,7 @@ int main() {
 	std::cout << std::endl << "Print you array with size: " << array.size();
 	std::cin >> array;
 	std::cout << std::endl << array;
-	*/
+	
 	
 	std::cout << std::endl << "Min: " << array.findMin();
 	std::cout << std::endl << "Max: " << array.findMax();
