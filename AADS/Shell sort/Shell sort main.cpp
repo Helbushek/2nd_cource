@@ -28,7 +28,6 @@ void generateFilesForArray(int arraySize,  int arrayRange) {
 
 
 	for (int i = 0; i < arraySize; i++) {
-		//long int randomNumber = rand() % (2 * arrayRange + 1) - arrayRange;
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
@@ -51,9 +50,10 @@ void vectorFromFile(const char* fileName, std::vector<long int> & array) {
 	fclose(openedFile);
 }
 
-double calculateTime(std::vector<long int> &array, int type) {					// 0 - Shell
-	double end;													// 1 - Hibbard
-	double start = clock();										// 2 - Marcin Ciur
+double calculateTime(std::vector<long int> &array, int type, int arraySize, int arrayRange) {					// 0 - Shell
+	double end;																									// 1 - Hibbard
+	double start = clock();																						// 2 - Marcin Ciur
+																												
 	switch (type) {
 	case 0: {
 		sortByShell(array);
@@ -81,17 +81,15 @@ int main() {
 			std::vector<long int> origin;
 			vectorFromFile(file.c_str(), origin);
 			for (int type=0; type<3; type++) {
-			//int type = 2;
 				double sumOfTimes = 0;
 				for (int j=0; j<repeatsNumber; j++) {
 					std::vector<long int> array = origin;
-					sumOfTimes += calculateTime(array, type);
+					sumOfTimes += calculateTime(array, type, arraySize, arrayRange);
 
 				}
 				
 				std::cout  << "  " << "type: " << type << "; repeats: " << repeatsNumber << "; avgSum: " << sumOfTimes / repeatsNumber << std::endl;
 
-			/*generateFilesForArray(arraySize, arrayRange);*/
 			}
 		}
 	}
