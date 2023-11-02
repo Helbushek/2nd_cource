@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <random>
+#include <cmath>
 
 
 void sortByShell(std::vector<long int> &array) {
@@ -42,7 +43,8 @@ int pow(int x, int y) {
 
 void sortByHibbard(std::vector<long int>& array) {
 	long int size = array.size();
-	for (int h = 0, step = pow(2, h)-1; step>0; ++h, step = pow(2, h+1) - 1) {
+
+	for (long h = log2(size/2), step = pow(2, h) - 1; step>0; step/=2) {
 		for (int m = 0; m < step; m++) {
 			int sorted = m;
 			for (int i = sorted + step; i < size; i += step) {
