@@ -31,8 +31,9 @@ void vectorFromFile(const char* fileName, std::vector<long int>& array) {
 
 bool isSorted(std::vector<long int> array) {
 	int size = array.size();
-	for (int i = 0; i < size - 1; i++) {
-		if (array[i] > array[i + 1]) return false;
+	for (int i = 0; i < size-1; i++) {
+		if (array[i] > array[i + 1])
+			return false;
 	}
 	return true;
 }
@@ -56,16 +57,16 @@ int main() {
 				double time = (end - start) / CLOCKS_PER_SEC;
 				avgSum += time;
 
-				/*FILE* openFile; // Печать сортированных файлов
-				std::string sorted = "sorted" + fileName(arraySize, arrayRange);
-				
-				fopen_s(&openFile, sorted.c_str(), "w");
-				for (auto iter : array) {
-					fprintf_s(openFile, "%ld ", iter);
-				}
-				fclose(openFile);*/
+				if (!isSorted(array)) {
+					FILE* openFile; // Печать сортированных файлов
+					std::string sorted = "unsorted" + fileName(arraySize, arrayRange);
 
-				
+					fopen_s(&openFile, sorted.c_str(), "w");
+					for (auto iter : array) {
+						fprintf_s(openFile, "%ld ", iter);
+					}
+					fclose(openFile);
+				}
 				
 				std::cout << "REP_NUM: " << i + 1 << " SORTED: " << (isSorted(array) ? "true" : "false") << std::endl;
 				fprintf(openedFile, "REP_NUM: %d SORTED : %d \n", i + 1, isSorted(array));

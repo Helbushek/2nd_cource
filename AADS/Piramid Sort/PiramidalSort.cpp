@@ -41,7 +41,7 @@ void sift(std::vector<long int>& array, int i, int size) { // просеивает один уз
 void heapify(std::vector<long int> &array, int size) {
 	for (int i = size / 2-1; i>=0 ; i--) { // Просеиваем снизу вверх (в нижних узлах выделяем максимальные числа и двигаем их наверх 
 		sift(array, i, size);
-	}
+	}	
 }
 
 
@@ -53,9 +53,8 @@ void piramidalSort(std::vector<long int> &array) {
 
 	std::cout << std::endl;
 	
-	for (int i = size - 1; i >= 0; i--) {
-		sift(array, 0, i);
+	for (int i = size-1; i >= 0; i--) {
+		sift(array, 0, i+1);
 		swap(array[0], array[i]);
-		
 	}
 }
