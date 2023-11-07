@@ -54,7 +54,7 @@ void piramidalSort(std::vector<long int> &array) {
 	std::cout << std::endl;
 	
 	for (int i = size-1; i >= 0; i--) {
-		sift(array, 0, i+1);
 		swap(array[0], array[i]);
+		sift(array, 0, i);
 	}
 }
