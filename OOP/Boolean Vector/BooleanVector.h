@@ -5,11 +5,20 @@
 class BoolVector;
 
 class BoolRank {
+    BoolRank(bool value, unsigned char* ptr, int index) {
+        (*this).value = value; 
+        (*this).ptr = ptr;
+        (*this).index = index;
+    }
     friend BoolVector;
     int index=0;
     bool value = 0;
-
+    unsigned char* ptr;
+    
+public:
     void setValue();
+    void operator=(bool value);
+    operator bool() const;
 };
 
 class BoolVector {
@@ -38,7 +47,7 @@ public:
 
    
 
-    void invert(const int index) const;
+    void invert(const int index);
 
     void setBits(int index, int count, bool value);
 
@@ -46,9 +55,15 @@ public:
 
     int weight();
 
+    void nullifyInsignificant();
+
+    void setInsignificant();
+
     // Реализация побитовых операций
 
-    bool operator[](int index) const;
+    BoolRank operator[](int index) const;
+
+    BoolVector& operator=(const BoolVector& other);
 
     BoolVector operator&(const BoolVector& other) const;
 
@@ -56,9 +71,23 @@ public:
 
     BoolVector operator^(const BoolVector& other) const;
 
-    BoolVector operator~() const;
+    BoolVector & operator~();
 
+    BoolVector& operator&=(const BoolVector& other);
 
+    BoolVector& operator|=(const BoolVector& other);
+
+    BoolVector& operator^=(const BoolVector& other); 
+
+    // Реализация побитовых сдвигов
+
+    BoolVector& operator<<(int number);
+
+    BoolVector& operator<<=(int number);
+
+    BoolVector& operator>>(int number);
+
+    BoolVector& operator>>=(int number);
 
 private:
     int size;
