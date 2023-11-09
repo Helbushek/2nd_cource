@@ -24,6 +24,8 @@ public:
 class BoolVector {
     friend BoolRank;
 public:
+    static const int CELL_SIZE = 8;
+public:
     BoolVector();
     BoolVector(int size, int data);
     BoolVector(const char* data);
@@ -34,7 +36,7 @@ public:
        if (vector!=nullptr) delete[] vector;
     }
 
-    void print();
+    const void print() const; 
 
     // Методы для установки и получения битов
     void setBit(int index, bool value=1);
@@ -61,7 +63,9 @@ public:
 
     // Реализация побитовых операций
 
-    BoolRank operator[](int index) const;
+    const bool operator[](int index) const;
+
+    BoolRank operator[](int index);
 
     BoolVector& operator=(const BoolVector& other);
 
@@ -83,11 +87,11 @@ public:
 
     BoolVector operator<<(int number);
 
-   /* BoolVector& operator<<=(int number);
+    BoolVector& operator<<=(int number);
 
     BoolVector operator>>(int number);
 
-    BoolVector& operator>>=(int number);*/
+    BoolVector& operator>>=(int number);
 
 private:
     int size;

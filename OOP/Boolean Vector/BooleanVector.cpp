@@ -1,6 +1,4 @@
 #include "BooleanVector.h"
-#define  CELL_SIZE  8
-
 
 BoolVector::BoolVector() {
     vector = nullptr;
@@ -12,8 +10,10 @@ BoolVector::BoolVector(int size, int data) {
 }
 BoolVector::BoolVector(const char* data) {
     size = strlen(data);
-    if (size) vector = new unsigned char[size / CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE))];
-    else vector = nullptr;
+    if (size)
+        vector = new unsigned char[size / CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE))];
+    else
+        vector = nullptr;
 
     int i = size-1;
     while (i>=0) {
@@ -34,14 +34,14 @@ BoolVector::BoolVector(const BoolVector& other) {
     }
 }
 
-void BoolVector::print() {
-    for (int i = 0; i <size; i++) {
-        std::cout << ((vector[i / CELL_SIZE]>>i% CELL_SIZE) & 1);
+const void BoolVector::print() const{
+    for (int i = 0; i < size; i++) {
+        std::cout << getBit(i);
     }
 }
 
 // Методы для установки и получения битов
-void BoolVector::setBit(int index, bool value) {
+void BoolVector::setBit(const int index, const bool value) {
     if (index<0 || index>size) {
         std::cerr << "Incorrect index in BoolVector::setBit, I=" << index;
         return;
@@ -54,12 +54,13 @@ void BoolVector::setBit(int index, bool value) {
     }
 }
 
-bool BoolVector::getBit(int index) const {
+bool BoolVector::getBit(const int index) const {
     if (index<0 || index>size) {
         std::cerr << "Incorrect index in BoolVector::getBit, I=" << index;
         return 0;
     }
-    if ((vector[index / CELL_SIZE] & (1 << index % CELL_SIZE)) == 0) return 0;
+    if ((vector[index / CELL_SIZE] & (1 << index % CELL_SIZE)) == 0)
+        return 0;
     return 1;
 }
 
@@ -75,7 +76,7 @@ void BoolVector::swap(BoolVector& other){
 
 
 void BoolVector::invert(const int index){
-    setBit(index, (~getBit(index)));
+    setBit(index, !getBit(index));
 }
 
 void BoolVector::setBits(int index, int count, bool value) {
@@ -90,7 +91,7 @@ void BoolVector::setBits(int index, int count, bool value) {
 
 void BoolVector::setAll(bool value) {
     for (int i = 0; i <= size / CELL_SIZE; i++) {
-        vector[i] = (value == 1 ? (pow(2, CELL_SIZE)-1) : 0);
+        vector[i] = (value == 1 ? (2<<CELL_SIZE-1) : 0);
     }
 }
 
@@ -120,8 +121,15 @@ int BoolVector::weight() {
 
 // Реализация побитовых операций
 
-BoolRank BoolVector::operator[](int index) const {
-    if (((vector[index / CELL_SIZE]>> (index % CELL_SIZE))&1) == 1) return BoolRank(1, (*this).vector , index);
+const bool BoolVector::operator[](int index) const {
+    if (((vector[index / CELL_SIZE]>> (index % CELL_SIZE))&1) == 1)
+        return 1;
+    return 0;
+}
+
+BoolRank BoolVector::operator[](int index){
+    if (((vector[index / CELL_SIZE] >> (index % CELL_SIZE)) & 1) == 1)
+        return BoolRank(1, (*this).vector, index);
     return BoolRank(0, (*this).vector, index);
 }
 
@@ -193,10 +201,10 @@ BoolVector BoolVector::operator<<(int number) {
     }
     for (int i = 0; i < size; i+=CELL_SIZE) {
         temp.vector[i / CELL_SIZE] >>= number;
-        if (i / CELL_SIZE + 1 > temp.size/CELL_SIZE) {
-            unsigned char mask = temp.vector[i/CELL_SIZE+1]>>(size-number-1);
+        if (i / CELL_SIZE + 1 >= temp.size/CELL_SIZE) {
+            unsigned char mask = temp.vector[i/CELL_SIZE+1];
             
-            temp.vector[i / CELL_SIZE] |= mask;
+            temp.vector[i / CELL_SIZE] |= (mask<<(CELL_SIZE-number));
         }
     }
     for (int i = size - number; i < size; i++) {
@@ -205,17 +213,35 @@ BoolVector BoolVector::operator<<(int number) {
     return temp;
 }
 
-//BoolVector& BoolVector::operator<<=(int number) {
-//
-//}
-//
-//BoolVector& BoolVector::operator>>(int number) {
-//
-//}
-//
-//BoolVector& BoolVector::operator>>=(int number) {
-//
-//}
+BoolVector& BoolVector::operator<<=(int number) {
+    (*this) = (*this) << number;
+    return *this;
+}
+
+BoolVector BoolVector::operator>>(int number) {
+    BoolVector temp(*this);
+    if (number <= 0) {
+        std::cerr << "Incorrect number for shift in BoolVector:: operator<<, number= " << number;
+        return("0");
+    }
+    for (int i = size; i >=0 ; i -= CELL_SIZE) {
+        temp.vector[i / CELL_SIZE] <<= number;
+        if (i / CELL_SIZE-1 >= 0) {
+            unsigned char mask = temp.vector[i / CELL_SIZE - 1];
+
+            temp.vector[i / CELL_SIZE] |= (mask >> (CELL_SIZE -number));
+        }
+    }
+    for (int i = 0;  i < number; i++) {
+        temp.setBit(i, 0);
+    }
+    return temp;
+}
+
+BoolVector& BoolVector::operator>>=(int number) {
+    (*this) = (*this) >> number;
+    return *this;
+}
 
 // Реализация необходимых операций для вспомогательного класса
 
@@ -226,10 +252,10 @@ void BoolRank::setValue() {
     }
 
     if (value == 1) {
-        ptr[index / CELL_SIZE] |= (1 << index % CELL_SIZE);
+        ptr[index / BoolVector::CELL_SIZE] |= (1 << index % BoolVector::CELL_SIZE);
     }
     else {
-        ptr[index / CELL_SIZE] &= (~(1 << index % CELL_SIZE));
+        ptr[index / BoolVector::CELL_SIZE] &= (~(1 << index % BoolVector::CELL_SIZE));
     }
 }
 
