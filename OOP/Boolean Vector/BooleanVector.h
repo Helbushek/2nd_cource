@@ -55,9 +55,9 @@ public:
 
     int weight();
 
-    void nullifyInsignificant();
+    //void nullifyInsignificant();
 
-    void setInsignificant();
+    //void setInsignificant();
 
     // Реализация побитовых операций
 
@@ -81,13 +81,13 @@ public:
 
     // Реализация побитовых сдвигов
 
-    BoolVector& operator<<(int number);
+    BoolVector operator<<(int number);
 
-    BoolVector& operator<<=(int number);
+   /* BoolVector& operator<<=(int number);
 
-    BoolVector& operator>>(int number);
+    BoolVector operator>>(int number);
 
-    BoolVector& operator>>=(int number);
+    BoolVector& operator>>=(int number);*/
 
 private:
     int size;
