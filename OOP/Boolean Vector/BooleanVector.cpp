@@ -28,7 +28,7 @@ BoolVector::BoolVector(const char* data) {
 }
 BoolVector::BoolVector(const BoolVector& other) {
     size = other.size;
-    vector = new unsigned char[size];
+    vector = new unsigned char[size / CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE))];
     for (int i = 0; i < size; i+=CELL_SIZE) {
         vector[i/CELL_SIZE] = other.vector[i/CELL_SIZE];
     }
@@ -91,7 +91,7 @@ void BoolVector::setBits(int index, int count, bool value) {
 
 void BoolVector::setAll(bool value) {
     for (int i = 0; i <= size / CELL_SIZE; i++) {
-        vector[i] = (value == 1 ? (2<<CELL_SIZE-1) : 0);
+        vector[i] = (value == 1 ? ((2<<CELL_SIZE)-1) : 0);
     }
 }
 
@@ -134,8 +134,10 @@ BoolRank BoolVector::operator[](int index){
 }
 
 BoolVector& BoolVector::operator=(const BoolVector& other) {
-    BoolVector temp(other);
-    swap(temp);
+    size = other.size;
+    for (int i = 0; i < size; i++) {
+        vector[i/CELL_SIZE] = other.vector[i/CELL_SIZE];
+    }
     return *this;
 }
 
@@ -193,53 +195,69 @@ BoolVector& BoolVector::operator~(){
 
 // –еализаци€ побитовых сдвигов
 
-BoolVector BoolVector::operator<<(int number) {
+BoolVector BoolVector::operator<<(int number) const{
     BoolVector temp(*this);
     if (number <= 0) {
         std::cerr << "Incorrect number for shift in BoolVector:: operator<<, number= " << number;
         return("0");
     }
-    for (int i = 0; i < size; i+=CELL_SIZE) {
-        temp.vector[i / CELL_SIZE] >>= number;
+
+    for (int i = 0; i<number/CELL_SIZE; i+=CELL_SIZE) { // —двигаем по €чейкам
+        temp.vector[i] = temp.vector[i+number/CELL_SIZE];
+    }
+    for (int i = size/CELL_SIZE + ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE)-1; i > size / CELL_SIZE + ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE) - number/CELL_SIZE-1; i--) {
+        temp.vector[i] =0;
+    }
+
+    for (int i = 0; i < size; i+=CELL_SIZE) { // —двигаем внутри €чеек
+        temp.vector[i / CELL_SIZE] >>= number%CELL_SIZE;
         if (i / CELL_SIZE + 1 >= temp.size/CELL_SIZE) {
             unsigned char mask = temp.vector[i/CELL_SIZE+1];
             
-            temp.vector[i / CELL_SIZE] |= (mask<<(CELL_SIZE-number));
+            temp.vector[i / CELL_SIZE] |= (mask<<(CELL_SIZE-number%CELL_SIZE));
         }
     }
-    for (int i = size - number; i < size; i++) {
+    for (int i = size - number%CELL_SIZE; i < size; i++) {
         temp.setBit(i, 0);
     }
     return temp;
 }
 
 BoolVector& BoolVector::operator<<=(int number) {
-    (*this) = (*this) << number;
+    (*this) = ((*this) << number);
     return *this;
 }
 
-BoolVector BoolVector::operator>>(int number) {
+BoolVector BoolVector::operator>>(int number) const {
     BoolVector temp(*this);
     if (number <= 0) {
         std::cerr << "Incorrect number for shift in BoolVector:: operator<<, number= " << number;
         return("0");
     }
+
+    for (int i = size/CELL_SIZE; i > size/CELL_SIZE - number / CELL_SIZE; i -= CELL_SIZE) { // —двигаем по €чейкам
+        temp.vector[i] = vector[i - number / CELL_SIZE];
+    }
+    for (int i = 0; i < number / CELL_SIZE; i += CELL_SIZE) {
+        temp.vector[i] = 0;
+    }
+
     for (int i = size; i >=0 ; i -= CELL_SIZE) {
-        temp.vector[i / CELL_SIZE] <<= number;
+        temp.vector[i / CELL_SIZE] <<= number%CELL_SIZE;
         if (i / CELL_SIZE-1 >= 0) {
             unsigned char mask = temp.vector[i / CELL_SIZE - 1];
 
-            temp.vector[i / CELL_SIZE] |= (mask >> (CELL_SIZE -number));
+            temp.vector[i / CELL_SIZE] |= (mask >> (CELL_SIZE -number%CELL_SIZE));
         }
     }
-    for (int i = 0;  i < number; i++) {
+    for (int i = 0;  i < number%CELL_SIZE; i++) {
         temp.setBit(i, 0);
     }
     return temp;
 }
 
 BoolVector& BoolVector::operator>>=(int number) {
-    (*this) = (*this) >> number;
+    *this = *this >> number;
     return *this;
 }
 

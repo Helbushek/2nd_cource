@@ -22,7 +22,6 @@ public:
 };
 
 class BoolVector {
-    friend BoolRank;
 public:
     static const int CELL_SIZE = 8;
 public:
@@ -85,11 +84,11 @@ public:
 
     // Реализация побитовых сдвигов
 
-    BoolVector operator<<(int number);
+    BoolVector operator<<(int number) const;
 
     BoolVector& operator<<=(int number);
 
-    BoolVector operator>>(int number);
+    BoolVector operator>>(int number) const;
 
     BoolVector& operator>>=(int number);
 
