@@ -134,7 +134,11 @@ BoolRank BoolVector::operator[](int index){
 }
 
 BoolVector& BoolVector::operator=(const BoolVector& other) {
-    size = other.size;
+    if (size != other.size) {
+        size = other.size;
+        delete[] vector;
+        vector = new unsigned char[size / CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE))];
+    }
     for (int i = 0; i < size; i++) {
         vector[i/CELL_SIZE] = other.vector[i/CELL_SIZE];
     }
