@@ -11,7 +11,7 @@ BoolVector::BoolVector(int size, int data) {
 BoolVector::BoolVector(const char* data) {
     size = strlen(data);
     if (size)
-        vector = new unsigned char[size / CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE))];
+        vector = new unsigned char[cellNumber()];
     else
         vector = nullptr;
 
@@ -28,7 +28,7 @@ BoolVector::BoolVector(const char* data) {
 }
 BoolVector::BoolVector(const BoolVector& other) {
     size = other.size;
-    vector = new unsigned char[size / CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE))];
+    vector = new unsigned char[cellNumber()];
     for (int i = 0; i < size; i+=CELL_SIZE) {
         vector[i/CELL_SIZE] = other.vector[i/CELL_SIZE];
     }
@@ -62,6 +62,10 @@ bool BoolVector::getBit(const int index) const {
     if ((vector[index / CELL_SIZE] & (1 << index % CELL_SIZE)) == 0)
         return 0;
     return 1;
+}
+
+int BoolVector::cellNumber() const{
+    return size / CELL_SIZE + ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE);
 }
 
 int BoolVector::sizeOf() const {
@@ -105,20 +109,6 @@ int BoolVector::weight() {
     return count;
 }
 
-//void BoolVector::nullifyInsignificant() {
-//    int count =size/ CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE)); //  ол-во €чеек 
-//    for (int i = 7; i > size % CELL_SIZE; i--) {
-//        vector[count + size % CELL_SIZE] &= (~(1 << i));
-//    }
-//}
-//
-//void BoolVector::setInsignificant() {
-//    int count = size / CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE)); //  ол-во €чеек 
-//    for (int i = 7; i > size % CELL_SIZE; i--) {
-//        vector[count + size % CELL_SIZE] |= (1 << i);
-//    }
-//}
-
 // –еализаци€ побитовых операций
 
 const bool BoolVector::operator[](int index) const {
@@ -137,7 +127,7 @@ BoolVector& BoolVector::operator=(const BoolVector& other) {
     if (size != other.size) {
         size = other.size;
         delete[] vector;
-        vector = new unsigned char[size / CELL_SIZE + (ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE))];
+        vector = new unsigned char[cellNumber()];
     }
     for (int i = 0; i < size; i++) {
         vector[i/CELL_SIZE] = other.vector[i/CELL_SIZE];
@@ -201,67 +191,65 @@ BoolVector& BoolVector::operator~(){
 
 BoolVector BoolVector::operator<<(int number) const{
     BoolVector temp(*this);
-    if (number <= 0) {
-        std::cerr << "Incorrect number for shift in BoolVector:: operator<<, number= " << number;
-        return("0");
-    }
-
-    for (int i = 0; i<number/CELL_SIZE; i+=CELL_SIZE) { // —двигаем по €чейкам
-        temp.vector[i] = temp.vector[i+number/CELL_SIZE];
-    }
-    for (int i = size/CELL_SIZE + ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE)-1; i > size / CELL_SIZE + ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE) - number/CELL_SIZE-1; i--) {
-        temp.vector[i] =0;
-    }
-
-    for (int i = 0; i < size; i+=CELL_SIZE) { // —двигаем внутри €чеек
-        temp.vector[i / CELL_SIZE] >>= number%CELL_SIZE;
-        if (i / CELL_SIZE + 1 >= temp.size/CELL_SIZE) {
-            unsigned char mask = temp.vector[i/CELL_SIZE+1];
-            
-            temp.vector[i / CELL_SIZE] |= (mask<<(CELL_SIZE-number%CELL_SIZE));
-        }
-    }
-    for (int i = size - number%CELL_SIZE; i < size; i++) {
-        temp.setBit(i, 0);
-    }
+    temp <<= number;
     return temp;
 }
 
 BoolVector& BoolVector::operator<<=(int number) {
-    (*this) = ((*this) << number);
+    if (number < 0) {
+        std::cerr << "Incorrect number for shift in BoolVector:: operator<<, number= " << number;
+        return ((*this) >>= -number);
+    }
+
+    for (int i = 0; i < number / CELL_SIZE; i += CELL_SIZE) { // —двигаем по €чейкам
+        vector[i] = vector[i + number / CELL_SIZE];
+    }
+    for (int i = cellNumber() - 1; i > cellNumber() - number / CELL_SIZE - 1; i--) {
+        vector[i] = 0;
+    }
+
+    for (int i = 0; i < cellNumber(); i ++) { // —двигаем внутри €чеек
+        vector[i] >>= number % CELL_SIZE;
+        if (i + 1 <= cellNumber()-1) {
+            unsigned char mask = vector[i + 1];
+
+            vector[i] |= (mask << (CELL_SIZE - number % CELL_SIZE));
+        }
+    }
+
+    vector[(cellNumber() - 1)] &= (255 >> number % CELL_SIZE); // 255 - все позиции единицы, сдвигаем на кол-во сдвигов внутри €чеек, умножаем на последнюю €чейку
+    
     return *this;
 }
 
 BoolVector BoolVector::operator>>(int number) const {
     BoolVector temp(*this);
-    if (number <= 0) {
-        std::cerr << "Incorrect number for shift in BoolVector:: operator<<, number= " << number;
-        return("0");
-    }
-
-    for (int i = size/CELL_SIZE; i > size/CELL_SIZE - number / CELL_SIZE; i -= CELL_SIZE) { // —двигаем по €чейкам
-        temp.vector[i] = vector[i - number / CELL_SIZE];
-    }
-    for (int i = 0; i < number / CELL_SIZE; i += CELL_SIZE) {
-        temp.vector[i] = 0;
-    }
-
-    for (int i = size; i >=0 ; i -= CELL_SIZE) {
-        temp.vector[i / CELL_SIZE] <<= number%CELL_SIZE;
-        if (i / CELL_SIZE-1 >= 0) {
-            unsigned char mask = temp.vector[i / CELL_SIZE - 1];
-
-            temp.vector[i / CELL_SIZE] |= (mask >> (CELL_SIZE -number%CELL_SIZE));
-        }
-    }
-    for (int i = 0;  i < number%CELL_SIZE; i++) {
-        temp.setBit(i, 0);
-    }
+    temp >>= number;
     return temp;
 }
 
 BoolVector& BoolVector::operator>>=(int number) {
-    *this = *this >> number;
+    if (number < 0) {
+        std::cerr << "Incorrect number for shift in BoolVector:: operator>>, number= " << number;
+        return((*this)<<=-number);
+    }
+
+    for (int i = cellNumber()-1; i > cellNumber() - number / CELL_SIZE-1; i -= CELL_SIZE) { // —двигаем по €чейкам
+        vector[i] = vector[i - number / CELL_SIZE];
+    }
+    for (int i = 0; i < number / CELL_SIZE; i += CELL_SIZE) {
+        vector[i] = 0;
+    }
+
+    for (int i = cellNumber()-1; i >=0; i --) {
+        vector[i] <<= number % CELL_SIZE;
+        if (i - 1 >= 0) {
+            unsigned char mask = vector[i- 1];
+
+            vector[i] |= (mask >> (CELL_SIZE - number % CELL_SIZE));
+        }
+    }
+    vector[0] &= (255 << number);
     return *this;
 }
 

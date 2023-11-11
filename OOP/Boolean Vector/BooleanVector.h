@@ -32,7 +32,8 @@ public:
 
 
     ~BoolVector() {
-       if (vector!=nullptr) delete[] vector;
+       if (vector!=nullptr)
+           delete[] vector;
     }
 
     const void print() const; 
@@ -42,11 +43,11 @@ public:
 
     bool getBit(int index) const;
 
+    int cellNumber() const;
+
     int sizeOf() const;
 
     void swap(BoolVector& other);
-
-   
 
     void invert(const int index);
 
@@ -55,10 +56,6 @@ public:
     void setAll(bool value);
 
     int weight();
-
-    //void nullifyInsignificant();
-
-    //void setInsignificant();
 
     // Реализация побитовых операций
 
