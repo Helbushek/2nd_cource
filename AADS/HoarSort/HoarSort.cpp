@@ -37,8 +37,14 @@ bool testCase(float pos, float compared, int type, char comparison) {
 	return false;
 }
 
+struct elem {
+	int left, right;
+};
+
 int HoarSort(std::vector<int> &array,  int type, int leftBorder, int rightBorder, int leftValue, int rightValue ) {
 	int count = 1;
+
+	elem* stack = new elem[array.size()];
 
 	// Инициализация вспомогательных переменных
 	if (rightBorder == -1) {
@@ -77,19 +83,19 @@ int HoarSort(std::vector<int> &array,  int type, int leftBorder, int rightBorder
 	}
 
 
-	
+
 	// Условие выхода из рекурсии: 
 	if (type == 1) {
 		if (leftBorder >= rightBorder || minValue == maxValue)
 			return count;
 	}
-	else if (type >1 && leftBorder >= rightBorder) {
+	else if (type > 1 && leftBorder >= rightBorder) {
 		return count;
 	}
 
 
 	int left = leftBorder, right = rightBorder;
-	if(type == 2) {
+	if (type == 2) {
 		left++;
 	}
 
@@ -101,7 +107,7 @@ int HoarSort(std::vector<int> &array,  int type, int leftBorder, int rightBorder
 	}
 	if (type == 3) {
 		median = array[(left + right) / 2];
-	}	
+	}
 
 	// Сортировка
 
@@ -114,8 +120,8 @@ int HoarSort(std::vector<int> &array,  int type, int leftBorder, int rightBorder
 		while (right >= left && testCase(array[right], median, type, '>')) {
 			right--;
 		}
-		
-		if (type <3 && left < right) {
+
+		if (type < 3 && left < right) {
 			std::swap(array[left++], array[right--]);
 		}
 		if (type == 3 && left <= right) {
@@ -128,7 +134,63 @@ int HoarSort(std::vector<int> &array,  int type, int leftBorder, int rightBorder
 
 	// Вызов рекурсии 
 
-	count+=HoarSort(array, type, leftBorder, right, minValue, median-0.5);
+	count += HoarSort(array, type, leftBorder, right, minValue, median - 0.5);
 
-	count+=HoarSort(array, type, left, rightBorder, median+0.5, maxValue);
+	count += HoarSort(array, type, left, rightBorder, median + 0.5, maxValue);
+}
+
+void NotRecHoarSort(std::vector<int>& array) {
+
+	elem* stack = new elem[array.size()];
+
+	// Инициализация вспомогательных переменных
+
+	stack[0].left = 0;
+	stack[0].right = array.size()-1;
+
+	int stackSize = 0;
+
+	int leftBorder, rightBorder, left, right, median;
+
+	// Сортировка
+	while (stackSize >= 0) {
+		leftBorder = stack[stackSize].left, rightBorder = stack[stackSize].right;
+		stackSize--;
+
+		if (leftBorder < rightBorder) {
+			left = leftBorder, right = rightBorder;
+
+			median = array[(left + right) / 2];
+
+			while (left < right) {
+
+				while (left <= right && array[left] < median) {
+					left++;
+				}
+
+				while (right >= left && array[right] > median) {
+					right--;
+				}
+
+
+				if (left < right) {
+					std::swap(array[left++], array[right--]);
+				}
+			}
+		}
+		if (rightBorder-leftBorder>1) {
+			stackSize++;
+			stack[stackSize].left = left; stack[stackSize].right = rightBorder;
+		
+			stackSize++;
+			stack[stackSize].left = leftBorder; stack[stackSize].right = right;
+		}
+
+		/*	std::cout << std::endl; // Debug
+			for (auto iter: array) {
+				std::cout << iter << ' ';
+			}*/
+	}
+	
+	delete[] stack;
 }

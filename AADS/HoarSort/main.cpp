@@ -45,11 +45,10 @@ int main() {
 		for (int arrayRange = 10; arrayRange <= 100000; arrayRange *= 100) {
 			double avgSum = 0;
 			for (int i = 0; i < repeat_number; i++) {
-				for (int type = 1; type <= 3; type++) {
 					std::vector <int> array;
 					vectorFromFile(fileName(arraySize, arrayRange).c_str(), array);
 					double end, start = clock();
-					HoarSort(array, type);
+					NotRecHoarSort(array);
 					end = clock();
 
 					double time = (end - start) / CLOCKS_PER_SEC;
@@ -67,15 +66,21 @@ int main() {
 					fclose(openFile);
 
 
-					std::cout << "REP_NUM: " << i + 1 << " TYPE: "<< type << " SORTED: " << (isSorted(array) ? "true" : "false") << std::endl;
-					fprintf(openedFile, "REP_NUM: %d TYPE: %d SORTED : %d \n", i + 1, type, isSorted(array));
+					std::cout << "REP_NUM: " << i + 1  << " SORTED: " << (isSorted(array) ? "true" : "false") << std::endl;
+					fprintf(openedFile, "REP_NUM: %d SORTED : %d \n", i + 1, isSorted(array));
 				}
-			}
 			std::cout << std::endl << "SIZE: " << arraySize << " RANGE: " << arrayRange << " REP: " << repeat_number << " AVG_TIME: " << (double)(avgSum + 0.) / (repeat_number + 0.) << std::endl;
 			fprintf(openedFile, "SIZE:%d RANGE:%d REP:%d AVG_TIME:%f \n", arraySize, arrayRange, repeat_number, (double)(avgSum + 0.) / (repeat_number + 0.));
 			
 		}
 	}
 	fclose(openedFile);
+	/*std::vector<int> array{ 0 ,8 ,6, 1, 7,8, 2 };
+	NotRecHoarSort(array);
+
+	std::cout << std::endl;
+	for (auto iter : array) {
+		std::cout << iter << ' ';
+	}*/
 	return(0);
 }
