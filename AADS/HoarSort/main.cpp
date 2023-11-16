@@ -54,17 +54,18 @@ int main() {
 					double time = (end - start) / CLOCKS_PER_SEC;
 					avgSum += time;
 
-					FILE* openFile; // Печать сортированных файлов
-					const char* isSort = "sorted";
-					if (!isSorted(array)) isSort = "unsorted";
-					std::string sorted = isSort + fileName(arraySize, arrayRange);
+					if (!isSorted) {
+						FILE* openFile; // Печать сортированных файлов
+						const char* isSort = "sorted";
+						if (!isSorted(array)) isSort = "unsorted";
+						std::string sorted = isSort + fileName(arraySize, arrayRange);
 
-					fopen_s(&openFile, sorted.c_str(), "w");
-					for (auto iter : array) {
-						fprintf_s(openFile, "%ld ", iter);
-					}
-					fclose(openFile);
-
+						fopen_s(&openFile, sorted.c_str(), "w");
+						for (auto iter : array) {
+							fprintf_s(openFile, "%ld ", iter);
+						}
+						fclose(openFile);
+					}   
 
 					std::cout << "REP_NUM: " << i + 1  << " SORTED: " << (isSorted(array) ? "true" : "false") << std::endl;
 					fprintf(openedFile, "REP_NUM: %d SORTED : %d \n", i + 1, isSorted(array));
@@ -75,12 +76,5 @@ int main() {
 		}
 	}
 	fclose(openedFile);
-	/*std::vector<int> array{ 0 ,8 ,6, 1, 7,8, 2 };
-	NotRecHoarSort(array);
-
-	std::cout << std::endl;
-	for (auto iter : array) {
-		std::cout << iter << ' ';
-	}*/
 	return(0);
 }
