@@ -71,7 +71,7 @@ public:
 
     BoolVector operator^(const BoolVector& other) const;
 
-    BoolVector & operator~();
+    BoolVector& operator~();
 
     BoolVector& operator&=(const BoolVector& other);
 
@@ -93,4 +93,3 @@ private:
     int size;
     unsigned char* vector;
 };
-
