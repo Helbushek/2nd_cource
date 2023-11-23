@@ -5,11 +5,12 @@ BoolVector::BoolVector() {
     size = 0;
 }
 BoolVector::BoolVector(int size, int data) {
-    vector = new unsigned char[size / CELL_SIZE];
     (*this).size = size;
+    vector = new unsigned char[cellNumber()];
+    (*this).setAll(data);
 }
 BoolVector::BoolVector(const char* data) {
-    size = strlen(data);
+    size = sizeof(data)/sizeof(data[0]);
     if (size)
         vector = new unsigned char[cellNumber()];
     else
@@ -94,7 +95,7 @@ void BoolVector::setBits(int index, int count, bool value) {
 }
 
 void BoolVector::setAll(bool value) {
-    for (int i = 0; i <= size / CELL_SIZE; i++) {
+    for (int i = 0; i <= cellNumber()-1; i+=CELL_SIZE) {
         vector[i] = (value == 1 ? ((2<<CELL_SIZE)-1) : 0);
     }
 }
@@ -180,11 +181,12 @@ BoolVector& BoolVector::operator^=(const BoolVector& other) {
     return *this;
 }
 
-BoolVector& BoolVector::operator~(){
-    for (int i = 0; i < size; i++) {
-        vector[i / CELL_SIZE] = ~vector[i / CELL_SIZE];
+BoolVector BoolVector::operator~(){
+    BoolVector temp = *this;
+    for (int i = 0; i < cellNumber(); i+=CELL_SIZE) {
+        temp.vector[i] = ~temp.vector[i];
     }
-    return *this;
+    return temp;
 }
 
 // Реализация побитовых сдвигов
@@ -276,4 +278,21 @@ void BoolRank::operator=(bool value) {
 
 BoolRank::operator bool() const {
     return value;
+}
+
+std::ostream& operator<<(std::ostream& os, const BoolVector& vector) {
+    for (int i = 0; i < vector.sizeOf(); i++) {
+        os << vector.getBit(i);
+    }
+
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, BoolVector& vector) {
+    std::string temp;
+    is >> temp;
+    const char* temp1 = temp.c_str();
+    vector = BoolVector(temp1);
+
+    return is;
 }

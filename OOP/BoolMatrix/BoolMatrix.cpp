@@ -8,7 +8,8 @@ BoolMatrix::BoolMatrix() {
 	_column = 0;
 	_line = 0;
 }
-BoolMatrix::BoolMatrix(int lines, int columns, int fillValue) {
+
+BoolMatrix::BoolMatrix(int lines, int columns, bool fillValue) {
 	matrix = new BoolVector[lines];
 	for (int i = 0; i < lines; i++) {
 		matrix[i] = BoolVector(columns, fillValue);
@@ -16,17 +17,20 @@ BoolMatrix::BoolMatrix(int lines, int columns, int fillValue) {
 	_line = lines;
 	_column = columns;
 }
-BoolMatrix::BoolMatrix(const char**& otherMatrix) {
-	_line = sizeof(otherMatrix) / sizeof(otherMatrix[0]);
+
+BoolMatrix::BoolMatrix(const char * const *  otherMatrix, int lines) {
+	_line = lines;
 	_column = sizeof(otherMatrix[0]) / sizeof(otherMatrix[0][0]);
 	matrix = new BoolVector[_line];
 	for (int i = 0; i < _line; i++) {
 		matrix[i] = BoolVector(otherMatrix[i]);
 	}
 }
+
 BoolMatrix::BoolMatrix(const BoolMatrix& other){
 	_line = other._line;
 	_column = other._column;
+	matrix = new BoolVector[_line];
 	for (int i = 0; i < _line; i++) {
 		matrix[i] = other.matrix[i];
 	}
@@ -101,10 +105,12 @@ BoolVector BoolMatrix::disjunction(){
 }
 
 BoolMatrix& BoolMatrix::operator=(const BoolMatrix& other){
-	delete[] matrix;
+	if (this != &other || _line != other._line) {
+		delete[] matrix;
+		matrix = new BoolVector[other._line];
+	}
 	_line = other._line;
 	_column = other._column;
-	matrix = new BoolVector[_line];
 	for (int i = 0; i < _line; i++) {
 		matrix[i] = other.matrix[i];
 	}
@@ -155,19 +161,21 @@ BoolMatrix BoolMatrix::operator^(const BoolMatrix& other) const{
 }
 
 BoolMatrix BoolMatrix::operator~(){
-	BoolMatrix temp = *this;
-	for (int i = 0; i < _line; i++) {
+	BoolMatrix temp(*this);
+	for (int i = 0; i < temp._line; i++) {
 		temp.matrix[i] = ~temp.matrix[i];
 	}
 	return temp;
 }
 
-std::ostream& operator<<(std::ostream& os, const BoolMatrix& matrix){
+std::ostream& operator<<(std::ostream& os, const BoolMatrix& matrix) {
 	for (int i = 0; i < matrix.lines(); i++) {
 		for (int j = 0; j < matrix.columns(); j++) {
-			os << matrix[i].getBit(j);
+			os << matrix[i][j];
 		}
+		os << std::endl;
 	}
+	return os;
 }
 
 std::istream& operator>>(std::istream& is, BoolMatrix& matrix) {
@@ -175,9 +183,9 @@ std::istream& operator>>(std::istream& is, BoolMatrix& matrix) {
 	for (int i = 0; i < matrix.lines(); i++) {
 		is >> temp[i];
 	}
-	const char** temp1 = new char* [matrix.lines()];
+	char** temp1 = new char* [matrix.lines()];
 	for (int i = 0; i < matrix.lines(); i++) {
-		temp1[i] = temp[i].c_str();
+		temp1[i] = &temp[i][0];
 		matrix[i] = temp1[i];
 	}
 

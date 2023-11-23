@@ -71,7 +71,7 @@ public:
 
     BoolVector operator^(const BoolVector& other) const;
 
-    BoolVector& operator~();
+    BoolVector operator~();
 
     BoolVector& operator&=(const BoolVector& other);
 
@@ -93,3 +93,7 @@ private:
     int size;
     unsigned char* vector;
 };
+
+std::ostream& operator<<(std::ostream& os, const BoolVector& vector);
+
+std::istream& operator>>(std::istream& is, BoolVector& vector);

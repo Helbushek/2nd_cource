@@ -1,15 +1,20 @@
 #pragma once
+#include <iostream>
 #include "BooleanVector.h"
 
 class BoolMatrix {
 public:
 	BoolMatrix();
-	BoolMatrix(int lines, int columns, int fillValue);
-	BoolMatrix(const char** &matrix);
+	BoolMatrix(int lines, int columns, bool fillValue);
+	BoolMatrix(char const * const * const matrix, int lines);
 	BoolMatrix(const BoolMatrix& other);
 
+	~BoolMatrix() {
+		delete[]matrix;
+	}
+
 	int lines() const;
-	int columns() const;
+	int columns() const;	
 
 	void swap(BoolMatrix& other);
 
@@ -45,9 +50,14 @@ public:
 
 	BoolMatrix operator~();
 
+	
+
 private:
 	BoolVector* matrix;
 	int _column;
 	int _line;
 };
 
+std::ostream& operator<<(std::ostream& os, const BoolMatrix& matrix);
+
+std::istream& operator>>(std::istream& is, BoolMatrix& matrix);
