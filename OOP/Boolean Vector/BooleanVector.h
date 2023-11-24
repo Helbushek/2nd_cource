@@ -51,6 +51,8 @@ public:
 
     void invert(const int index);
 
+    void invert();
+
     void setBits(int index, int count, bool value);
 
     void setAll(bool value);
@@ -71,7 +73,7 @@ public:
 
     BoolVector operator^(const BoolVector& other) const;
 
-    BoolVector operator~();
+    BoolVector operator~() const;
 
     BoolVector& operator&=(const BoolVector& other);
 

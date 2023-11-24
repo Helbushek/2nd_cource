@@ -12,7 +12,7 @@ public:
 	~BoolMatrix() {
 		delete[]matrix;
 	}
-
+	           
 	int lines() const;
 	int columns() const;	
 
@@ -48,7 +48,7 @@ public:
 	BoolMatrix& operator^=(const BoolMatrix& other);
 	BoolMatrix operator^(const BoolMatrix& other) const;
 
-	BoolMatrix operator~();
+	BoolMatrix operator~() const;
 
 	
 

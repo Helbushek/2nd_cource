@@ -21,9 +21,15 @@
     <ClCompile Include="BoolMatrix.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\Boolean Vector\BooleanVector.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoolMatrix.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Boolean Vector\BooleanVector.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>

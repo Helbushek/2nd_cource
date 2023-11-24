@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "BooleanVector.h"
 
 BoolVector::BoolVector() {
@@ -81,7 +83,14 @@ void BoolVector::swap(BoolVector& other){
 
 
 void BoolVector::invert(const int index){
+    assert(index > 0 && index < size);
     setBit(index, !getBit(index));
+}
+
+void BoolVector::invert() {
+    for (int i = 0; i < size; i++) {
+        invert(i);
+    }
 }
 
 void BoolVector::setBits(int index, int count, bool value) {
@@ -181,7 +190,7 @@ BoolVector& BoolVector::operator^=(const BoolVector& other) {
     return *this;
 }
 
-BoolVector BoolVector::operator~(){
+BoolVector BoolVector::operator~() const{
     BoolVector temp = *this;
     for (int i = 0; i < cellNumber(); i+=CELL_SIZE) {
         temp.vector[i] = ~temp.vector[i];
@@ -291,8 +300,7 @@ std::ostream& operator<<(std::ostream& os, const BoolVector& vector) {
 std::istream& operator>>(std::istream& is, BoolVector& vector) {
     std::string temp;
     is >> temp;
-    const char* temp1 = temp.c_str();
-    vector = BoolVector(temp1);
+    vector = BoolVector(temp.c_str());
 
     return is;
 }

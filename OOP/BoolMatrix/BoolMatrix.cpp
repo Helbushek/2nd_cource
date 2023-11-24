@@ -1,7 +1,6 @@
-#include "BoolMatrix.h"
-#include "BooleanVector.h"
-#include "BooleanVector.cpp"
 #include <iostream>
+#include <assert.h>
+#include "BoolMatrix.h"
 
 BoolMatrix::BoolMatrix() {
 	matrix = nullptr;
@@ -50,10 +49,12 @@ void BoolMatrix::swap(BoolMatrix& other){
 }
 
 BoolVector& BoolMatrix::getLine(int index){
+	assert(index < _line && index > 0);
 	return matrix[index];
 }
 
 void BoolMatrix::setLine(int index, const BoolVector& other){
+	assert(index > 0 && index < _line);
 	matrix[index] = other;
 }
 
@@ -71,32 +72,38 @@ int BoolMatrix::weight(int i){
 }
 
 void BoolMatrix::inverseIn(int lineNumber, int index){
+	assert(index > 0 && index < _column);
+	assert(lineNumber > 0 && lineNumber < _line);
 	matrix[lineNumber].invert(index);
 }
 void BoolMatrix::inverseInBy(int lineNumber, int index, int number){
+	assert(index + number > 0 && index + number < _column);
+	assert(lineNumber > 0 && lineNumber < _line);
 	for (int i = index; i < index + number; i++) {
 		matrix[lineNumber].invert(i);
 	}
 }
 
 void BoolMatrix::setIn(int lineNumber, int index, int value){
+	assert(index > 0 && index < _column);
+	assert(lineNumber > 0 && lineNumber < _line);
 	matrix[lineNumber].setBit(index, value);
 }
 void BoolMatrix::setInBy(int lineNumber, int index, int value, int number){
+	assert(index + number > 0 && index + number < _column);
+	assert(lineNumber > 0 && lineNumber < _line);
 	matrix[lineNumber].setBits(index, number, value);
 }
 
 BoolVector BoolMatrix::conjunction(){
-	BoolVector temp = matrix[0];
-	temp.setAll(1);
+	BoolVector temp = BoolVector(_column, 1);
 	for (int i = 0; i < _line; i++) {
 		temp &= matrix[i];
 	}
 	return temp;
 }
 BoolVector BoolMatrix::disjunction(){
-	BoolVector temp = matrix[0];
-	temp.setAll(0);
+	BoolVector temp = BoolVector(_column, 0);
 
 	for (int i = 0; i < _line; i++) {
 		temp |= matrix[i];
@@ -105,7 +112,7 @@ BoolVector BoolMatrix::disjunction(){
 }
 
 BoolMatrix& BoolMatrix::operator=(const BoolMatrix& other){
-	if (this != &other || _line != other._line) {
+	if (_line != other._line) {
 		delete[] matrix;
 		matrix = new BoolVector[other._line];
 	}
@@ -118,9 +125,11 @@ BoolMatrix& BoolMatrix::operator=(const BoolMatrix& other){
 }
 
 BoolVector& BoolMatrix::operator[](int index){
+	assert(index > 0 && index < _line);
 	return matrix[index];
 }
 const BoolVector& BoolMatrix::operator[](int index) const{
+	assert(index > 0 && index < _line);
 	return matrix[index];
 }
 
@@ -160,10 +169,10 @@ BoolMatrix BoolMatrix::operator^(const BoolMatrix& other) const{
 	return temp;
 }
 
-BoolMatrix BoolMatrix::operator~(){
+BoolMatrix BoolMatrix::operator~() const{
 	BoolMatrix temp(*this);
 	for (int i = 0; i < temp._line; i++) {
-		temp.matrix[i] = ~temp.matrix[i];
+		temp.matrix[i].invert();
 	}
 	return temp;
 }
@@ -179,14 +188,10 @@ std::ostream& operator<<(std::ostream& os, const BoolMatrix& matrix) {
 }
 
 std::istream& operator>>(std::istream& is, BoolMatrix& matrix) {
-	std::string* temp = new std::string[matrix.lines()];
+	std::vector<std::string> temp(matrix.lines());
 	for (int i = 0; i < matrix.lines(); i++) {
 		is >> temp[i];
-	}
-	char** temp1 = new char* [matrix.lines()];
-	for (int i = 0; i < matrix.lines(); i++) {
-		temp1[i] = &temp[i][0];
-		matrix[i] = temp1[i];
+		matrix[i] = temp[i].c_str();
 	}
 
 	return is;
