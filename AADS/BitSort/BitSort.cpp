@@ -18,7 +18,6 @@ void BitSort(std::vector<int> &array, int leftBorder, int rightBorder, int level
 
 	int i = leftBorder, j = rightBorder;
 	if (level == 31) { // По первому разряду разделяем положительные и отрицательные, их будем проверять отдельно
-		std::cout << "31 level" << std::endl;
 		while (i <= j) {
 			while (i <= j && ((array[i] >> 31) & 1) == 1) { // 1 == negative number
 				i++;
@@ -28,9 +27,6 @@ void BitSort(std::vector<int> &array, int leftBorder, int rightBorder, int level
 			}
 			if (i < j)
 				std::swap(array[i++], array[j--]);
-		}
-		for (auto iter : array) {
-			std::cout << iter << ' ';
 		}
 		std::cout << std::endl;
 	}
