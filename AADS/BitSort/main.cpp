@@ -77,5 +77,13 @@ int main() {
 	//}
 	//fclose(openedFile); 
 
+	std::vector<int> array{ -1, -2, -3, 9, 8, 0 , 1, 2, 2, 2, 6, 10, 97};
+
+	BitSort(array);
+
+	for (auto iter : array) {
+		std::cout << iter << ' ';
+	}
+
 	return(0);
 }
