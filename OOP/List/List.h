@@ -18,17 +18,36 @@ public:
 	Node(T value);
 	Node(const Node<T> &other);
 	
-	/*Node<T> getNext();
-	Node<T> getPrev();
+	T& get();
 
-	Node<T> setNext();
-	Node<T> setPrev();*/
+	operator T() const {
+		return body;
+	}
 
 private:
 	T body;
 	Node<T>* next;
 	Node<T>* prev;
 };
+
+// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+
+
+
+template<typename T>
+T& Node<T>::get() {
+	return body;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Node<T>& that) {
+	os << that.body;
+}
+
+template<typename T>
+std::istream& operator>>(std::istream& is, Node<T>& that) {
+	is >> that.body;
+}
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
@@ -51,21 +70,70 @@ Node<T>::Node(const Node<T> &other) {
 	body = other.body;
 }
 
-//template<typename T>
-//Node<T> Node<T>::getNext(){
-//
-//}
-//template<typename T>
-//Node<T> getPrev();
-//template<typename T>
-//Node<T> setNext();
-//template<typename T>	
-//Node<T> setPrev();
+// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+
+template<typename TI>
+class Iterator {
+	friend class List<TI>
+private:
+	Iterator(Node<TI>* node);
+
+public: 
+	Iterator(const Iterator& other);
+
+	bool operator==(const Iterator& other);
+	bool operator!=(const Iterator& other);
+
+	Iterator& operator+= (int value);
+	Iterator& operator++();
+	Iterator& operator-=(int value);
+	Iterator& operator--();
+
+private:
+	Node<TI>* link;
+};
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
+template<typename TI>
+bool Iterator<TI>::operator==(const Iterator& other) {
+	if (link == other.link)
+		return true;
+	return false;
+}
+
+template<typename TI>
+bool Iterator<TI>::operator!=(const Iterator& other) {
+	return (!(*this == other));
+}
+
+template<typename TI>
+Iterator<TI>& Iterator<TI>::operator++() {
+	this = this->link->next;
+	return this;
+}
+
+template<typename TI>
+Iterator<TI>& Iterator<TI>::operator--() {
+	this = this->link->prev;
+	return this;
+}
+
+// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+
+
 template<typename TL>
 class List {
+public:
+	typedef Iterator<TL> iterator;
+	typedef Iterator<const TL> const_iterator;
+
+	iterator begin();
+	iterator end();
+
+	const_iterator begin() const;
+	const_iterator end() const;
+
 public:
 	List();
 	List(int nodesNumber, TL value);
@@ -105,7 +173,7 @@ public:
 
 	int clear();
 
-	int sort();
+	void sort();
 
 	void operator=(const List<TL>& other);
 	bool operator==(const List<TL>& other);
@@ -124,6 +192,26 @@ private:
 };
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+
+template<typename TL>
+List<TL>::iterator List<TL>::begin() {
+	return Iterator(_head->next);
+}
+
+template<typename TL>
+List<TL>::iterator List<TL>::end() {
+	return Iterator(_tail);
+}
+
+template<typename TL>
+List<TL>::const_iterator List<TL>::begin() const {
+	return const Iterator(_head->next);
+}
+
+template<typename TL>
+List<TL>::const_iterator List<TL>::end() const {
+	return const Iterator(_tail);
+}
 
 template<typename TL> 
 void List<TL>::construct() {
@@ -321,7 +409,7 @@ int List<TL>::clear() {
 
 template<typename TL>
 int List<TL>::sort() {
-
+	std::sort();
 }
 
 template<typename TL>
@@ -380,4 +468,25 @@ const Node<TL> const* List<TL>::operator[](int index) const{
 		temp = temp->next;
 	}
 	return temp;
+}
+
+template<typename TL>
+void List<TL>::sort() {
+	
+}
+
+template<typename TL>
+std::ostream& operator<<(std::ostream& os, const List<TL>& that) {
+	for (int i = 0; i < size; i++) {
+		os << that[i] << ' ';
+	}
+	return os;
+}
+
+template<typename TL>
+std::istream operator>>(std::istream& is, List<TL>& that) {
+	for (int i = 0; i < size; i++) {
+		is >> taht[i];
+	}
+	return is;
 }

@@ -10,7 +10,7 @@ class Array {
 public:
 	template<typename IteratorTemplate, typename ArrayTemplate>
 	class TemplateIterator;
-	using Iterator= TemplateIterator<ItemType, Array>;
+	using iterator= TemplateIterator<ItemType, Array>;
 	using ConstIterator = TemplateIterator<const ItemType, const Array>;
 public:
 
@@ -52,14 +52,14 @@ public:
 	int findMax() const;
 	int findMin() const;
 
-	Iterator begin();
-	Iterator end();
+	iterator begin();
+	iterator end();
 
 	ConstIterator begin() const;
 	ConstIterator end() const;
 
-	void deleteDiaposon(Array::Iterator begin, Array::Iterator end); //range
-	void insert(const ItemType &numberToInsert, Iterator iter);
+	void deleteDiaposon(Array::iterator begin, Array::iterator end); //range
+	void insert(const ItemType &numberToInsert, iterator iter);
 	void insert(const ItemType &numberToInsert, const int pos);
 
 protected:
@@ -435,13 +435,13 @@ bool Array<ItemType>::TemplateIterator<IT, AT>::isEqual(const Array<ItemType>::T
 }
 
 template <typename ItemType> typename
-Array<ItemType>::Iterator Array<ItemType>::begin() {
-	return Iterator(this, 0);
+Array<ItemType>::iterator Array<ItemType>::begin() {
+	return iterator(this, 0);
 }
 
 template <typename ItemType> typename
-Array<ItemType>::Iterator Array<ItemType>::end() {
-	return Iterator(this, _size());
+Array<ItemType>::iterator Array<ItemType>::end() {
+	return iterator(this, _size());
 }
 
 template <typename ItemType> typename
@@ -489,7 +489,7 @@ int Array<ItemType>::TemplateIterator<IT, AT>::getPos() const{
 }
 
 template <typename ItemType>
-void Array<ItemType>::deleteDiaposon(Array<ItemType>::Iterator start, Array<ItemType>::Iterator end) {
+void Array<ItemType>::deleteDiaposon(Array<ItemType>::iterator start, Array<ItemType>::iterator end) {
 	if (start.getPos() < 0 || start.getPos() > m_size || end.getPos() < 0 || end.getPos() > m_size - 1) {
 		std::cerr << "Invalid index of diaposon in Array::deleteDiaposon, will be executed from method... ";
 		return;
@@ -503,14 +503,14 @@ void Array<ItemType>::deleteDiaposon(Array<ItemType>::Iterator start, Array<Item
 		return;
 	}
 	int deleteCount = 0;
-	for (Array<ItemType>::Iterator i = start; i != end + 1; ++i) {
+	for (Array<ItemType>::iterator i = start; i != end + 1; ++i) {
 		deleteByIndex(i.getPos() - deleteCount);
 		deleteCount++;
 	}
 }
 
 template <typename ItemType>
-void Array<ItemType>::insert(const ItemType &numberToInsert, Iterator iter) {
+void Array<ItemType>::insert(const ItemType &numberToInsert, iterator iter) {
 	if (iter.getPos() < 0 || iter.getPos() > m_size) {
 		std::cerr << "Invalid index in Array::insert, will not run... \n";
 		return;
@@ -533,6 +533,6 @@ void Array<ItemType>::insert(const ItemType &numberToInsert, Iterator iter) {
 
 template <typename ItemType>
 void Array<ItemType>::insert(const ItemType &numberToInsert, const int pos) {
-	Array<ItemType>::Iterator iter(this, pos);
+	Array<ItemType>::iterator iter(this, pos);
 	insert(numberToInsert, iter);
 }
