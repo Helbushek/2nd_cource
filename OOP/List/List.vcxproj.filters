@@ -21,9 +21,15 @@
     <ClCompile Include="List.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\Array\Array.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="List.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Array\Array.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>

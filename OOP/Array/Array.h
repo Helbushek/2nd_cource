@@ -15,8 +15,8 @@ public:
 public:
 
 
-	Array(const int size = 0);
-	Array(const int size, const ItemType &fillNumber);
+	Array(const int _size = 0);
+	Array(const int _size, const ItemType &fillNumber);
 	~Array();
 	Array(const Array &array);
 	Array(Array&& other);
@@ -35,7 +35,7 @@ public:
 	bool operator==(const Array& other) const;
 	bool operator!=(const Array& other) const;
 
-	int size() const;
+	int _size() const;
 
 	int find(const ItemType &numberToFind) const;
 
@@ -77,7 +77,7 @@ std::ostream& operator<<(std::ostream& out, const Array<ItemType>& array) {
 
 template <typename ItemType>
 std::istream& operator>>(std::istream& in, Array<ItemType>& array) {
-	for (int i = 0; i < array.size(); i++) {
+	for (int i = 0; i < array._size(); i++) {
 		in >> array[i];
 	}
 	return(in);
@@ -124,17 +124,17 @@ Array<ItemType>::~Array() {
 }
 
 template <typename ItemType>
-Array<ItemType>::Array(const int size)
+Array<ItemType>::Array(const int _size)
 {
-	if (size > 0) {
-		m_array = new ItemType[size];
-		m_size = size;
+	if (_size > 0) {
+		m_array = new ItemType[_size];
+		m_size = _size;
 	}
 }
 
 template <typename ItemType>
-Array<ItemType>::Array(const int size, const ItemType &fillNumber)
-	: Array(size)
+Array<ItemType>::Array(const int _size, const ItemType &fillNumber)
+	: Array(_size)
 {
 	for (int i = 0; i < m_size; i++) {
 		m_array[i] = fillNumber;
@@ -254,7 +254,7 @@ bool Array<ItemType>::operator!=(const Array& other) const{
 }
 
 template <typename ItemType>
-int Array<ItemType>::size() const{
+int Array<ItemType>::_size() const{
 	return(m_size);
 }
 
@@ -441,7 +441,7 @@ Array<ItemType>::Iterator Array<ItemType>::begin() {
 
 template <typename ItemType> typename
 Array<ItemType>::Iterator Array<ItemType>::end() {
-	return Iterator(this, size());
+	return Iterator(this, _size());
 }
 
 template <typename ItemType> typename
@@ -451,7 +451,7 @@ Array<ItemType>::ConstIterator Array<ItemType>::begin() const{
 
 template <typename ItemType> typename
 Array<ItemType>::ConstIterator Array<ItemType>::end() const{
-	return ConstIterator(this, size());
+	return ConstIterator(this, _size());
 }
 
 template <typename ItemType>
