@@ -5,9 +5,8 @@ int main() {
 	List<int> temp(3, 1);
 	//temp.set();
 	std::cout << std::endl;
-	temp.print();
-	std::cout << std::endl;
-	temp.push(1);
-	temp.print();
+	for (auto iter : temp) {
+		std::cout << iter << ' ';
+	}
 	return(0);
 }
