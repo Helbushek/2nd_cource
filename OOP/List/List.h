@@ -3,7 +3,6 @@
 #include <vector>
 #include <assert.h>
 #include "Array.h"
-#include "List.cpp"
 
 template<typename TL>
 class List;
@@ -30,10 +29,13 @@ public:
 		return body;
 	}
 
-	/*operator Iterator<T>() {
-		Iterator temp(*this);
-		return  temp;
-	}*/
+	void swap(Node& other);
+
+	bool operator>(const Node<T>& other);
+	bool operator<(const Node<T>& other);
+
+	bool operator>=(const Node<T>& other);
+	bool operator<=(const Node<T>& other);
 
 private:
 	T body;
@@ -43,7 +45,12 @@ private:
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
-
+template<typename T>
+void Node<T>::swap(Node& other) {
+	std::swap(body, other.body);
+	std::swap(next, other.next);
+	std::swap(prev, other.prev);
+}
 
 template<typename T>
 T& Node<T>::get() {
@@ -84,6 +91,34 @@ Node<T>::Node(const Node<T> &other) {
 	body = other.body;
 }
 
+template<typename T>
+bool Node<T>::operator>(const Node<T>& other) {
+	if (body > other.body)
+		return true;
+	return false;
+}
+
+template<typename T>
+bool Node<T>::operator<(const Node<T>& other) {
+	if (body < other.body)
+		return true;
+	return false;
+}
+
+template<typename T>
+bool Node<T>::operator>=(const Node<T>& other) {
+	if (body >= other.body)
+		return true;
+	return false;
+}
+
+template<typename T>
+bool Node<T>::operator<=(const Node<T>& other) {
+	if (body <= other.body)
+		return true;
+	return false;
+}
+
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
 template<typename TI>
@@ -103,10 +138,14 @@ public:
 	bool operator==(const Iterator& other);
 	bool operator!=(const Iterator& other);
 
+	bool isSibling(const Iterator& other);
+
 	Iterator& operator+= (int value);
 	Iterator& operator++();
 	Iterator& operator-=(int value);
 	Iterator& operator--();
+	bool operator>(const Iterator& other);
+	bool operator<(const Iterator& other);
 
 	TI& operator*();
 	TI operator*() const;
@@ -116,6 +155,11 @@ private:
 };
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+
+template<typename TI>
+Iterator<TI>::Iterator(const Iterator& other) {
+	link = other.link;
+}
 
 template<typename TI>
 bool Iterator<TI>::operator==(const Iterator& other) {
@@ -130,6 +174,20 @@ bool Iterator<TI>::operator!=(const Iterator& other) {
 }
 
 template<typename TI>
+bool Iterator<TI>::isSibling(const Iterator& other) {
+	Node<TI>* temp = link;
+	while (temp->prev != nullptr) {
+		temp = temp->prev; // travel to head
+	}
+	while (temp->next != nullptr) {
+		if (other.link == temp)
+			return true; // if other points to element in the same list
+		temp = temp->next; // travel through list
+	}
+	return false;
+}
+
+template<typename TI>
 Iterator<TI>& Iterator<TI>::operator++() {
 	*this = Iterator(this->link->next);
 	return *this;
@@ -137,8 +195,8 @@ Iterator<TI>& Iterator<TI>::operator++() {
 
 template<typename TI>
 Iterator<TI>& Iterator<TI>::operator--() {
-	this = this->link->prev;
-	return this;
+	*this = Iterator(this->link->prev);
+	return *this;
 }
 
 template<typename TI>
@@ -149,6 +207,23 @@ TI& Iterator<TI>::operator*() {
 template<typename TI>
 TI Iterator<TI>::operator*() const {
 	return link->get();
+}
+
+template<typename TI>
+bool Iterator<TI>::operator>(const Iterator<TI>& other) {
+	assert(isSibling(other));
+	Iterator temp = *this;
+	while (temp.link != nullptr) {
+		if (temp.link == other.link)
+			return false; // other is righter from or on this
+		temp.link = temp.link->next;
+	}
+	return true; // other is lefter 
+}
+
+template<typename TI>
+	bool Iterator<TI>::operator<(const Iterator<TI>& other) {
+		return (!((*this) > other));
 }
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -188,16 +263,20 @@ public:
 	void print();
 	void set();
 
-	Node<TL>* search(TL value);
+	iterator search(TL value);
 
 	Node<TL>* push(TL value, int index = 0); // index = 0 after head, other index - before that index
 	Node<TL>* push(TL value, Node<TL> * adress);
 	Node<TL>* pushKey(TL valueToInsert, TL keyToSearch); // inserts before KEY
 	Node<TL>* pushBack(TL value); // before tail
+	iterator push(TL value, iterator iter);
 
 	void deleteBefore(int index = 0);
+	void deleteIn(Node<TL>* node);
 	void deleteBack();
 	void deleteKey(TL key);
+	void deleteBefore(iterator iter);
+	void deleteDiaposon(iterator first, iterator second);
 
 	Node<TL>* min();
 	Node<TL>* max();
@@ -206,7 +285,7 @@ public:
 
 	void clear();
 
-	void sort();
+	void sort(List<TL>& array, int leftBorder=0, int rightBorder=-1, int level=31);
 
 	void operator=(const List<TL>& other);
 	bool operator==(const List<TL>& other);
@@ -333,13 +412,15 @@ void List<TL>::set() {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::search(TL value) {
+Iterator<TL> List<TL>::search(TL value) {
 	Node<TL>* runner = _head->next;
 	while (runner != _tail) {
-		if (runner->body == value)
-			return runner;
+		if (runner->body == value) {
+			Iterator<TL> temp(runner);
+			return temp;
+		}
+		runner = runner->next;
 	}
-
 	return nullptr;
 }
 
@@ -388,9 +469,24 @@ Node<TL>* List<TL>::pushBack(TL value) {
 }
 
 template<typename TL>
+Iterator<TL> List<TL>::push(TL value, iterator iter) {
+	Node<TL>* temp = iter.link;
+	push(value, temp);
+}
+
+template<typename TL>
 void List<TL>::deleteBefore(int index) {
 	assert(index > 0 && index < size);
-	Node<TL>* temp = (*this)[index - 1];
+	Node<TL>* temp = _head->next;
+	for (int i = 0; i < index - 1; i++) {
+		temp = temp->next;
+	}
+	deleteIn(temp);
+}
+
+template<typename TL>
+void List<TL>::deleteIn(Node<TL>* node) {
+	Node<TL>* temp = node;
 	temp->prev->next = temp->next;
 	temp->next->prev = temp->prev;
 	delete[] temp;
@@ -407,8 +503,33 @@ void List<TL>::deleteBack() {
 }
 
 template<typename TL>
+void List<TL>::deleteBefore(iterator iter) {
+	Node<TL>* temp = iter.link;
+	deleteIn(temp->prev);
+}
+
+template<typename TL>
 void List<TL>::deleteKey(TL key) {
-	deleteBefore(search(key));
+	Node<TL> *temp = search(key).link;
+	deleteIn(temp);
+}
+
+template<typename TL>
+void List<TL>::deleteDiaposon(iterator first, iterator second) {
+	assert(first.isSibling(second));
+	Node<TL>* firstNode, * secondNode;
+	if (first < second) {
+		firstNode = first.link;
+		secondNode = second.link;
+	}
+	else {
+		secondNode = first.link;
+		firstNode = second.link;
+	}
+	while (firstNode != secondNode) {
+		firstNode = firstNode->next;
+		deleteIn(firstNode->prev);
+	}
 }
 
 template<typename TL>
@@ -442,10 +563,7 @@ void List<TL>::clear() {
 		deleteBack();
 }
 
-template<typename TL>
-void List<TL>::sort() {
-	std::sort(begin(), end());
-}	
+	
 
 template<typename TL>
 void List<TL>::operator=(const List<TL>& other) {
@@ -476,7 +594,7 @@ bool List<TL>::operator!=(const List<TL>& other) {
 template<typename TL>
 void List<TL>::operator+=(const List<TL>& other) {
 	for (int i = 0; i < other.size; i++) {
-		pushBack(other[i].body);
+		pushBack(other[i]);
 	}
 }
 
@@ -508,7 +626,7 @@ const TL List<TL>::operator[](int index) const{
 template<typename TL>
 std::ostream& operator<<(std::ostream& os, const List<TL>& that) {
 	for (int i = 0; i < that.getSize(); i++) {
-		os << that[i]->get() << ' ';
+		os << that[i] << ' ';
 	}
 	return os;
 }
@@ -516,7 +634,47 @@ std::ostream& operator<<(std::ostream& os, const List<TL>& that) {
 template<typename TL>
 std::istream& operator>>(std::istream& is, List<TL>& that) {
 	for (int i = 0; i < that.getSize(); i++) {
-		is >> that[i]->get();
+		is >> that[i];
 	}
 	return is;
+}
+
+template<typename TL>
+void List<TL>::sort(List<TL>& array, int leftBorder, int rightBorder, int level) {
+
+	if ((rightBorder < leftBorder && level != 31) || level < 0)
+		return;
+
+	if (rightBorder == -1)
+		rightBorder = array.size - 1;
+
+	int i = leftBorder, j = rightBorder;
+	if (level == 31) { // По первому разряду разделяем положительные и отрицательные, их будем проверять отдельно
+		while (i <= j) {
+			while (i <= j && ((array[i] >> 31) & 1) == 1) { // 1 == negative number
+				i++;
+			}
+			while (i <= j && ((array[j] >> 31) & 1) == 0) { // 0 == positive number
+				j--;
+			}
+			if (i < j)
+				std::swap(array[i++], array[j--]);
+		}
+		std::cout << std::endl;
+	}
+	else { // Обычный процесс сортировки по разряду 
+
+		while (i <= j) {
+			while (i <= j && ((array[i] >> level) & 1) == 0)
+				i++;
+			while (i <= j && ((array[j] >> level) & 1) == 1)
+				j--;
+			if (i < j)
+				std::swap(array[i++], array[j--]);
+		}
+
+	}
+
+	sort(array, leftBorder, j, level - 1);
+	sort(array, i, rightBorder, level - 1);
 }

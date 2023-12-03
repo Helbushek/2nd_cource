@@ -2,11 +2,12 @@
 #include "List.h"
 
 int main() {
-	List<int> temp(3, 1);
-	//temp.set();
-	std::cout << std::endl;
-	for (auto iter : temp) {
-		std::cout << iter << ' ';
+	List<int> temp(5, 1);
+	for (int i = 0; i < 5; i++) {
+		temp[i] = 5-i;
 	}
+	
+	std::cout << temp <<std::endl;
+	
 	return(0);
 }
