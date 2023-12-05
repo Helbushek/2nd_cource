@@ -2,7 +2,10 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include <random>
+#include <time.h>
 #include "Array.h"
+
 
 template<typename TL>
 class List;
@@ -18,7 +21,7 @@ class Node {
 	friend class Iterator<T>;
 public:
 	Node();
-	Node(T value);
+	Node(const T value);
 	Node(const Node<T> &other);
 	
 	T& get();
@@ -38,9 +41,38 @@ public:
 	bool operator<=(const Node<T>& other);
 
 private:
-	T body;
+	T body = 0;
 	Node<T>* next;
 	Node<T>* prev;
+};
+
+template <typename T>
+class Node<const T> {
+	friend class List<const T>;
+	friend class Iterator<const T>;
+public:
+	Node();
+	Node(const T value);
+	Node(const Node<T>& other);
+
+	T get() const;
+
+	operator T() const {
+		return body;
+	}
+
+	void swap(Node& other);
+
+	bool operator>(const Node<T>& other);
+	bool operator<(const Node<T>& other);
+
+	bool operator>=(const Node<T>& other);
+	bool operator<=(const Node<T>& other);
+
+private:
+	const T body = 0;
+	Node<const T>* next;
+	Node<const T>* prev;
 };
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -75,7 +107,6 @@ std::istream& operator>>(std::istream& is, Node<T>& that) {
 template<typename T>
 Node<T>::Node() {
 	next = prev = nullptr;
-	body = 0;
 }
 
 template<typename T>
@@ -124,16 +155,13 @@ bool Node<T>::operator<=(const Node<T>& other) {
 template<typename TI>
 class Iterator {
 	friend class List<TI>;
-	Iterator(Node<TI>* node) {
-		this->link = node;
-	}
-
-	operator Node<TI>*() {
-
-	}
 
 public: 
 	Iterator(const Iterator& other);
+
+	Iterator(Node<TI>* node) {
+		this->link = node;
+	}
 
 	bool operator==(const Iterator& other);
 	bool operator!=(const Iterator& other);
@@ -142,8 +170,10 @@ public:
 
 	Iterator& operator+= (int value);
 	Iterator& operator++();
+	Iterator operator++(int);
 	Iterator& operator-=(int value);
 	Iterator& operator--();
+	Iterator operator--(int);
 	bool operator>(const Iterator& other);
 	bool operator<(const Iterator& other);
 
@@ -151,7 +181,39 @@ public:
 	TI operator*() const;
 
 private:
-	Node<TI>* link;
+	Node<TI>* link = nullptr;
+};
+
+template<typename TI>
+class Iterator<const TI> {
+	friend class List<const TI>;
+
+public:
+	Iterator(const Iterator& other);
+
+	Iterator(Node<const TI>* node) {
+		this->link = node;
+	}
+
+	bool operator==(const Iterator& other);
+	bool operator!=(const Iterator& other);
+
+	bool isSibling(const Iterator& other);
+
+	Iterator& operator+= (int value);
+	Iterator& operator++();
+	Iterator operator++(int);
+	Iterator& operator-=(int value);
+	Iterator& operator--();
+	Iterator operator--(int);
+	bool operator>(const Iterator& other);
+	bool operator<(const Iterator& other);
+
+	TI& operator*();
+	TI operator*() const;
+
+private:
+	Node<const TI>* link = nullptr;
 };
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -200,6 +262,20 @@ Iterator<TI>& Iterator<TI>::operator--() {
 }
 
 template<typename TI>
+Iterator<TI> Iterator<TI>::operator++(int) {
+	Iterator temp(*this);
+	*this = Iterator(this->link->next);
+	return temp;
+}
+
+template<typename TI>
+Iterator<TI> Iterator<TI>::operator--(int) {
+	Iterator temp(*this);
+	*this = Iterator(this->link->prev);
+	return temp;
+}
+
+template<typename TI>
 TI& Iterator<TI>::operator*() {
 	return link->get();
 }
@@ -238,9 +314,11 @@ public:
 
 	iterator begin();
 	iterator end();
+	iterator randAccess();
 
 	const_iterator begin() const;
 	const_iterator end() const;
+	const_iterator randAccess() const;
 
 public:
 	List();
@@ -265,8 +343,8 @@ public:
 
 	iterator search(TL value);
 
-	Node<TL>* push(TL value, int index = 0); // index = 0 after head, other index - before that index
-	Node<TL>* push(TL value, Node<TL> * adress);
+	Node<TL>* push(const TL value, int index = 0); // index = 0 after head, other index - before that index
+	Node<TL>* push(const TL value, Node<TL> * adress);
 	Node<TL>* pushKey(TL valueToInsert, TL keyToSearch); // inserts before KEY
 	Node<TL>* pushBack(TL value); // before tail
 	iterator push(TL value, iterator iter);
@@ -316,14 +394,33 @@ Iterator<TL> List<TL>::end() {
 	return Iterator<TL>(_tail);
 }
 
-template<typename TL>
-Iterator<const TL> List<TL>::begin() const {
-	return Iterator<TL>(_head->next);
+template<typename TL> 
+Iterator<TL> List<TL>::randAccess() {
+	srand(time(0));
+	Iterator<TL> temp = begin();
+	for (int r = rand() % size, i = 0; i < r; i++) {
+		temp++;
+	}
+
+	return temp;
 }
 
 template<typename TL>
-Iterator<const TL> List<TL>::end() const {
-	return Iterator<TL>(_tail);
+Iterator<const TL> List<TL>::begin() const {
+	return Iterator<const TL>(_head->next);
+}
+
+template<typename TL>
+Iterator<const TL> List<TL>::end() const{
+	return Iterator<const TL>(_tail);
+}
+
+template<typename TL>
+Iterator<const TL> List<TL>::randAccess() const{
+	srand(time(0));
+	Iterator<const TL> temp = begin() + rand() % size;
+
+	return temp;
 }
 
 template<typename TL> 
@@ -425,7 +522,7 @@ Iterator<TL> List<TL>::search(TL value) {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::push(TL value, int index) {
+Node<TL>* List<TL>::push(const TL value, int index) {
 	assert(index >= 0 && index < size);
 	Node<TL>* temp = _head->next; // 0`th element
 	for (int i = 0; i < index; i++) {
@@ -436,7 +533,7 @@ Node<TL>* List<TL>::push(TL value, int index) {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::push(TL value, Node<TL> *adress) {
+Node<TL>* List<TL>::push(const TL value, Node<TL> *adress) {
 	Node<TL>* temp = new Node<TL>();
 	temp->body = value;
 	temp->next = adress;
