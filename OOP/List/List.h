@@ -19,6 +19,7 @@ template <typename T>
 class Node {
 	friend class List<T>;
 	friend class Iterator<T>;
+	friend class Iterator<const T>;
 public:
 	Node();
 	Node(const T value);
@@ -44,35 +45,6 @@ private:
 	T body = 0;
 	Node<T>* next;
 	Node<T>* prev;
-};
-
-template <typename T>
-class Node<const T> {
-	friend class List<const T>;
-	friend class Iterator<const T>;
-public:
-	Node();
-	Node(const T value);
-	Node(const Node<T>& other);
-
-	T get() const;
-
-	operator T() const {
-		return body;
-	}
-
-	void swap(Node& other);
-
-	bool operator>(const Node<T>& other);
-	bool operator<(const Node<T>& other);
-
-	bool operator>=(const Node<T>& other);
-	bool operator<=(const Node<T>& other);
-
-private:
-	const T body = 0;
-	Node<const T>* next;
-	Node<const T>* prev;
 };
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -168,55 +140,19 @@ public:
 
 	bool isSibling(const Iterator& other);
 
-	Iterator& operator+= (int value);
 	Iterator& operator++();
 	Iterator operator++(int);
-	Iterator& operator-=(int value);
 	Iterator& operator--();
 	Iterator operator--(int);
 	bool operator>(const Iterator& other);
 	bool operator<(const Iterator& other);
 
-	TI& operator*();
 	TI operator*() const;
+	TI& operator*();
 
 private:
 	Node<TI>* link = nullptr;
 };
-
-template<typename TI>
-class Iterator<const TI> {
-	friend class List<const TI>;
-
-public:
-	Iterator(const Iterator& other);
-
-	Iterator(Node<const TI>* node) {
-		this->link = node;
-	}
-
-	bool operator==(const Iterator& other);
-	bool operator!=(const Iterator& other);
-
-	bool isSibling(const Iterator& other);
-
-	Iterator& operator+= (int value);
-	Iterator& operator++();
-	Iterator operator++(int);
-	Iterator& operator-=(int value);
-	Iterator& operator--();
-	Iterator operator--(int);
-	bool operator>(const Iterator& other);
-	bool operator<(const Iterator& other);
-
-	TI& operator*();
-	TI operator*() const;
-
-private:
-	Node<const TI>* link = nullptr;
-};
-
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
 template<typename TI>
 Iterator<TI>::Iterator(const Iterator& other) {
@@ -298,7 +234,119 @@ bool Iterator<TI>::operator>(const Iterator<TI>& other) {
 }
 
 template<typename TI>
-	bool Iterator<TI>::operator<(const Iterator<TI>& other) {
+bool Iterator<TI>::operator<(const Iterator<TI>& other) {
+	return (!((*this) > other));
+}
+
+template<typename TI>
+class Iterator<const TI> {
+	friend class List<const TI>;
+
+public:
+	Iterator(const Iterator& other);
+
+	Iterator(Node<TI>* node) {
+		this->link = node;
+	}
+
+	bool operator==(const Iterator& other);
+	bool operator!=(const Iterator& other);
+
+	bool isSibling(const Iterator& other);
+
+	Iterator& operator+= (int value);
+	Iterator& operator++();
+	Iterator operator++(int);
+	Iterator& operator-=(int value);
+	Iterator& operator--();
+	Iterator operator--(int);
+	bool operator>(const Iterator& other);
+	bool operator<(const Iterator& other);
+
+	TI operator*() const;
+
+private:
+	Node<TI>* link = nullptr;
+};
+
+// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+
+template<typename TI>
+Iterator<const TI>::Iterator(const Iterator& other) {
+	link = other.link;
+}
+
+template<typename TI>
+bool Iterator<const TI>::operator==(const Iterator& other) {
+	if (link == other.link)
+		return true;
+	return false;
+}
+
+template<typename TI>
+bool Iterator<const TI>::operator!=(const Iterator& other) {
+	return (!(*this == other));
+}
+
+template<typename TI>
+bool Iterator<const TI>::isSibling(const Iterator& other) {
+	Node<TI>* temp = link;
+	while (temp->prev != nullptr) {
+		temp = temp->prev; // travel to head
+	}
+	while (temp->next != nullptr) {
+		if (other.link == temp)
+			return true; // if other points to element in the same list
+		temp = temp->next; // travel through list
+	}
+	return false;
+}
+
+template<typename TI>
+Iterator<const TI>& Iterator<const TI>::operator++() {
+	*this = Iterator(this->link->next);
+	return *this;
+}
+
+template<typename TI>
+Iterator<const TI>& Iterator<const TI>::operator--() {
+	*this = Iterator(this->link->prev);
+	return *this;
+}
+
+template<typename TI>
+Iterator<const TI> Iterator<const TI>::operator++(int) {
+	Iterator temp(*this);
+	*this = Iterator(this->link->next);
+	return temp;
+}
+
+template<typename TI>
+Iterator<const TI> Iterator<const TI>::operator--(int) {
+	Iterator temp(*this);
+	*this = Iterator(this->link->prev);
+	return temp;
+}
+
+template<typename TI>
+TI Iterator<const TI>::operator*() const {
+	return link->get();
+}
+
+template<typename TI>
+bool Iterator<const TI>::operator>(const Iterator<const TI>& other) {
+	assert(isSibling(other));
+	Iterator temp = *this;
+	while (temp.link != nullptr) {
+		if (temp.link == other.link)
+			return false; // other is righter from or on this
+		temp.link = temp.link->next;
+	}
+	return true; // other is lefter 
+}
+
+template<typename TI>
+	bool Iterator<const TI>::operator<(const Iterator<const TI>& other) {
 		return (!((*this) > other));
 }
 
@@ -407,7 +455,9 @@ Iterator<TL> List<TL>::randAccess() {
 
 template<typename TL>
 Iterator<const TL> List<TL>::begin() const {
-	return Iterator<const TL>(_head->next);
+	
+	Iterator<const TL> temp = (_head->next);
+	return temp;
 }
 
 template<typename TL>
