@@ -21,9 +21,21 @@
     <ClCompile Include="Topology.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\OOP\BoolMatrix\BoolMatrix.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\OOP\Boolean Vector\BooleanVector.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Topology.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\OOP\BoolMatrix\BoolMatrix.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\OOP\Boolean Vector\BooleanVector.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>

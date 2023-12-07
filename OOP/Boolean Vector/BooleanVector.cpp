@@ -1,5 +1,5 @@
 #include <assert.h>
-
+#include <cmath>
 #include "BooleanVector.h"
 
 BoolVector::BoolVector() {
@@ -67,10 +67,6 @@ bool BoolVector::getBit(const int index) const {
     return 1;
 }
 
-int BoolVector::cellNumber() const{
-    return size / CELL_SIZE + ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE);
-}
-
 int BoolVector::sizeOf() const {
     return size;
 }
@@ -104,7 +100,7 @@ void BoolVector::setBits(int index, int count, bool value) {
 }
 
 void BoolVector::setAll(bool value) {
-    for (int i = 0; i <= cellNumber()-1; i+=CELL_SIZE) {
+    for (int i = 0; i < cellNumber(); i++) {
         vector[i] = (value == 1 ? ((2<<CELL_SIZE)-1) : 0);
     }
 }
@@ -139,8 +135,8 @@ BoolVector& BoolVector::operator=(const BoolVector& other) {
         delete[] vector;
         vector = new unsigned char[cellNumber()];
     }
-    for (int i = 0; i < size; i++) {
-        vector[i/CELL_SIZE] = other.vector[i/CELL_SIZE];
+    for (int i = 0; i < cellNumber(); i++) {
+        vector[i] = other.vector[i];
     }
     return *this;
 }

@@ -43,7 +43,9 @@ public:
 
     bool getBit(int index) const;
 
-    int cellNumber() const;
+    int cellNumber() const {
+        return(size / CELL_SIZE + ceil(((size % CELL_SIZE) + 0.) / CELL_SIZE));
+    }
 
     int sizeOf() const;
 

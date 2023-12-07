@@ -125,11 +125,11 @@ BoolMatrix& BoolMatrix::operator=(const BoolMatrix& other){
 }
 
 BoolVector& BoolMatrix::operator[](int index){
-	assert(index > 0 && index < _line);
+	assert(index >= 0 && index < _line);
 	return matrix[index];
 }
 const BoolVector& BoolMatrix::operator[](int index) const{
-	assert(index > 0 && index < _line);
+	assert(index >= 0 && index < _line);
 	return matrix[index];
 }
 
