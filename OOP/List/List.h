@@ -126,7 +126,6 @@ bool Node<T>::operator<=(const Node<T>& other) {
 
 template<typename TI>
 class Iterator {
-	friend class List<TI>;
 
 public: 
 	Iterator(const Iterator& other);
@@ -147,7 +146,7 @@ public:
 	bool operator>(const Iterator& other);
 	bool operator<(const Iterator& other);
 
-	TI operator*() const;
+	const TI& operator*() const;
 	TI& operator*();
 
 private:
@@ -217,7 +216,7 @@ TI& Iterator<TI>::operator*() {
 }
 
 template<typename TI>
-TI Iterator<TI>::operator*() const {
+const TI& Iterator<TI>::operator*() const {
 	return link->get();
 }
 
@@ -238,123 +237,12 @@ bool Iterator<TI>::operator<(const Iterator<TI>& other) {
 	return (!((*this) > other));
 }
 
-template<typename TI>
-class Iterator<const TI> {
-	friend class List<const TI>;
-
-public:
-	Iterator(const Iterator& other);
-
-	Iterator(Node<TI>* node) {
-		this->link = node;
-	}
-
-	bool operator==(const Iterator& other);
-	bool operator!=(const Iterator& other);
-
-	bool isSibling(const Iterator& other);
-
-	Iterator& operator+= (int value);
-	Iterator& operator++();
-	Iterator operator++(int);
-	Iterator& operator-=(int value);
-	Iterator& operator--();
-	Iterator operator--(int);
-	bool operator>(const Iterator& other);
-	bool operator<(const Iterator& other);
-
-	TI operator*() const;
-
-private:
-	Node<TI>* link = nullptr;
-};
-
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-
-template<typename TI>
-Iterator<const TI>::Iterator(const Iterator& other) {
-	link = other.link;
-}
-
-template<typename TI>
-bool Iterator<const TI>::operator==(const Iterator& other) {
-	if (link == other.link)
-		return true;
-	return false;
-}
-
-template<typename TI>
-bool Iterator<const TI>::operator!=(const Iterator& other) {
-	return (!(*this == other));
-}
-
-template<typename TI>
-bool Iterator<const TI>::isSibling(const Iterator& other) {
-	Node<TI>* temp = link;
-	while (temp->prev != nullptr) {
-		temp = temp->prev; // travel to head
-	}
-	while (temp->next != nullptr) {
-		if (other.link == temp)
-			return true; // if other points to element in the same list
-		temp = temp->next; // travel through list
-	}
-	return false;
-}
-
-template<typename TI>
-Iterator<const TI>& Iterator<const TI>::operator++() {
-	*this = Iterator(this->link->next);
-	return *this;
-}
-
-template<typename TI>
-Iterator<const TI>& Iterator<const TI>::operator--() {
-	*this = Iterator(this->link->prev);
-	return *this;
-}
-
-template<typename TI>
-Iterator<const TI> Iterator<const TI>::operator++(int) {
-	Iterator temp(*this);
-	*this = Iterator(this->link->next);
-	return temp;
-}
-
-template<typename TI>
-Iterator<const TI> Iterator<const TI>::operator--(int) {
-	Iterator temp(*this);
-	*this = Iterator(this->link->prev);
-	return temp;
-}
-
-template<typename TI>
-TI Iterator<const TI>::operator*() const {
-	return link->get();
-}
-
-template<typename TI>
-bool Iterator<const TI>::operator>(const Iterator<const TI>& other) {
-	assert(isSibling(other));
-	Iterator temp = *this;
-	while (temp.link != nullptr) {
-		if (temp.link == other.link)
-			return false; // other is righter from or on this
-		temp.link = temp.link->next;
-	}
-	return true; // other is lefter 
-}
-
-template<typename TI>
-	bool Iterator<const TI>::operator<(const Iterator<const TI>& other) {
-		return (!((*this) > other));
-}
-
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
 
 template<typename TL>
 class List {
+public:
 	typedef Iterator<TL> iterator;
 	typedef Iterator<const TL> const_iterator;
 
@@ -389,18 +277,18 @@ public:
 	void print();
 	void set();
 
-	iterator search(TL value);
+	iterator search(const TL value);
 
 	Node<TL>* push(const TL value, int index = 0); // index = 0 after head, other index - before that index
 	Node<TL>* push(const TL value, Node<TL> * adress);
-	Node<TL>* pushKey(TL valueToInsert, TL keyToSearch); // inserts before KEY
-	Node<TL>* pushBack(TL value); // before tail
-	iterator push(TL value, iterator iter);
+	Node<TL>* pushKey(const TL valueToInsert, const TL keyToSearch); // inserts before KEY
+	Node<TL>* pushBack(const TL value); // before tail
+	iterator push(const TL value, iterator iter);
 
 	void deleteBefore(int index = 0);
 	void deleteIn(Node<TL>* node);
 	void deleteBack();
-	void deleteKey(TL key);
+	void deleteKey(const TL key);
 	void deleteBefore(iterator iter);
 	void deleteDiaposon(iterator first, iterator second);
 
@@ -411,7 +299,7 @@ public:
 
 	void clear();
 
-	void sort(List<TL>& array, int leftBorder=0, int rightBorder=-1, int level=31);
+	void sort();
 
 	void operator=(const List<TL>& other);
 	bool operator==(const List<TL>& other);
@@ -449,7 +337,6 @@ Iterator<TL> List<TL>::randAccess() {
 	for (int r = rand() % size, i = 0; i < r; i++) {
 		temp++;
 	}
-
 	return temp;
 }
 
@@ -559,7 +446,7 @@ void List<TL>::set() {
 }
 
 template<typename TL>
-Iterator<TL> List<TL>::search(TL value) {
+Iterator<TL> List<TL>::search(const TL value) {
 	Node<TL>* runner = _head->next;
 	while (runner != _tail) {
 		if (runner->body == value) {
@@ -595,7 +482,7 @@ Node<TL>* List<TL>::push(const TL value, Node<TL> *adress) {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::pushKey(TL valueToInsert, TL keyToSearch) {
+Node<TL>* List<TL>::pushKey(const TL valueToInsert, const TL keyToSearch) {
 	Node<TL>* temp = search(keyToSearch);
 	temp = push(valueToInsert, temp);
 	return temp;
@@ -603,7 +490,7 @@ Node<TL>* List<TL>::pushKey(TL valueToInsert, TL keyToSearch) {
 
 
 template<typename TL>
-Node<TL>* List<TL>::pushBack(TL value) {
+Node<TL>* List<TL>::pushBack(const TL value) {
 	Node<TL>* temp = new Node<TL>();
 	temp->body = value;
 	temp->next = _tail;
@@ -616,7 +503,7 @@ Node<TL>* List<TL>::pushBack(TL value) {
 }
 
 template<typename TL>
-Iterator<TL> List<TL>::push(TL value, iterator iter) {
+Iterator<TL> List<TL>::push(const TL value, iterator iter) {
 	Node<TL>* temp = iter.link;
 	push(value, temp);
 }
@@ -656,7 +543,7 @@ void List<TL>::deleteBefore(iterator iter) {
 }
 
 template<typename TL>
-void List<TL>::deleteKey(TL key) {
+void List<TL>::deleteKey(const TL key) {
 	Node<TL> *temp = search(key).link;
 	deleteIn(temp);
 }
@@ -787,41 +674,37 @@ std::istream& operator>>(std::istream& is, List<TL>& that) {
 }
 
 template<typename TL>
-void List<TL>::sort(List<TL>& array, int leftBorder, int rightBorder, int level) {
-
-	if ((rightBorder < leftBorder && level != 31) || level < 0)
-		return;
-
-	if (rightBorder == -1)
-		rightBorder = array.size - 1;
-
-	int i = leftBorder, j = rightBorder;
-	if (level == 31) { // ѕо первому разр€ду раздел€ем положительные и отрицательные, их будем провер€ть отдельно
-		while (i <= j) {
-			while (i <= j && ((array[i] >> 31) & 1) == 1) { // 1 == negative number
-				i++;
+void List<TL>::sort() {
+	int count = getSize();
+	int left = 0, right = count - 1; // лева€ и права€ границы сортируемой области массива
+	int flag = 1;  // флаг наличи€ перемещений
+	// ¬ыполнение цикла пока лева€ граница не сомкнЄтс€ с правой
+	// и пока в массиве имеютс€ перемещени€
+	while ((left < right) && flag > 0)
+	{
+		flag = 0;
+		for (int i = left; i < right; i++)  //двигаемс€ слева направо
+		{
+			if ((*this)[i] > (*this)[i + 1]) // если следующий элемент меньше текущего,
+			{             // мен€ем их местами
+				double t = (*this)[i];
+				(*this)[i] = (*this)[i + 1];
+				(*this)[i + 1] = t;
+				flag = 1;      // перемещени€ в этом цикле были
 			}
-			while (i <= j && ((array[j] >> 31) & 1) == 0) { // 0 == positive number
-				j--;
+		}
+		right--; // сдвигаем правую границу на предыдущий элемент
+		for (int i = right; i > left; i--)  //двигаемс€ справа налево
+		{
+			if ((*this)[i - 1] > (*this)[i]) // если предыдущий элемент больше текущего,
+			{            // мен€ем их местами
+				double t = (*this)[i];
+				(*this)[i] = (*this)[i - 1];
+				(*this)[i - 1] = t;
+				flag = 1;    // перемещени€ в этом цикле были
 			}
-			if (i < j)
-				std::swap(array[i++], array[j--]);
 		}
-		std::cout << std::endl;
-	}
-	else { // ќбычный процесс сортировки по разр€ду 
-
-		while (i <= j) {
-			while (i <= j && ((array[i] >> level) & 1) == 0)
-				i++;
-			while (i <= j && ((array[j] >> level) & 1) == 1)
-				j--;
-			if (i < j)
-				std::swap(array[i++], array[j--]);
-		}
-
+		left++; // сдвигаем левую границу на следующий элемент
 	}
 
-	sort(array, leftBorder, j, level - 1);
-	sort(array, i, rightBorder, level - 1);
 }
