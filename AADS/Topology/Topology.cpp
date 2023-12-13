@@ -34,7 +34,7 @@ std::vector<int> topologySortMatrix(BoolMatrix& matrix) {
 	std::vector<int> deletion;
 	while (matrix.lines() != 0 && matrix.columns() != 0) {
 		deletion.clear();
-
+		bool flag = 0;
 		for (int i = 0; i < matrix.columns(); i++) {
 			int count=0;
 			for (int j = 0; j < matrix.lines(); j++) {
@@ -50,6 +50,12 @@ std::vector<int> topologySortMatrix(BoolMatrix& matrix) {
 		for (int i = deletion.size()-1; i >=0 ; --i) {
 			deleteColumn(matrix, deletion[i]);
 			deleteLine(matrix, deletion[i]);
+			flag = 1;
+		}
+
+		if (flag == 0) {
+			assert(!"Graph has loop");
+			break;
 		}
 	}
 	return solve;

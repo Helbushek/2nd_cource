@@ -27,7 +27,7 @@ public:
 	
 	T& get();
 
-	T get() const;
+	const T& get() const;
 
 	operator T() const{
 		return body;
@@ -42,7 +42,7 @@ public:
 	bool operator<=(const Node<T>& other);
 
 private:
-	T body = 0;
+	T body;
 	Node<T>* next;
 	Node<T>* prev;
 };
@@ -62,7 +62,7 @@ T& Node<T>::get() {
 }
 
 template<typename T>
-T Node<T>::get() const{
+const T& Node<T>::get() const{
 	return body;
 }
 
@@ -78,7 +78,9 @@ std::istream& operator>>(std::istream& is, Node<T>& that) {
 
 template<typename T>
 Node<T>::Node() {
-	next = prev = nullptr;
+	body;
+	next = nullptr;
+	prev = nullptr;
 }
 
 template<typename T>
@@ -160,14 +162,12 @@ Iterator<TI>::Iterator(const Iterator& other) {
 
 template<typename TI>
 bool Iterator<TI>::operator==(const Iterator& other) {
-	if (link == other.link)
-		return true;
-	return false;
+	return link == other.link;
 }
 
 template<typename TI>
 bool Iterator<TI>::operator!=(const Iterator& other) {
-	return (!(*this == other));
+	return (link != other.link);
 }
 
 template<typename TI>
@@ -186,27 +186,27 @@ bool Iterator<TI>::isSibling(const Iterator& other) {
 
 template<typename TI>
 Iterator<TI>& Iterator<TI>::operator++() {
-	*this = Iterator(this->link->next);
+	this->link = this->link->next;
 	return *this;
 }
 
 template<typename TI>
 Iterator<TI>& Iterator<TI>::operator--() {
-	*this = Iterator(this->link->prev);
+	this->link = this->link->prev;
 	return *this;
 }
 
 template<typename TI>
 Iterator<TI> Iterator<TI>::operator++(int) {
 	Iterator temp(*this);
-	*this = Iterator(this->link->next);
+	this->link = this->link->next;
 	return temp;
 }
 
 template<typename TI>
 Iterator<TI> Iterator<TI>::operator--(int) {
 	Iterator temp(*this);
-	*this = Iterator(this->link->prev);
+	this->link = this->link->prev;
 	return temp;
 }
 
@@ -250,11 +250,9 @@ public:
 
 	iterator begin();
 	iterator end();
-	iterator randAccess();
 
 	const_iterator begin() const;
 	const_iterator end() const;
-	const_iterator randAccess() const;
 
 public:
 	List();
@@ -266,50 +264,51 @@ public:
 	~List() {
 		clear();
 
-		delete[] _head;
-		delete[] _tail;
+		delete _head;
+		delete _tail;
 	}
 
 	int getSize() const;
 
 	void swap(List<TL>& other);
 
-	void print();
+	void print() const;
 	void set();
 
-	iterator search(const TL value);
+	iterator search(const TL& value) const;
 
-	Node<TL>* push(const TL value, int index = 0); // index = 0 after head, other index - before that index
-	Node<TL>* push(const TL value, Node<TL> * adress);
-	Node<TL>* pushKey(const TL valueToInsert, const TL keyToSearch); // inserts before KEY
-	Node<TL>* pushBack(const TL value); // before tail
-	iterator push(const TL value, iterator iter);
+	iterator push(const TL& value, int index = 0); // index = 0 after head, other index - before that index
+	iterator pushKey(const TL& valueToInsert, const TL& keyToSearch); // inserts before KEY
+	iterator pushBack(const TL& value); // before tail
+	iterator push(const TL& value, iterator iter);
 
 	void deleteBefore(int index = 0);
-	void deleteIn(Node<TL>* node);
+	void deleteIn(iterator node);
 	void deleteBack();
 	void deleteKey(const TL key);
 	void deleteBefore(iterator iter);
 	void deleteDiaposon(iterator first, iterator second);
 
-	Node<TL>* min();
-	Node<TL>* max();
+	iterator min() const;
+	iterator max() const;
 
-	bool isEmpty();
+	bool isEmpty() const;
 
 	void clear();
 
 	void sort();
 
 	void operator=(const List<TL>& other);
-	bool operator==(const List<TL>& other);
-	bool operator!=(const List<TL>& other);
+	bool operator==(const List<TL>& other) const;
+	bool operator!=(const List<TL>& other) const;
 	void operator+=(const List<TL>& other);
 	List<TL> operator+(const List<TL>& other);
 	TL& operator[](int index);
 	const TL operator[](int index) const;
 
 private:
+
+	iterator push(const TL& value, Node<TL>* adress);
 	void construct();
 
 	Node<TL>* _head;
@@ -330,19 +329,8 @@ Iterator<TL> List<TL>::end() {
 	return Iterator<TL>(_tail);
 }
 
-template<typename TL> 
-Iterator<TL> List<TL>::randAccess() {
-	srand(time(0));
-	Iterator<TL> temp = begin();
-	for (int r = rand() % size, i = 0; i < r; i++) {
-		temp++;
-	}
-	return temp;
-}
-
 template<typename TL>
 Iterator<const TL> List<TL>::begin() const {
-	
 	Iterator<const TL> temp = (_head->next);
 	return temp;
 }
@@ -350,14 +338,6 @@ Iterator<const TL> List<TL>::begin() const {
 template<typename TL>
 Iterator<const TL> List<TL>::end() const{
 	return Iterator<const TL>(_tail);
-}
-
-template<typename TL>
-Iterator<const TL> List<TL>::randAccess() const{
-	srand(time(0));
-	Iterator<const TL> temp = begin() + rand() % size;
-
-	return temp;
 }
 
 template<typename TL> 
@@ -409,8 +389,9 @@ List<TL>::List(const Array<TL>& other) {
 template<typename TL>
 List<TL>::List(const List<TL> &other) {
 	construct();
-	for (int i = 0; i < size; i++) {
-
+	Iterator<TL> runner = other._head->next;
+	while (runner != other._tail) {
+		(*this).pushBack(*(runner++));
 	}
 }
 
@@ -428,7 +409,7 @@ void List<TL>::swap(List<TL>& other) {
 }
 
 template<typename TL>
-void List<TL>::print() {
+void List<TL>::print() const{
 	Node<TL>* runner = _head->next;
 	while(runner!=_tail) {
 		std::cout << runner->body << ' ';
@@ -446,7 +427,7 @@ void List<TL>::set() {
 }
 
 template<typename TL>
-Iterator<TL> List<TL>::search(const TL value) {
+Iterator<TL> List<TL>::search(const TL& value) const{
 	Node<TL>* runner = _head->next;
 	while (runner != _tail) {
 		if (runner->body == value) {
@@ -459,7 +440,7 @@ Iterator<TL> List<TL>::search(const TL value) {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::push(const TL value, int index) {
+Iterator<TL> List<TL>::push(const TL& value, int index) {
 	assert(index >= 0 && index < size);
 	Node<TL>* temp = _head->next; // 0`th element
 	for (int i = 0; i < index; i++) {
@@ -470,7 +451,7 @@ Node<TL>* List<TL>::push(const TL value, int index) {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::push(const TL value, Node<TL> *adress) {
+Iterator<TL> List<TL>::push(const TL& value, Node<TL>* adress) {
 	Node<TL>* temp = new Node<TL>();
 	temp->body = value;
 	temp->next = adress;
@@ -482,7 +463,7 @@ Node<TL>* List<TL>::push(const TL value, Node<TL> *adress) {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::pushKey(const TL valueToInsert, const TL keyToSearch) {
+Iterator<TL> List<TL>::pushKey(const TL& valueToInsert, const TL& keyToSearch) {
 	Node<TL>* temp = search(keyToSearch);
 	temp = push(valueToInsert, temp);
 	return temp;
@@ -490,7 +471,7 @@ Node<TL>* List<TL>::pushKey(const TL valueToInsert, const TL keyToSearch) {
 
 
 template<typename TL>
-Node<TL>* List<TL>::pushBack(const TL value) {
+Iterator<TL> List<TL>::pushBack(const TL& value) {
 	Node<TL>* temp = new Node<TL>();
 	temp->body = value;
 	temp->next = _tail;
@@ -503,7 +484,7 @@ Node<TL>* List<TL>::pushBack(const TL value) {
 }
 
 template<typename TL>
-Iterator<TL> List<TL>::push(const TL value, iterator iter) {
+Iterator<TL> List<TL>::push(const TL& value, iterator iter) {
 	Node<TL>* temp = iter.link;
 	push(value, temp);
 }
@@ -519,8 +500,9 @@ void List<TL>::deleteBefore(int index) {
 }
 
 template<typename TL>
-void List<TL>::deleteIn(Node<TL>* node) {
-	Node<TL>* temp = node;
+void List<TL>::deleteIn(List<TL>::iterator node) {
+	assert(node.isSibling(_head->next));
+	Node<TL>* temp = node->link;
 	temp->prev->next = temp->next;
 	temp->next->prev = temp->prev;
 	delete[] temp;
@@ -538,6 +520,7 @@ void List<TL>::deleteBack() {
 
 template<typename TL>
 void List<TL>::deleteBefore(iterator iter) {
+	assert(iter.isSibling(_head->next));
 	Node<TL>* temp = iter.link;
 	deleteIn(temp->prev);
 }
@@ -567,7 +550,7 @@ void List<TL>::deleteDiaposon(iterator first, iterator second) {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::min() {
+Iterator<TL> List<TL>::min() const{
 	Node<TL> min = _head->next;
 	for (int i = 1; i < size; i++) {
 		if (min.body > (*this)[i].body)
@@ -577,7 +560,7 @@ Node<TL>* List<TL>::min() {
 }
 
 template<typename TL>
-Node<TL>* List<TL>::max() {
+Iterator<TL> List<TL>::max() const{
 	Node<TL> max = _head->next;
 	for (int i = 1; i < size; i++) {
 		if (max.body < (*this)[i].body)
@@ -587,7 +570,7 @@ Node<TL>* List<TL>::max() {
 }
 
 template<typename TL>
-bool List<TL>::isEmpty() {
+bool List<TL>::isEmpty() const{
 	return (size == 0) ? true : false;
 }
 
@@ -603,6 +586,7 @@ template<typename TL>
 void List<TL>::operator=(const List<TL>& other) {
 	if (size != other.size) {
 		clear();
+		construct();
 	}
 	for (int i = 0; i < other.size; i++) {
 		pushBack(other[i].body);
@@ -610,7 +594,7 @@ void List<TL>::operator=(const List<TL>& other) {
 }
 
 template<typename TL>
-bool List<TL>::operator==(const List<TL>& other) {
+bool List<TL>::operator==(const List<TL>& other) const{
 	if (size != other.size)
 		return false;
 	for (int i = 0; i < size; i++) {
@@ -621,7 +605,7 @@ bool List<TL>::operator==(const List<TL>& other) {
 }
 
 template<typename TL>
-bool List<TL>::operator!=(const List<TL>& other) {
+bool List<TL>::operator!=(const List<TL>& other) const{
 	return(!((*this) == other));
 }
 
@@ -641,6 +625,7 @@ List<TL> List<TL>::operator+(const List<TL>& other) {
 
 template<typename TL>
 TL& List<TL>::operator[](int index) {
+	assert(index >= 0 && index < size);
 	Node<TL>* temp = _head->next;
 	for (int i = 0; i < index; i++) {
 		temp = temp->next;
@@ -650,6 +635,7 @@ TL& List<TL>::operator[](int index) {
 
 template<typename TL>
 const TL List<TL>::operator[](int index) const{
+	assert(index >= 0 && index < size);
 	const Node<TL>* temp = _head->next;
 	for (int i = 0; i < index; i++) {
 		temp = temp->next;
@@ -706,5 +692,4 @@ void List<TL>::sort() {
 		}
 		left++; // сдвигаем левую границу на следующий элемент
 	}
-
 }
