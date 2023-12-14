@@ -7,7 +7,7 @@
 template<typename TL>
 class List {
 public:
-	template<typename TL>
+	template<typename TI>
 	class Iterator;
 
 	template<typename TL>
@@ -88,8 +88,7 @@ private:
 
 
 template<typename TI>
-template<typename TL>
-class List<TL>::Iterator {
+class List<TI>::Iterator<TI> {
 
 public:
 	Iterator(const Node<TI>* node) {
@@ -119,10 +118,10 @@ private:
 };
 
 template <typename TL>
-class Node {
+class List<TL>::Node {
 	friend class List<TL>;
-	friend class Iterator<TL>;
-	friend class Iterator<const TL>;
+	friend class List<TL>::Iterator<TL>;
+	friend class List<const TL>::Iterator<const TL>;
 public:
 	Node();
 	Node(const TL value);
@@ -151,7 +150,7 @@ private:
 };
 
 template<typename TL>
-void Node<TL>::swap(Node& other) {
+void List<TL>::Node<TL>::swap(Node& other) {
 	std::swap(body, other.body);
 	std::swap(next, other.next);
 	std::swap(prev, other.prev);
