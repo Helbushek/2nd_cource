@@ -74,6 +74,7 @@ public:
 	const TL operator[](int index) const;
 
 private:
+	Node* underKillIterator(Node* dead);
 
 	Iterator push(const TL& value, Node* adress);
 	void construct();
@@ -82,6 +83,8 @@ private:
 	Node* _tail;
 	int size;
 };
+
+
 
 
 template<typename TI>
@@ -93,9 +96,11 @@ public:
 	}
 	Iterator(Node* node) {
 		this->link = node;
+		node->connections.push_back(this);
 	}
 	Iterator(const Iterator& other) {
-		this->link = other.link;;
+		this->link = other.link;
+		this->link->connections.push_back(this);
 	}
 
 	bool operator==(const Iterator& other);
@@ -114,6 +119,10 @@ public:
 	TI& operator*();
 
 private:
+	void eraseSelfFromNode() {
+		this->link->connections.erase(std::remove(this->link->connections.begin(), this->link->connections.end(), this), this->link->connections.end());
+	}
+
 	Node* link;
 };
 
@@ -146,7 +155,18 @@ private:
 	TL body;
 	Node* next;
 	Node* prev;
+	std::vector<Iterator*> connections;
 };
+
+template<typename TL> typename
+List<TL>::Node* List<TL>::underKillIterator(Node* dead) {
+	auto iter = dead->connections.begin();
+	while (iter != dead->connections.end()) {
+		(*iter++)++;
+	}
+	dead->connections.clear();
+	return dead->next;
+}
 
 template<typename TL>
 void List<TL>::Node::swap(List<TL>::Node& other) {
@@ -249,27 +269,35 @@ bool List<TL>::Iterator::isSibling(const Iterator& other) {
 
 template<typename TL> typename 
 List<TL>::Iterator& List<TL>::Iterator::operator++() {
+	eraseSelfFromNode();
 	this->link = this->link->next;
+	this->link->connections.push_back(this);
 	return *this;
 }
 
 template<typename TL> typename
 List<TL>::Iterator& List<TL>::Iterator::operator--() {
+	eraseSelfFromNode();
 	this->link = this->link->prev;
+	this->link->connections.push_back(this);
 	return *this;
 }
 
 template<typename TL> typename
 List<TL>::Iterator List<TL>::Iterator::operator++(int) {
-	Iterator temp(*this);
+	Iterator temp(*this); 
+	eraseSelfFromNode();
 	this->link = this->link->next;
+	this->link->connections.push_back(this);
 	return temp;
 }
 
 template<typename TL> typename
 List<TL>::Iterator List<TL>::Iterator::operator--(int) {
 	Iterator temp(*this);
+	eraseSelfFromNode();
 	this->link = this->link->prev;
+	this->link->connections.push_back(this);
 	return temp;
 }
 
@@ -483,8 +511,9 @@ void List<TL>::deleteBefore(int index) {
 
 template<typename TL>
 void List<TL>::deleteIn(List<TL>::Iterator node) {
-	assert(node.isSibling(_head->next));
+	assert(node.isSibling(_head->next));	
 	Node* temp = node.link;
+	underKillIterator(temp);
 	temp->prev->next = temp->next;
 	temp->next->prev = temp->prev;
 	delete[] temp;
@@ -494,6 +523,7 @@ void List<TL>::deleteIn(List<TL>::Iterator node) {
 template<typename TL>
 void List<TL>::deleteBack() {
 	Node* temp = _tail->prev;
+	underKillIterator(temp);
 	temp->prev->next = _tail;
 	_tail->prev = temp->prev;
 	delete temp;
