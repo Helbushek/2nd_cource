@@ -6,135 +6,97 @@
 #include <time.h>
 #include "Array.h"
 
-
 template<typename TL>
-class List;
+class Node;
 
 template<typename TL>
 class Iterator;
 
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-
-template <typename T>
-class Node {
-	friend class List<T>;
-	friend class Iterator<T>;
-	friend class Iterator<const T>;
+template<typename TL>
+class List {
 public:
-	Node();
-	Node(const T value);
-	Node(const Node<T> &other);
-	
-	T& get();
+	using iterator = Iterator<TL>;
+	using const_iterator = Iterator<const TL>;
 
-	const T& get() const;
+public:
 
-	operator T() const{
-		return body;
+	iterator begin();
+	iterator end();
+
+	const_iterator begin() const;
+	const_iterator end() const;
+
+public:
+	List();
+	List(int nodesNumber, TL value);
+	List(const std::vector<TL>& other);
+	List(const Array<TL>& other);
+	List(const List<TL>& other);
+
+	~List() {
+		clear();
+
+		delete _head;
+		delete _tail;
 	}
 
-	void swap(Node& other);
+	int getSize() const;
 
-	bool operator>(const Node<T>& other);
-	bool operator<(const Node<T>& other);
+	void swap(List<TL>& other);
 
-	bool operator>=(const Node<T>& other);
-	bool operator<=(const Node<T>& other);
+	void print() const;
+	void set();
+
+	iterator search(const TL& value) const;
+
+	iterator push(const TL& value, int index = 0); // index = 0 after head, other index - before that index
+	iterator pushKey(const TL& valueToInsert, const TL& keyToSearch); // inserts before KEY
+	iterator pushBack(const TL& value); // before tail
+	iterator push(const TL& value, iterator iter);
+
+	void deleteBefore(int index = 0);
+	void deleteIn(iterator node);
+	void deleteBack();
+	void deleteKey(const TL key);
+	void deleteBefore(iterator iter);
+	void deleteDiaposon(iterator first, iterator second);
+
+	iterator min() const;
+	iterator max() const;
+
+	bool isEmpty() const;
+
+	void clear();
+
+	void sort();
+
+	void operator=(const List<TL>& other);
+	bool operator==(const List<TL>& other) const;
+	bool operator!=(const List<TL>& other) const;
+	void operator+=(const List<TL>& other);
+	List<TL> operator+(const List<TL>& other);
+	TL& operator[](int index);
+	const TL operator[](int index) const;
 
 private:
-	T body;
-	Node<T>* next;
-	Node<T>* prev;
+
+	iterator push(const TL& value, Node<TL>* adress);
+	void construct();
+
+	Node<TL>* _head;
+	Node<TL>* _tail;
+	int size;
 };
 
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-
-template<typename T>
-void Node<T>::swap(Node& other) {
-	std::swap(body, other.body);
-	std::swap(next, other.next);
-	std::swap(prev, other.prev);
-}
-
-template<typename T>
-T& Node<T>::get() {
-	return body;
-}
-
-template<typename T>
-const T& Node<T>::get() const{
-	return body;
-}
-
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const Node<T>& that) {
-	os << that.body;
-}
-
-template<typename T>
-std::istream& operator>>(std::istream& is, Node<T>& that) {
-	is >> that.body;
-}
-
-template<typename T>
-Node<T>::Node() {
-	body;
-	next = nullptr;
-	prev = nullptr;
-}
-
-template<typename T>
-Node<T>::Node(T value) {
-	next = prev = nullptr;
-	body = value;
-}
-
-template<typename T>
-Node<T>::Node(const Node<T> &other) {
-	next = other.next;
-	prev = other.prev;
-	body = other.body;
-}
-
-template<typename T>
-bool Node<T>::operator>(const Node<T>& other) {
-	if (body > other.body)
-		return true;
-	return false;
-}
-
-template<typename T>
-bool Node<T>::operator<(const Node<T>& other) {
-	if (body < other.body)
-		return true;
-	return false;
-}
-
-template<typename T>
-bool Node<T>::operator>=(const Node<T>& other) {
-	if (body >= other.body)
-		return true;
-	return false;
-}
-
-template<typename T>
-bool Node<T>::operator<=(const Node<T>& other) {
-	if (body <= other.body)
-		return true;
-	return false;
-}
-
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
 template<typename TI>
 class Iterator {
 
-public: 
-	Iterator(const Iterator& other);
-
+public:
 	Iterator(Node<TI>* node) {
 		this->link = node;
 	}
+	Iterator(const Iterator& other);
 
 	bool operator==(const Iterator& other);
 	bool operator!=(const Iterator& other);
@@ -154,6 +116,119 @@ public:
 private:
 	Node<TI>* link = nullptr;
 };
+
+template <typename TL>
+class Node {
+	friend class List<TL>;
+	friend class Iterator<TL>;
+	friend class Iterator<const TL>;
+public:
+	Node();
+	Node(const TL value);
+	Node(const Node<TL> &other);
+	
+	TL& get();
+
+	const TL& get() const;
+
+	operator TL() const{
+		return body;
+	}
+
+	void swap(Node& other);
+
+	bool operator>(const Node<TL>& other);
+	bool operator<(const Node<TL>& other);
+
+	bool operator>=(const Node<TL>& other);
+	bool operator<=(const Node<TL>& other);
+
+private:
+	TL body;
+	Node<TL>* next;
+	Node<TL>* prev;
+};
+
+// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+
+template<typename TL>
+void Node<TL>::swap(Node& other) {
+	std::swap(body, other.body);
+	std::swap(next, other.next);
+	std::swap(prev, other.prev);
+}
+
+template<typename TL>
+TL& Node<TL>::get() {
+	return body;
+}
+
+template<typename TL>
+const TL& Node<TL>::get() const{
+	return body;
+}
+
+template<typename TL>
+std::ostream& operator<<(std::ostream& os, const Node<TL>& that) {
+	os << that.body;
+}
+
+template<typename TL>
+std::istream& operator>>(std::istream& is, Node<TL>& that) {
+	is >> that.body;
+}
+
+template<typename TL>
+Node<TL>::Node() {
+	body;
+	next = nullptr;
+	prev = nullptr;
+}
+
+template<typename TL>
+Node<TL>::Node(TL value) {
+	next = prev = nullptr;
+	body = value;
+}
+
+template<typename TL>
+Node<TL>::Node(const Node<TL> &other) {
+	next = other.next;
+	prev = other.prev;
+	body = other.body;
+}
+
+template<typename TL>
+bool Node<TL>::operator>(const Node<TL>& other) {
+	if (body > other.body)
+		return true;
+	return false;
+}
+
+template<typename TL>
+bool Node<TL>::operator<(const Node<TL>& other) {
+	if (body < other.body)
+		return true;
+	return false;
+}
+
+template<typename TL>
+bool Node<TL>::operator>=(const Node<TL>& other) {
+	if (body >= other.body)
+		return true;
+	return false;
+}
+
+template<typename TL>
+bool Node<TL>::operator<=(const Node<TL>& other) {
+	if (body <= other.body)
+		return true;
+	return false;
+}
+
+// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+
+
 
 template<typename TI>
 Iterator<TI>::Iterator(const Iterator& other) {
@@ -240,112 +315,38 @@ bool Iterator<TI>::operator<(const Iterator<TI>& other) {
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
 
-template<typename TL>
-class List {
-public:
-	typedef Iterator<TL> iterator;
-	typedef Iterator<const TL> const_iterator;
 
-public:
-
-	iterator begin();
-	iterator end();
-
-	const_iterator begin() const;
-	const_iterator end() const;
-
-public:
-	List();
-	List(int nodesNumber, TL value);
-	List(const std::vector<TL>& other);
-	List(const Array<TL>& other);
-	List(const List<TL> &other);
-
-	~List() {
-		clear();
-
-		delete _head;
-		delete _tail;
-	}
-
-	int getSize() const;
-
-	void swap(List<TL>& other);
-
-	void print() const;
-	void set();
-
-	iterator search(const TL& value) const;
-
-	iterator push(const TL& value, int index = 0); // index = 0 after head, other index - before that index
-	iterator pushKey(const TL& valueToInsert, const TL& keyToSearch); // inserts before KEY
-	iterator pushBack(const TL& value); // before tail
-	iterator push(const TL& value, iterator iter);
-
-	void deleteBefore(int index = 0);
-	void deleteIn(iterator node);
-	void deleteBack();
-	void deleteKey(const TL key);
-	void deleteBefore(iterator iter);
-	void deleteDiaposon(iterator first, iterator second);
-
-	iterator min() const;
-	iterator max() const;
-
-	bool isEmpty() const;
-
-	void clear();
-
-	void sort();
-
-	void operator=(const List<TL>& other);
-	bool operator==(const List<TL>& other) const;
-	bool operator!=(const List<TL>& other) const;
-	void operator+=(const List<TL>& other);
-	List<TL> operator+(const List<TL>& other);
-	TL& operator[](int index);
-	const TL operator[](int index) const;
-
-private:
-
-	iterator push(const TL& value, Node<TL>* adress);
-	void construct();
-
-	Node<TL>* _head;
-	Node<TL>* _tail;
-	int size;
-};
 
 // ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
 
-template<typename TL>
-Iterator<TL> List<TL>::begin() {
-	return Iterator<TL>(_head->next);
+template<typename TL> typename
+List<TL>::iterator List<TL>::begin() {
+	return iterator(_head->next);
 }
 
-template<typename TL>
-Iterator<TL> List<TL>::end() {
-	return Iterator<TL>(_tail);
+template<typename TL> typename
+List<TL>::iterator List<TL>::end() {
+	return iterator(_tail);
 }
 
-template<typename TL>
+template<typename TL> typename
 Iterator<const TL> List<TL>::begin() const {
 	Iterator<const TL> temp = (_head->next);
 	return temp;
 }
 
-template<typename TL>
-Iterator<const TL> List<TL>::end() const{
-	return Iterator<const TL>(_tail);
+template<typename TL> typename
+List<TL>::const_iterator List<TL>::end() const{
+	return const_iterator(_tail);
 }
 
 template<typename TL> 
 void List<TL>::construct() {
 	if (_head != nullptr || _tail != nullptr) {
 		clear();
-		delete[] _head;
-		delete[] _tail;
+		delete _head;
+		delete _tail;
 	}
 	size = 0;
 	_head = new Node<TL>();
@@ -372,7 +373,7 @@ template<typename TL>
 List<TL>::List(const std::vector<TL>& other) {
 	construct();
 
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < other.size(); i++) {
 		pushBack(other[i]);
 	}
 }
@@ -586,10 +587,9 @@ template<typename TL>
 void List<TL>::operator=(const List<TL>& other) {
 	if (size != other.size) {
 		clear();
-		construct();
 	}
 	for (int i = 0; i < other.size; i++) {
-		pushBack(other[i].body);
+		pushBack(other[i]);
 	}
 }
 
@@ -598,7 +598,7 @@ bool List<TL>::operator==(const List<TL>& other) const{
 	if (size != other.size)
 		return false;
 	for (int i = 0; i < size; i++) {
-		if ((*this)[i].body != other[i].body)
+		if ((*this)[i] != other[i])
 			return false;
 	}
 	return true;

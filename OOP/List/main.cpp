@@ -2,7 +2,13 @@
 #include "List.h"
 
 int main() {
-	List<std::string> string;
+	std::vector<std::string> temp{ "asdf", "jhgf" };
+	List<std::string> string(temp), stringCopy(temp);
+
+	stringCopy = string;
+	assert(string == stringCopy);
+
+	std::cout << string;
 
 	return(0);
 }
