@@ -2,19 +2,17 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
-#include <random>
-#include <time.h>
 #include "Array.h"
-
-template<typename TL>
-class Node;
-
-template<typename TL>
-class Iterator;
 
 template<typename TL>
 class List {
 public:
+	template<typename TL>
+	class Iterator;
+
+	template<typename TL>
+	class Node;
+
 	using iterator = Iterator<TL>;
 	using const_iterator = Iterator<const TL>;
 
@@ -90,13 +88,16 @@ private:
 
 
 template<typename TI>
-class Iterator {
+template<typename TL>
+class List<TL>::Iterator {
 
 public:
-	Iterator(Node<TI>* node) {
+	Iterator(const Node<TI>* node) {
 		this->link = node;
 	}
-	Iterator(const Iterator& other);
+	Iterator(const Iterator& other) {
+		this->link = node;
+	}
 
 	bool operator==(const Iterator& other);
 	bool operator!=(const Iterator& other);
@@ -148,8 +149,6 @@ private:
 	Node<TL>* next;
 	Node<TL>* prev;
 };
-
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 
 template<typename TL>
 void Node<TL>::swap(Node& other) {
@@ -225,10 +224,6 @@ bool Node<TL>::operator<=(const Node<TL>& other) {
 		return true;
 	return false;
 }
-
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-
-
 
 template<typename TI>
 Iterator<TI>::Iterator(const Iterator& other) {
@@ -312,17 +307,10 @@ bool Iterator<TI>::operator<(const Iterator<TI>& other) {
 	return (!((*this) > other));
 }
 
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-
-
-
-
-// ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-
-
 template<typename TL> typename
 List<TL>::iterator List<TL>::begin() {
-	return iterator(_head->next);
+	iterator temp(_head->next);
+	return temp;
 }
 
 template<typename TL> typename
@@ -585,9 +573,10 @@ void List<TL>::clear() {
 
 template<typename TL>
 void List<TL>::operator=(const List<TL>& other) {
-	if (size != other.size) {
-		clear();
+	if (this == &other) {
+		return;
 	}
+	clear();
 	for (int i = 0; i < other.size; i++) {
 		pushBack(other[i]);
 	}
@@ -673,7 +662,7 @@ void List<TL>::sort() {
 		{
 			if ((*this)[i] > (*this)[i + 1]) // если следующий элемент меньше текущего,
 			{             // меняем их местами
-				double t = (*this)[i];
+				TL t = (*this)[i];
 				(*this)[i] = (*this)[i + 1];
 				(*this)[i + 1] = t;
 				flag = 1;      // перемещения в этом цикле были
@@ -684,7 +673,7 @@ void List<TL>::sort() {
 		{
 			if ((*this)[i - 1] > (*this)[i]) // если предыдущий элемент больше текущего,
 			{            // меняем их местами
-				double t = (*this)[i];
+				TL t = (*this)[i];
 				(*this)[i] = (*this)[i - 1];
 				(*this)[i - 1] = t;
 				flag = 1;    // перемещения в этом цикле были

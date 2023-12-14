@@ -5,7 +5,7 @@ int main() {
 	std::vector<std::string> temp{ "asdf", "jhgf" };
 	List<std::string> string(temp), stringCopy(temp);
 
-	stringCopy = string;
+	string = stringCopy;
 	assert(string == stringCopy);
 
 	std::cout << string;
