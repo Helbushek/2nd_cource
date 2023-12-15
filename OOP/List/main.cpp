@@ -3,12 +3,12 @@
 
 int main() {
 	std::vector<std::string> temp{ "asdf", "jhgf" };
-	List<std::string> string(temp), stringCopy(temp);
+	List<std::string> stringCopy(temp);
+	const List<std::string> string(temp);
 
-	string = stringCopy;
-	assert(string == stringCopy);
-
-	std::cout << string;
+	for (List<std::string>::Constiterator iter = string.begin(); iter != string.end(); iter++) {
+		std::cout << *iter << ' ';
+	}
 
 	return(0);
 }
