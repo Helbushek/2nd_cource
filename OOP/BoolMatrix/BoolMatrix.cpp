@@ -188,10 +188,8 @@ std::ostream& operator<<(std::ostream& os, const BoolMatrix& matrix) {
 }
 
 std::istream& operator>>(std::istream& is, BoolMatrix& matrix) {
-	std::vector<std::string> temp(matrix.lines());
 	for (int i = 0; i < matrix.lines(); i++) {
-		is >> temp[i];
-		matrix[i] = temp[i].c_str();
+		is >> matrix[i];
 	}
 
 	return is;

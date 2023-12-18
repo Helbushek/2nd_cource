@@ -118,6 +118,10 @@ public:
 	const TL& operator*() const;
 	TL& operator*();
 
+	Node* getNode() {
+		return link;
+	}
+
 private:
 
 	Node* link;

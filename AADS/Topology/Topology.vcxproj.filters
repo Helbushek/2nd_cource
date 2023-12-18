@@ -27,6 +27,9 @@
     <ClCompile Include="..\..\OOP\Boolean Vector\BooleanVector.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\OOP\Array\Array.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Topology.h">
@@ -36,6 +39,12 @@
       <Filter>Исходные файлы</Filter>
     </ClInclude>
     <ClInclude Include="..\..\OOP\Boolean Vector\BooleanVector.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\OOP\List\List.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\OOP\Array\Array.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>

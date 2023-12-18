@@ -297,6 +297,5 @@ std::istream& operator>>(std::istream& is, BoolVector& vector) {
     std::string temp;
     is >> temp;
     vector = BoolVector(temp.c_str());
-
     return is;
 }

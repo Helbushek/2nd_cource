@@ -61,6 +61,6 @@ std::vector<int> topologySortMatrix(BoolMatrix& matrix) {
 	return solve;
 }
 
-void topologySortList(std::list<graph> graph) {
+void topologySortList(List<graph> graph) {
 
 }

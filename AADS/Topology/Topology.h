@@ -1,12 +1,13 @@
 #pragma once
-#include <list>
 #include <vector>
 #include "BoolMatrix.h"
+#include "List.h"
+
 
 struct graph {
-	std::list<graph*> trailer;
-	int st;
-	int key;
+	List<List<graph>::Node*> trailer;
+	int st=0;
+	int key=0;
 };
 
 BoolMatrix deleteColumn(BoolMatrix& matrix, int index);
@@ -15,4 +16,4 @@ BoolMatrix deleteLine(BoolMatrix& matrix, int index);
 
 std::vector<int> topologySortMatrix(BoolMatrix& matrix);
 
-void topologySortList(std::list<graph> graph);
+void topologySortList(List<graph> graph);

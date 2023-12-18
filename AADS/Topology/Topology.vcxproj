@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Александр\2nd_cource\OOP\Boolean Vector;C:\Users\Александр\2nd_cource\OOP\BoolMatrix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Александр\2nd_cource\OOP\Array;C:\Users\Александр\2nd_cource\OOP\List;C:\Users\Александр\2nd_cource\OOP\Boolean Vector;C:\Users\Александр\2nd_cource\OOP\BoolMatrix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Александр\2nd_cource\OOP\Boolean Vector;C:\Users\Александр\2nd_cource\OOP\BoolMatrix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Александр\2nd_cource\OOP\Array;C:\Users\Александр\2nd_cource\OOP\List;C:\Users\Александр\2nd_cource\OOP\Boolean Vector;C:\Users\Александр\2nd_cource\OOP\BoolMatrix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,14 +129,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\OOP\Array\Array.cpp" />
     <ClCompile Include="..\..\OOP\Boolean Vector\BooleanVector.cpp" />
     <ClCompile Include="..\..\OOP\BoolMatrix\BoolMatrix.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Topology.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\OOP\Array\Array.h" />
     <ClInclude Include="..\..\OOP\Boolean Vector\BooleanVector.h" />
     <ClInclude Include="..\..\OOP\BoolMatrix\BoolMatrix.h" />
+    <ClInclude Include="..\..\OOP\List\List.h" />
     <ClInclude Include="Topology.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
