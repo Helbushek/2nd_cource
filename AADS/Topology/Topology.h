@@ -3,9 +3,10 @@
 #include "BoolMatrix.h"
 #include "List.h"
 
+struct Trailer;
 
-struct graph {
-	List<List<graph>::Node*> trailer;
+struct Graph {
+	List<List<Graph>::_iterator> trailer;
 	int st=0;
 	int key=0;
 };
@@ -16,4 +17,4 @@ BoolMatrix deleteLine(BoolMatrix& matrix, int index);
 
 std::vector<int> topologySortMatrix(BoolMatrix& matrix);
 
-void topologySortList(List<graph> graph);
+bool topologySortList(List<Graph>& graph);

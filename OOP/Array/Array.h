@@ -15,7 +15,7 @@ public:
 public:
 
 
-	Array(const int _size = 0);
+	explicit Array(const int _size = 0);
 	Array(const int _size, const ItemType &fillNumber);
 	~Array();
 	Array(const Array &array);

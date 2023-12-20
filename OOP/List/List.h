@@ -11,6 +11,7 @@ public:
 	class Iterator;
 
 	class Node;
+	class _iterator;
 
 	using iterator = Iterator<TL>;
 	using Constiterator = Iterator<const TL>;
@@ -122,10 +123,36 @@ public:
 		return link;
 	}
 
-private:
+protected:
 
 	Node* link;
 };
+
+template<typename TL>
+class List<TL>::_iterator : public Iterator<TL>
+{
+public:
+	_iterator() {
+		this->link = nullptr;
+	}
+	_iterator(const Iterator<TL>& other) {
+		this->link = other.link;
+	}
+
+	void move(_iterator& to);
+};
+
+template<typename TL> 
+void List<TL>::_iterator::move(_iterator& to) {
+	this->link->prev->next = this->link->next;
+	this->link->next->prev = this->link->next;
+
+	to.link->prev->next = this->link;
+	to.link->prev = this->link;
+
+	this->link->next = to.link;
+	this->link->prev = to.link->prev;
+}
 
 template <typename TL>
 class List<TL>::Node {
@@ -349,7 +376,9 @@ template<typename TL>
 void List<TL>::construct() {
 	if (_head != nullptr || _tail != nullptr) {
 		clear();
+		if (_head != nullptr)
 		delete _head;
+		if (_tail != nullptr)
 		delete _tail;
 	}
 	size = 0;
