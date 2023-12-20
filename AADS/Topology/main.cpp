@@ -50,15 +50,37 @@ List<Graph> listFromArcs(std::vector<arc> arcs) {
 	return graph;
 }
 
-int main() {
-	int size;
-	std::cin >> size;
-	std::vector<arc> arcs(size);
+List<Graph> listFromMatrix(std::vector<bool> matrix, int size) {
+	BoolMatrix temp(size, size, false);
 	for (int i = 0; i < size; ++i) {
-		std::cin >> arcs[i];
+		for (int j = 0; j < size; j++)
+			temp[i][j] = matrix[i + (size)*j];
 	}
 
-	List<Graph> graph = listFromArcs(arcs);
+	List<Graph> graph(size, Graph());
+	for (int i = 0; i < size; ++i) {
+		graph[i].key = i + 1;
+	}
+
+	for (int i = 0; i < size; ++i) {
+		for (int j = 0; j < size; ++j) {
+			if (temp[i][j]) {
+				List<Graph>::_iterator tempIter = graph.begin();
+				for (int k = 0; k < j; ++k, ++tempIter);
+				graph[i].trailer.pushBack(tempIter);
+				++(*tempIter).st;
+			}
+		}
+	}
+	return graph;
+}
+
+int main() {
+	std::vector<bool> matrix{ 0, 1, 1,
+							0, 0, 1,
+							0, 0, 0, };
+
+	List<Graph> graph = listFromMatrix(matrix, sqrt(matrix.size()));
 	topologySortList(graph);
 
 	return 0;

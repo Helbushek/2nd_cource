@@ -62,14 +62,14 @@ bool topologySortList(List<Graph>& graph) {
 	while (graph.getSize() > 0) {
 		bool ifFoundOne = false;
 		List<Graph>::_iterator iter = graph.begin();
-		while (iter != nullptr) { // Проход для выбора нулевых узлов
+		while (iter != graph.end()) { // Проход для выбора нулевых узлов
 			if ((*iter).st == 0) {
 				List<Graph>::_iterator tempIt = temp.end();
 				iter.move(tempIt);
-
 				if (!ifFoundOne)
 					ifFoundOne = true;
 			}
+			++iter;
 		}
 		iter = temp.begin();
 		while (iter != nullptr) { // Проход для уменьшения счётчика у тех, на которые вели нулевые узлы
