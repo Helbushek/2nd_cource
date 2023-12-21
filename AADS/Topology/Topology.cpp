@@ -33,17 +33,23 @@ std::vector<int> topologySortMatrix(BoolMatrix& matrix) {
 	std::vector<int> solve;
 	std::vector<int> deletion;
 	bool hasLoop = false;
+	
+	int deleted = 0;
 	while (!hasLoop && matrix.lines() != 0 && matrix.columns() != 0) {
 		deletion.clear();
 		for (int i = 0; i < matrix.columns(); i++) {
 			int count=0;
 			for (int j = 0; j < matrix.lines(); j++) {
-				if (matrix[j][i] != 0)
+				if (matrix[j][i])
 					++count;
 			}
 			if (count == 0) {
-				solve.push_back(i + 1);
 				deletion.push_back(i);
+				int temp = i + 1;
+				if (!solve.empty() && temp > solve.back())
+					temp += deleted;
+				solve.push_back(temp);
+				
 			}
 		}
 
@@ -51,7 +57,31 @@ std::vector<int> topologySortMatrix(BoolMatrix& matrix) {
 		for (int i = static_cast<int>(deletion.size())-1; i >=0 ; --i) {
 			deleteColumn(matrix, deletion[i]);
 			deleteLine(matrix, deletion[i]);
+			++deleted;
 			hasLoop = false;
+		}
+	}
+	return solve;
+}
+
+std::vector<int> topologySortMatrix_(BoolMatrix matrix) {
+	std::vector<int> solve;
+	BoolVector disjunctions = matrix.disjunction();
+	BoolVector deleted(matrix.lines(), false);
+	
+	while (disjunctions != BoolVector(matrix.lines(), false)) {
+		BoolVector tempDeleted(matrix.lines(), false);
+		disjunctions = matrix.disjunction(); // nullified columns
+		tempDeleted |= ~disjunctions;
+		for (int i = 0; i < tempDeleted.sizeOf(); ++i) {
+			if (tempDeleted[i] == true && tempDeleted[i]!=deleted[i]) {
+				solve.push_back(i + 1);
+				matrix[i].setAll(false);
+			}
+		}
+		deleted |= tempDeleted;
+		if (tempDeleted == BoolVector(tempDeleted.sizeOf(), false)) {
+			return solve;
 		}
 	}
 	return solve;
@@ -59,42 +89,30 @@ std::vector<int> topologySortMatrix(BoolMatrix& matrix) {
 
 bool topologySortList(List<Graph>& graph) {
 	List<Graph> temp;
-	while (graph.getSize() > 0) {
-		bool ifFoundOne = false;
-		List<Graph>::_iterator iter = graph.begin();
-		while (iter != graph.end()) { // Проход для выбора нулевых узлов
-			if ((*iter).st == 0) {
-				List<Graph>::_iterator tempIt = temp.end();
-				iter.move(tempIt);
-				if (!ifFoundOne)
-					ifFoundOne = true;
-			}
-			++iter;
-		}
-		iter = temp.begin();
-		while (iter != nullptr) { // Проход для уменьшения счётчика у тех, на которые вели нулевые узлы
-			List<List<Graph>::_iterator>::_iterator tempIter = (*iter++).trailer.begin();
-			while (tempIter != (*iter).trailer.end()) {
-				--(*(*tempIter++)).st;
-			}
-		}
-	// Повторять, пока не конатся нулевые элементы, можно завести флаг ... !!! Для проверки цикла 
-		if (!ifFoundOne) {
-			assert("loop in graph in TopologySortList");
-			temp += graph;
-			temp.swap(graph);
-			return false;
-		}
-	}
-	// Восстановление ссылок в trailer и значений st
-	List<Graph>::_iterator iter = temp.begin(); // С новым перемещением ссылки восстанавливать не нужно 
-	while (iter != temp.end()) {
-		List<List<Graph>::_iterator>::_iterator innerIter = (*iter++).trailer.begin();
-		while (innerIter != (*iter++).trailer.end()) {
-			++(*(*innerIter)).st;
-		}
-	}
+	bool hasLoop = false;
 
-	temp.swap(graph); // graph должен оказаться пустым, если все решения совпадают
+	while (graph.getSize() > 0 && !hasLoop) {
+		for (List<Graph>::_iterator graphIter = graph.begin(); graphIter != graph.end(); ++graphIter) {
+			if ((*graphIter).st == 0) {
+				List<Graph>::_iterator temp_(temp.end()), tempMove(graphIter++);
+				tempMove.move(temp_);
+				
+				graph.resize();
+				temp.resize();	
+			}
+			std::cout << graph;
+		}
+		
+
+		for (List<Graph>::_iterator tempIter = temp.begin(); tempIter != temp.end(); ++tempIter) {
+			for (List<List<Graph>::_iterator>::_iterator trailerIter = (*tempIter).trailer.begin(); trailerIter != (*tempIter).trailer.end(); ++trailerIter) {
+				(*(*trailerIter)).st--;
+			}
+		}
+
+
+
+	}
+	temp.swap(graph);
 	return true;
 }

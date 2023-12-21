@@ -31,9 +31,9 @@ BoolVector::BoolVector(const char* data) {
 }
 BoolVector::BoolVector(const BoolVector& other) {
     size = other.size;
-    vector = new unsigned char[cellNumber()];
-    for (int i = 0; i < size; i+=CELL_SIZE) {
-        vector[i/CELL_SIZE] = other.vector[i/CELL_SIZE];
+    vector = new unsigned char[other.cellNumber()];
+    for (int i = 0; i < other.cellNumber(); ++i) {
+        vector[i] = other.vector[i];
     }
 }
 
@@ -133,7 +133,7 @@ BoolVector& BoolVector::operator=(const BoolVector& other) {
     if (size != other.size) {
         size = other.size;
         delete[] vector;
-        vector = new unsigned char[cellNumber()];
+        vector = new unsigned char[other.cellNumber()];
     }
     for (int i = 0; i < cellNumber(); i++) {
         vector[i] = other.vector[i];
@@ -298,4 +298,17 @@ std::istream& operator>>(std::istream& is, BoolVector& vector) {
     is >> temp;
     vector = BoolVector(temp.c_str());
     return is;
+}
+
+bool BoolVector::operator==(const BoolVector& other) {
+    if (size != other.size) {
+        return false;
+    }
+    if (((*this) & ~other).weight() == 0)
+        return true;
+    return false;
+}
+
+bool BoolVector::operator!=(const BoolVector& other) {
+    return !((*this) == other);
 }

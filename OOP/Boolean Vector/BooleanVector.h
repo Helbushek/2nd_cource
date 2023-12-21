@@ -83,6 +83,10 @@ public:
 
     BoolVector& operator^=(const BoolVector& other); 
 
+    bool operator==(const BoolVector& other);
+
+    bool operator!=(const BoolVector& other);
+
     // Реализация побитовых сдвигов
 
     BoolVector operator<<(int number) const;

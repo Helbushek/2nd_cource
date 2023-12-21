@@ -50,16 +50,23 @@ List<Graph> listFromArcs(std::vector<arc> arcs) {
 	return graph;
 }
 
-List<Graph> listFromMatrix(std::vector<bool> matrix, int size) {
+BoolMatrix boolMatrixFromVector(std::vector<std::vector<bool>> matrix, int size) {
 	BoolMatrix temp(size, size, false);
 	for (int i = 0; i < size; ++i) {
-		for (int j = 0; j < size; j++)
-			temp[i][j] = matrix[i + (size)*j];
+		for (int j = 0; j <size ; ++j)
+			temp[i][j] = matrix[i][j];
 	}
+	return temp;
+}
+
+List<Graph> listFromMatrix(std::vector<std::vector<bool>> matrix, int size) {
+	BoolMatrix temp = boolMatrixFromVector(matrix, size);
 
 	List<Graph> graph(size, Graph());
 	for (int i = 0; i < size; ++i) {
 		graph[i].key = i + 1;
+		graph[i].st = 0;
+		graph[i].trailer.clear();
 	}
 
 	for (int i = 0; i < size; ++i) {
@@ -76,12 +83,19 @@ List<Graph> listFromMatrix(std::vector<bool> matrix, int size) {
 }
 
 int main() {
-	std::vector<bool> matrix{ 0, 1, 1,
-							0, 0, 1,
-							0, 0, 0, };
+	std::vector<std::vector<bool>> matrix{ {0, 0, 1},
+										   {1, 0, 1},
+										   {0, 0, 0}, };
 
-	List<Graph> graph = listFromMatrix(matrix, sqrt(matrix.size()));
-	topologySortList(graph);
+	/*List<Graph> graph = listFromMatrix(matrix, sqrt(matrix.size()));
+	topologySortList(graph);*/
+
+	//BoolMatrix temp = boolMatrixFromVector(matrix, 3);
+	List<Graph> tempList = listFromMatrix(matrix, 3);
+	topologySortList(tempList);
+	for (auto iter = tempList.begin(); iter != tempList.end(); ++iter) {
+		std::cout << *iter << std::endl;
+	}
 
 	return 0;
 }

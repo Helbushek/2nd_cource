@@ -68,6 +68,8 @@ public:
 
 	void sort();
 
+	void resize();
+
 	void operator=(const List<TL>& other);
 	bool operator==(const List<TL>& other) const;
 	bool operator!=(const List<TL>& other) const;
@@ -672,11 +674,9 @@ TL& List<TL>::operator[](int index) {
 template<typename TL>
 const TL List<TL>::operator[](int index) const{
 	assert(index >= 0 && index < size);
-	const Node* temp = _head->next;
-	for (int i = 0; i < index; i++) {
-		temp = temp->next;
-	}
-	return temp->body;
+	List<TL>::Constiterator temp = begin();
+	for (int i = 0; i < index && temp != end(); ++i, ++temp);
+	return *temp;
 }
 
 template<typename TL>
@@ -728,4 +728,10 @@ void List<TL>::sort() {
 		}
 		left++; // сдвигаем левую границу на следующий элемент
 	}
+}
+
+template<typename TL>
+void List<TL>::resize() {
+	size = 0;
+	for (List<TL>::iterator runner = begin(); runner != end(); ++runner, ++size);
 }
