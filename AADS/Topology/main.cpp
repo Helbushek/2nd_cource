@@ -87,15 +87,19 @@ int main() {
 										   {1, 0, 1},
 										   {0, 0, 0}, };
 
-	/*List<Graph> graph = listFromMatrix(matrix, sqrt(matrix.size()));
-	topologySortList(graph);*/
-
-	//BoolMatrix temp = boolMatrixFromVector(matrix, 3);
+	
+	BoolMatrix temp = boolMatrixFromVector(matrix, 3);
 	List<Graph> tempList = listFromMatrix(matrix, 3);
-	topologySortList(tempList);
+	std::vector<int> solve = topologySortMatrix_(temp);
+	for (auto iter : solve) {
+		std::cout << iter << ' ';
+	}
+
+
+	/*topologySortList(tempList);
 	for (auto iter = tempList.begin(); iter != tempList.end(); ++iter) {
 		std::cout << *iter << std::endl;
-	}
+	}*/
 
 	return 0;
 }
