@@ -147,7 +147,7 @@ public:
 template<typename TL> 
 void List<TL>::_iterator::move(_iterator& to) {
 	this->link->prev->next = this->link->next;
-	this->link->next->prev = this->link->next;
+	this->link->next->prev = this->link->prev;
 
 	to.link->prev->next = this->link;
 	to.link->prev = this->link;
@@ -217,7 +217,7 @@ std::istream& operator>>(std::istream& is, typename List<TL>::Node& that) {
 
 template<typename TL>
 List<TL>::Node::Node() {
-	body;
+	body = TL();
 	next = nullptr;
 	prev = nullptr;
 }
@@ -376,13 +376,7 @@ List<TL>::Iterator<const TL> List<TL>::end() const{
 
 template<typename TL> 
 void List<TL>::construct() {
-	if (_head != nullptr || _tail != nullptr) {
-		clear();
-		if (_head != nullptr)
-		delete _head;
-		if (_tail != nullptr)
-		delete _tail;
-	}
+	clear();
 	size = 0;
 	_head = new Node();
 	_tail = new Node();
@@ -392,6 +386,7 @@ void List<TL>::construct() {
 
 template<typename TL>
 List<TL>::List() {
+	_head = _tail = nullptr;
 	construct();
 }
 
@@ -627,7 +622,9 @@ void List<TL>::operator=(const List<TL>& other) {
 	}
 	clear();
 	for (int i = 0; i < other.size; i++) {
-		pushBack(other[i]);
+		List<TL>::Constiterator temp = other.begin();
+		for (int j = 0; j <= i; ++j, ++temp);
+		pushBack(temp.link->body);
 	}
 }
 
@@ -681,16 +678,16 @@ const TL List<TL>::operator[](int index) const{
 
 template<typename TL>
 std::ostream& operator<<(std::ostream& os, const List<TL>& that) {
-	for (int i = 0; i < that.getSize(); i++) {
-		os << that[i] << ' ';
+	for (auto iterator = that.begin(); iterator != that.end(); ++iterator ) {
+		os << *iterator << ' ';
 	}
 	return os;
 }
 
 template<typename TL>
 std::istream& operator>>(std::istream& is, List<TL>& that) {
-	for (int i = 0; i < that.getSize(); i++) {
-		is >> that[i];
+	for (auto iterator = that.begin(); iterator != that.end(); ++iterator) {
+		is >> *iterator;
 	}
 	return is;
 }

@@ -87,32 +87,41 @@ std::vector<int> topologySortMatrix_(BoolMatrix matrix) {
 	return solve;
 }
 
-bool topologySortList(List<Graph>& graph) {
+List<Graph>& topologySortList(List<Graph>& graph) {
 	List<Graph> temp;
 	bool hasLoop = false;
 
 	while (graph.getSize() > 0 && !hasLoop) {
-		for (List<Graph>::_iterator graphIter = graph.begin(); graphIter != graph.end(); ++graphIter) {
+		int addedNodes = 0;
+		for (List<Graph>::_iterator graphIter = graph.begin(); graphIter != graph.end();) {
 			if ((*graphIter).st == 0) {
 				List<Graph>::_iterator temp_(temp.end()), tempMove(graphIter++);
 				tempMove.move(temp_);
-				
-				graph.resize();
-				temp.resize();	
-			}
-			std::cout << graph;
-		}
-		
+				++addedNodes;
 
-		for (List<Graph>::_iterator tempIter = temp.begin(); tempIter != temp.end(); ++tempIter) {
+				graph.resize();
+				temp.resize();
+			}
+			else graphIter++;
+		}
+		if (addedNodes == 0) {
+			hasLoop = true;
+			continue;
+		}
+		List<Graph>::_iterator tempIter = temp.begin();
+		for (int j = 0; j < temp.getSize() - addedNodes; ++j, ++tempIter);
+		for (; tempIter != temp.end(); ++tempIter) {
 			for (List<List<Graph>::_iterator>::_iterator trailerIter = (*tempIter).trailer.begin(); trailerIter != (*tempIter).trailer.end(); ++trailerIter) {
 				(*(*trailerIter)).st--;
 			}
 		}
 
-
-
 	}
-	temp.swap(graph);
-	return true;
+	graph.swap(temp);
+	for (List<Graph>::_iterator iter = graph.begin(); iter != graph.end(); ++iter) {
+		for (List<List<Graph>::_iterator>::_iterator innerIter = (*iter).trailer.begin(); innerIter != (*iter).trailer.end(); ++innerIter) {
+			++(*(*innerIter)).st;
+		}
+	}
+	return graph;
 }

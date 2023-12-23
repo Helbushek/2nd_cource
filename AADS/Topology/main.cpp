@@ -1,29 +1,5 @@
+#include <iostream>
 #include "Topology.h"
-
-struct arc 
-{
-	int left;
-	int right;
-
-	int max() const{
-		int max = left;
-		if (right > left) max = right;
-		return max;
-	}
-
-	int min() const{
-		int min = left;
-		if (right < left) min = right;
-		return min;
-	}
-
-};
-
-std::istream& operator>>(std::istream& is, arc &arc) {
-	is >> arc.left >> arc.right;
-	return is;
-}
-
 
 List<Graph> listFromArcs(std::vector<arc> arcs) {
 	int nodes = 0;
@@ -90,16 +66,14 @@ int main() {
 	
 	BoolMatrix temp = boolMatrixFromVector(matrix, 3);
 	List<Graph> tempList = listFromMatrix(matrix, 3);
-	std::vector<int> solve = topologySortMatrix_(temp);
-	for (auto iter : solve) {
-		std::cout << iter << ' ';
-	}
-
-
-	/*topologySortList(tempList);
-	for (auto iter = tempList.begin(); iter != tempList.end(); ++iter) {
-		std::cout << *iter << std::endl;
-	}*/
+	//std::vector<int> solve = topologySortMatrix_(temp);
+	//for (auto iter : solve) {
+	//	std::cout << iter << ' ';
+	//}
+	std::cout << "key    st  |: trailer" << std::endl;
+	std::cout << ' ' << tempList;
+	tempList = topologySortList(tempList);
+	std::cout << tempList;
 
 	return 0;
 }
