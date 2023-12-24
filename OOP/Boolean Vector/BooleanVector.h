@@ -97,7 +97,7 @@ public:
 
     BoolVector& operator>>=(int number);
 
-private:
+protected:
     int size;
     unsigned char* vector;
 };

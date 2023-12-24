@@ -12,7 +12,7 @@ BoolVector::BoolVector(int size, int data) {
     (*this).setAll(data);
 }
 BoolVector::BoolVector(const char* data) {
-    size = sizeof(data)/sizeof(data[0]);
+    size = static_cast<int>(sizeof(data)) / static_cast<int>(sizeof(data[0]));
     if (size)
         vector = new unsigned char[cellNumber()];
     else
@@ -263,7 +263,7 @@ BoolVector& BoolVector::operator>>=(int number) {
 // Реализация необходимых операций для вспомогательного класса
 
 void BoolRank::setValue() {
-    if (index<0 || index>(sizeof(ptr) / sizeof(ptr[0]))) {
+    if (index<0) {
         std::cerr << "Incorrect index in BoolRank::setValue, I=" << index;
         return;
     }
