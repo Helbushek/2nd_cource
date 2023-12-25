@@ -65,7 +65,7 @@ Set& Set::operator=(const Set& other) {
 }
 
 bool Set::operator==(const Set& other) {
-	
+	return ((*this) & (~other)).power() == 0;
 }
 bool Set::operator!=(const Set& other) {
 	return !((*this) == other);

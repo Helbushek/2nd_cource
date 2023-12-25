@@ -2,7 +2,7 @@
 #include <iostream>
 #include <ios>
 #include <vector>
-#include "BoolMatrix.h"
+#include "/Users/Александр/2nd_cource/OOP/BoolMatrix/BoolMatrix.h"
 #include "List.h"
 
 struct Trailer;
@@ -47,12 +47,6 @@ inline std::ostream& operator<<(std::ostream& os, const Graph& graph) {
 	return os;
 }
 
-BoolMatrix deleteColumn(BoolMatrix& matrix, int index);
-
-BoolMatrix deleteLine(BoolMatrix& matrix, int index);
-
-std::vector<int> topologySortMatrix(BoolMatrix& matrix);
-
-std::vector<int> topologySortMatrix_(BoolMatrix matrix);
+std::vector<int> topologySortMatrix(BoolMatrix matrix);
 
 List<Graph>& topologySortList(List<Graph>& graph);

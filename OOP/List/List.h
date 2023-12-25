@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
-#include "Array.h"
+#include "/Users/Александр/2nd_cource/OOP/Array/Array.h"
 
 template<typename TL>
 class List {
@@ -79,7 +79,6 @@ public:
 	const TL operator[](int index) const;
 
 private:
-
 	iterator push(const TL& value, Node* adress);
 	void construct();
 
@@ -87,9 +86,6 @@ private:
 	Node* _tail;
 	int size;
 };
-
-
-
 
 template<typename TL>
 template<typename TI>
@@ -185,7 +181,6 @@ private:
 	TL body;
 	Node* next;
 	Node* prev;
-	std::vector<iterator> connections;
 };
 
 template<typename TL>
@@ -352,26 +347,24 @@ bool List<TL>::Iterator<TI>::operator<(const List<TL>::Iterator<TI>& other) {
 	return (!((*this) > other));
 }
 
-template<typename TL> 
-List<TL>::Iterator<TL> List<TL>::begin(void) {
-	Iterator<TL> temp(_head->next);
-	return temp;
+template<typename TL>  typename
+List<TL>::iterator List<TL>::begin(void) {
+	return iterator(_head->next);
 }
 
 template<typename TL> typename
-List<TL>::Iterator<TL> List<TL>::end() {
-	return Iterator<TL>(_tail);
+List<TL>::iterator List<TL>::end() {
+	return iterator(_tail);
 }
 
 template<typename TL> typename
-List<TL>::Iterator<const TL> List<TL>::begin() const {
-	List<TL>::Iterator<const TL> temp = (_head->next);
-	return temp;
+List<TL>::Constiterator List<TL>::begin() const {
+	return Constiterator(_head->next);
 }
 
 template<typename TL> typename
-List<TL>::Iterator<const TL> List<TL>::end() const{
-	return List<TL>::Iterator<const TL>(_tail);
+List<TL>::Constiterator List<TL>::end() const{
+	return Constiterator(_tail);
 }
 
 template<typename TL> 
@@ -536,7 +529,7 @@ void List<TL>::deleteIn(List<TL>::iterator node) {
 	Node* temp = node.link;
 	temp->prev->next = temp->next;
 	temp->next->prev = temp->prev;
-	delete[] temp;
+	delete temp;
 	--size;
 }
 

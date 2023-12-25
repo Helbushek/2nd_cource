@@ -59,17 +59,21 @@ List<Graph> listFromMatrix(std::vector<std::vector<bool>> matrix, int size) {
 }
 
 int main() {
-	std::vector<std::vector<bool>> matrix{ {0, 0, 1},
-										   {1, 0, 1},
-										   {0, 0, 0}, };
+	std::vector<std::vector<bool>> matrix{
+	{0, 1, 0, 1},
+	{0, 0, 0, 1},
+	{0, 0, 0, 1},
+	{0, 0, 0, 0}
+	};
 
-	
-	BoolMatrix temp = boolMatrixFromVector(matrix, 3);
-	List<Graph> tempList = listFromMatrix(matrix, 3);
-	//std::vector<int> solve = topologySortMatrix_(temp);
-	//for (auto iter : solve) {
-	//	std::cout << iter << ' ';
-	//}
+	BoolMatrix tempMatrix = boolMatrixFromVector(matrix, matrix.size());
+	std::vector<int> solve = topologySortMatrix(tempMatrix);
+	for (auto iter : solve) {
+		std::cout << iter << ' ';
+	}
+	std::cout << '\n';
+
+	List<Graph> tempList = listFromMatrix(matrix, matrix.size());
 	std::cout << "key    st  |: trailer" << std::endl;
 	std::cout << ' ' << tempList;
 	tempList = topologySortList(tempList);
