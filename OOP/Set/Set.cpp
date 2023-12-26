@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "Set.h"
 
 void Set::construct() {
@@ -112,18 +113,25 @@ Set Set::operator~() const{
 	return temp;
 }
 
-Set& Set::operator+=(const char) {
-
+Set& Set::operator+=(const char el) {
+	(*this) = (*this) + el;
+	return *this;
 }
-Set Set::operator+(const char) const {
-
+Set Set::operator+(const char element) const {
+	
+	Set temp(*this);
+	temp[static_cast<int>(element)] = true;
+	return temp;
 }
 
-Set& Set::operator-=(const char) {
-
+Set& Set::operator-=(const char el) {
+	(*this) = (*this) - el;
+	return *this;
 }
-Set Set::operator-(const char) const {
-
+Set Set::operator-(const char element) const {
+	Set temp(*this);
+	temp[static_cast<int>(element)] = false;
+	return temp;
 }
 
 

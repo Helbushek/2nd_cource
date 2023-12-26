@@ -117,11 +117,11 @@ public:
 	const TL& operator*() const;
 	TL& operator*();
 
+
+protected:
 	Node* getNode() {
 		return link;
 	}
-
-protected:
 
 	Node* link;
 };
@@ -316,9 +316,9 @@ List<TL>::Iterator<TI> List<TL>::Iterator<TI>::operator--(int) {
 	return temp;
 }
 
-template<typename TL>
-template<typename TI>
-TL& List<TL>::Iterator<TI>::operator*() {
+template <typename TL>
+template <typename TI>
+	TL& List<TL>::Iterator<TI>::operator*() {
 	return link->get();
 }
 

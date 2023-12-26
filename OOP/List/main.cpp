@@ -6,9 +6,9 @@ int main() {
 	List<std::string> stringCopy(temp);
 	const List<std::string> string(temp);
 
-	for (List<std::string>::Constiterator iter = string.begin(); iter != string.end(); iter++) {
-		std::cout << *iter << ' ';
-	}
+	List<std::string>::Constiterator tempIter = string.begin();
+	*tempIter = "a";
+	std::cout << *tempIter;
 
 	return(0);
 }

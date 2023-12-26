@@ -2,9 +2,8 @@
 
 int main() {
 	Set test("ab");
-	std::cout << test.power();
-	Set test2("ab");
-	//std::cin >> test;
-	std::cout << ~test;
+	Set test2 = (test);
+	
+	std::cout << test2;
 	return 0;
 }
