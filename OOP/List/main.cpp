@@ -6,8 +6,7 @@ int main() {
 	List<std::string> stringCopy(temp);
 	const List<std::string> string(temp);
 
-	List<std::string>::Constiterator tempIter = string.begin();
-	*tempIter = "a";
+	List<std::string>::const_iterator tempIter = string.begin();
 	std::cout << *tempIter;
 
 	return(0);
