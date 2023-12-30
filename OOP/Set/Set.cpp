@@ -1,20 +1,24 @@
 #include <assert.h>
+#include <stdio.h>
 #include "Set.h"
+const int ASCII_MAX = 256;
+const int ASCII_MAX_PRINTABLE = 32;
 
 void Set::construct() {
 	if (vector != nullptr)
 		delete vector;
-	vector = new unsigned char[32];
-	size = 256;
+	vector = new unsigned char[ASCII_MAX/CELL_SIZE];
+	size = ASCII_MAX;
 	setAll(false);
 }
 
-Set::Set() {
-	construct();
-}
-Set::Set(const char* array) {
-	construct();
-	int arrSize = strlen(array);
+Set::Set()
+	: BoolVector(ASCII_MAX, false)
+{}
+Set::Set(const char* array)
+	: Set()
+{
+	int arrSize = static_cast<int>(strlen(array));
 	for (int i = 0; i < arrSize; ++i) {
 		(*this)[static_cast<int>(array[i])] = true;
 	}
@@ -22,7 +26,7 @@ Set::Set(const char* array) {
 
 Set::Set(const Set& other) {
 	construct();
-	for (int i = 0; i<32; ++i) {
+	for (int i = 0; i < ASCII_MAX/CELL_SIZE ; ++i) {
 		vector[i] = other.vector[i];
 	}
 }
@@ -34,23 +38,33 @@ bool Set::find(const char symbol) const {
 }
 
 char Set::max() const {
-	for (int i = 255; i >= 0; --i) {
+	for (int i = ASCII_MAX-1; i >= 0; --i) {
 		if ((*this)[i])
 			return (*this)[i];
 	}
 	return char();
 }
 char Set::min() const {
-	for (int i = 0; i <255; ++i) {
+	for (int i = 0; i <ASCII_MAX; ++i) {
 		if ((*this)[i])
 			return (*this)[i];
 	}
 	return char();
 }
 
+void Set::print(int index) {
+	assert(index >= 0 && index <= ASCII_MAX);
+	if (index >= 0 && index <= ASCII_MAX_PRINTABLE) {
+		std::cout << "spec." << index;
+	}
+	else if (index > ASCII_MAX_PRINTABLE && index <= ASCII_MAX) {
+		std::cout << static_cast<char>(index);
+	}
+}
+
 int Set::power() const {
 	int count = 0;
-	for (int i = 0; i < 256; ++i) {
+	for (int i = 0; i < ASCII_MAX; ++i) {
 		count += (*this)[i];
 	}
 	return count;
@@ -59,7 +73,7 @@ int Set::power() const {
 Set& Set::operator=(const Set& other) {
 	delete vector;
 	vector = new unsigned char[other.cellNumber()];
-	for (int i = 0; i < 32; i++) {
+	for (int i = 0; i < ASCII_MAX/CELL_SIZE; i++) {
 		vector[i] = other.vector[i];
 	}
 	return *this;
@@ -78,7 +92,7 @@ Set& Set::operator|=(const Set& other) {
 }
 Set Set::operator|(const Set& other) const {
 	Set temp = (*this);
-	for (int i = 0; i < 32; ++i) {
+	for (int i = 0; i < ASCII_MAX/CELL_SIZE; ++i) {
 		temp.vector[i] |= other.vector[i];
 	}
 	return temp;
@@ -91,7 +105,7 @@ Set& Set::operator&=(const Set& other) {
 Set Set::operator&(const Set& other) const {
 	Set temp = (*this);
 	
-	for (int i = 0; i <32; ++i) {
+	for (int i = 0; i < ASCII_MAX/CELL_SIZE; ++i) {
 		temp.vector[i] &= other.vector[i];
 	}
 	return temp;
@@ -107,7 +121,7 @@ Set Set::operator/(const Set& other) const {
 
 Set Set::operator~() const{
 	Set temp = *this;
-	for (int i = 0; i < cellNumber(); ++i) {
+	for (int i = 0; i < ASCII_MAX/CELL_SIZE; ++i) {
 		temp.vector[i] = ~temp.vector[i];
 	}
 	return temp;
@@ -134,21 +148,50 @@ Set Set::operator-(const char element) const {
 	return temp;
 }
 
-
-
 std::ostream& operator<<(std::ostream& os, Set& that) {
-	for (int i = 0; i < 256; ++i) {
-		if (that[i]==true)
-			os << static_cast<char>(i) << ' ';
+	for (int i=0; i<=ASCII_MAX_PRINTABLE; ++i) {
+		os << "spec." << i << ' ';
+	}
+	for (int i=ASCII_MAX_PRINTABLE+1; i<ASCII_MAX; ++i) {
+		os << static_cast<char>(i) << ' ';
 	}
 	return os;
 }
 
-std::istream& operator>>(std::istream& is, Set& that) {
-	std::string temp;
-	is >> temp;
-	for (int i = 0; i < temp.size(); ++i) {
-		that[static_cast<int>(temp[i])] = true;
+int pow(int first, int second) {
+	int result = 1;
+	for (int i = 0; i < second; ++i) {
+		result *= first;
 	}
+	return result;
+}
+
+int SpecCharToInt(const char* number) {
+	int final = 0;
+	for (int i = strlen(number) - 1; static_cast<int>(number[i]) >= 48 && static_cast<int>(number[i]) <= 57; --i) {
+		final += (static_cast<int>(number[i]) - 48) * pow(10, strlen(number) - 1 - i);
+	}
+	return final;
+}
+
+std::istream& operator>>(std::istream& is, Set &that) {
+	char* temp = new char[ASCII_MAX*3]; 
+	is.getline(temp, ASCII_MAX*3);
+	for (int i = 0; i < strlen(temp); ++i) {
+		char unit[5] = {};
+		int j = 0;
+		while (temp[i] != ' ') {
+			unit[j++] += temp[i++];
+		}
+		if (unit[0] == 's' && unit[1] == 'p') {
+			that[SpecCharToInt(unit)] = true;
+		}
+		else {
+			j = strlen(unit) - 1;
+			while (j >= 0)
+				that[static_cast<int>(unit[j])] = true;
+		}
+	}
+	
 	return is;
 }

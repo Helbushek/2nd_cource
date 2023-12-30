@@ -5,8 +5,6 @@
 #include "/Users/Александр/2nd_cource/OOP/BoolMatrix/BoolMatrix.h"
 #include "List.h"
 
-struct Trailer;
-
 struct Graph {
 	List<List<Graph>::_iterator> trailer;
 	int st=0;
@@ -40,7 +38,7 @@ inline std::istream& operator>>(std::istream& is, arc& arc) {
 inline std::ostream& operator<<(std::ostream& os, const Graph& graph) {
 	
 	os << graph.key << " " << graph.st << " |: ";
-	for (auto iter = graph.trailer.begin(); iter != graph.trailer.end(); ++iter) {
+	for (List<List<Graph>::_iterator>::_iterator iter = graph.trailer.begin(); iter != graph.trailer.end(); ++iter) {
 		os << (*(*iter)).key << ' ';
 	}
 	os << std::endl;

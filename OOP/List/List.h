@@ -157,11 +157,11 @@ void List<TL>::_iterator::move(_iterator& to) {
 	this->link->prev->next = this->link->next;
 	this->link->next->prev = this->link->prev;
 
-	to.link->prev->next = this->link;
-	to.link->prev = this->link;
-
 	this->link->next = to.link;
 	this->link->prev = to.link->prev;
+
+	to.link->prev->next = this->link;
+	to.link->prev = this->link;
 }
 
 template <typename TL>
@@ -372,7 +372,8 @@ List<TL>::const_iterator List<TL>::end() const{
 
 template<typename TL> 
 void List<TL>::construct() {
-	clear();
+	if (_head!= nullptr && _tail!=nullptr)
+		clear();
 	size = 0;
 	_head = new Node();
 	_tail = new Node();

@@ -34,10 +34,9 @@ List<Graph>& topologySortList(List<Graph>& graph) {
 			if ((*graphIter).st == 0) {
 				List<Graph>::_iterator temp_(temp.end()), tempMove(graphIter++);
 				tempMove.move(temp_);
-				++addedNodes;
-
 				graph.resize();
 				temp.resize();
+				++addedNodes;
 			}
 			else graphIter++;
 		}
@@ -45,17 +44,21 @@ List<Graph>& topologySortList(List<Graph>& graph) {
 			hasLoop = true;
 			continue;
 		}
-		List<Graph>::_iterator tempIter = temp.begin();
+		List<Graph>::iterator tempIter = temp.begin();
 		for (int j = 0; j < temp.getSize() - addedNodes; ++j, ++tempIter);
 		for (; tempIter != temp.end(); ++tempIter) {
-			for (List<List<Graph>::_iterator>::_iterator trailerIter = (*tempIter).trailer.begin(); trailerIter != (*tempIter).trailer.end(); ++trailerIter) {
-				(*(*trailerIter)).st--;
+			for (auto trailerIter = (*tempIter).trailer.begin(); trailerIter != (*tempIter).trailer.end(); ++trailerIter) {
+				--(*(*trailerIter)).st;
 			}
 		}
 
 	}
-	std::cout << temp;
-	graph.swap(temp);
+	if (hasLoop) {
+		graph.clear();
+		return graph;
+	}
+	temp.swap(graph);
+	graph.resize();
 	for (List<Graph>::_iterator iter = graph.begin(); iter != graph.end(); ++iter) {
 		for (List<List<Graph>::_iterator>::_iterator innerIter = (*iter).trailer.begin(); innerIter != (*iter).trailer.end(); ++innerIter) {
 			++(*(*innerIter)).st;

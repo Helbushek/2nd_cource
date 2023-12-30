@@ -20,7 +20,7 @@ List<Graph> listFromArcs(std::vector<arc> arcs) {
 		for (int j = 0; j < right-1; ++j, ++iteratorRight); // right goes to right node of arc
 		for (int j = 0; j < left - 1; ++j, ++iteratorLeft); // left goes to left node of arc
 		(*iteratorLeft).trailer.pushBack(iteratorRight); // left iter calls node ptr, that calls its key which is graph structure, where we call for trailer link, which we can use to push back link to node that right iterator points to
-		++iteratorRight.getNode()->get().st;
+		(*iteratorRight).st++;
 	}
 
 	return graph;
@@ -42,6 +42,7 @@ List<Graph> listFromMatrix(std::vector<std::vector<bool>> matrix, int size) {
 	for (int i = 0; i < size; ++i) {
 		graph[i].key = i + 1;
 		graph[i].st = 0;
+		graph[i].trailer = List<List<Graph>::_iterator>();
 		graph[i].trailer.clear();
 	}
 
@@ -60,10 +61,24 @@ List<Graph> listFromMatrix(std::vector<std::vector<bool>> matrix, int size) {
 
 int main() {
 	std::vector<std::vector<bool>> matrix{
-	{0, 1, 0, 1},
-	{0, 0, 0, 1},
-	{0, 0, 0, 1},
-	{0, 0, 0, 0}
+	{0, 0, 0, 0,},
+	{0, 0, 0, 0,},
+	{0, 0, 0, 0,},
+	{1, 1, 1, 0,}
+	};
+
+	std::vector<std::vector<bool>> matrix2{
+	{0, 0, 0, 1,},
+	{0, 0, 1, 0,},
+	{1, 0, 0, 0,},
+	{0, 0, 1, 0,}
+	};
+
+	std::vector<std::vector<bool>> matrix3{
+	{0, 0, 0, 0,},
+	{1, 0, 1, 0,},
+	{0, 0, 0, 0,},
+	{0, 0, 1, 0,}
 	};
 
 	BoolMatrix tempMatrix = boolMatrixFromVector(matrix, matrix.size());
@@ -73,11 +88,13 @@ int main() {
 	}
 	std::cout << '\n';
 
-	List<Graph> tempList = listFromMatrix(matrix, matrix.size());
+
+	std::cout << "MATRIX" << std::endl;
+	List<Graph> tempList = listFromMatrix(matrix2, matrix.size());
 	std::cout << "key    st  |: trailer" << std::endl;
 	std::cout << ' ' << tempList;
 	tempList = topologySortList(tempList);
-	std::cout << tempList;
+	std::cout << tempList << std::endl;
 
 	return 0;
 }
