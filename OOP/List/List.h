@@ -7,14 +7,15 @@
 template<typename TL>
 class List {
 public:
-
 	class Node;
 
-	class _iterator;
+	template<typename IteratorTemplate>
+	class TEMPLATE_iterator;
 
-	class iterator;
-	class const_iterator;
+	using iterator = TEMPLATE_iterator<TL>;
+	using const_iterator = TEMPLATE_iterator<const TL>;
 
+	using _iterator = TEMPLATE_iterator<TL>;
 public:
 
 	iterator begin();
@@ -86,34 +87,36 @@ private:
 	int size;
 };
 
-template<typename TL>
-class List<TL>::iterator {
+template<typename TL> 
+template <typename IteratorType>
+class List<TL>::TEMPLATE_iterator {
 	friend class List<TL>;
 public:
-	iterator() {
+	TEMPLATE_iterator() {
 		link = nullptr;
 	}
-	iterator(Node* node) {
+	TEMPLATE_iterator(Node* node) {
 		this->link = node;
 	}
-	iterator(const iterator& other) {
+	TEMPLATE_iterator(const iterator& other) {
 		this->link = other.link;
 	}
 
-	bool operator==(const iterator& other) const;
-	bool operator!=(const iterator& other) const;
+	bool operator==(const TEMPLATE_iterator& other) const;
+	bool operator!=(const TEMPLATE_iterator& other) const;
 
-	bool isSibling(const iterator& other);
+	bool isSibling(const TEMPLATE_iterator& other);
 
-	iterator& operator++();
-	iterator operator++(int);
-	iterator& operator--();
-	iterator operator--(int);
-	bool operator>(const iterator& other);
-	bool operator<(const iterator& other);
+	TEMPLATE_iterator& operator++();
+	TEMPLATE_iterator operator++(int);
+	TEMPLATE_iterator& operator--();
+	TEMPLATE_iterator operator--(int);
+	bool operator>(const TEMPLATE_iterator& other);
+	bool operator<(const TEMPLATE_iterator& other);
 
-	TL& operator*();
+	TL& operator*() const;
 
+	void move(TEMPLATE_iterator& to);
 
 protected:
 	Node* getNode() {
@@ -124,36 +127,8 @@ protected:
 };
 
 template<typename TL>
-class List<TL>::const_iterator: public iterator {
-public:
-	const_iterator() {
-		iterator::link = nullptr;
-	}
-	const_iterator(Node* node) {
-		this->iterator::link = node;
-	}
-	const_iterator(const const_iterator& other) {
-		this->iterator::link = other.link;
-	}
-	const TL& operator*() const;
-};
-
-template<typename TL>
-class List<TL>::_iterator : public iterator
-{
-public:
-	_iterator() {
-		this->link = nullptr;
-	}
-	_iterator(const iterator& other) {
-		this->link = other.link;
-	}
-
-	void move(_iterator& to);
-};
-
-template<typename TL> 
-void List<TL>::_iterator::move(_iterator& to) {
+template<typename IT>
+void List<TL>::TEMPLATE_iterator<IT>::move(TEMPLATE_iterator<IT>& to) {
 	this->link->prev->next = this->link->next;
 	this->link->next->prev = this->link->prev;
 
@@ -271,17 +246,20 @@ bool List<TL>::Node::operator<=(const List<TL>::Node& other) {
 }
 
 template<typename TL>
-bool List<TL>::iterator::operator==(const List<TL>::iterator& other) const{
+template<typename IT>
+bool List<TL>::TEMPLATE_iterator<IT>::operator==(const List<TL>::TEMPLATE_iterator<IT>& other) const{
 	return link == other.link;
 }
 
 template<typename TL>
-bool List<TL>::iterator::operator!=(const iterator& other) const{
+template<typename IT>
+bool List<TL>::TEMPLATE_iterator<IT>::operator!=(const TEMPLATE_iterator<IT>& other) const{
 	return (link != other.link);
 }
 
 template<typename TL>
-bool List<TL>::iterator::isSibling(const iterator& other) {
+template<typename IT>
+bool List<TL>::TEMPLATE_iterator<IT>::isSibling(const TEMPLATE_iterator<IT>& other) {
 	typename List<TL>::Node* temp = link;
 	while (temp->prev != nullptr) {
 		temp = temp->prev; // travel to head
@@ -294,47 +272,48 @@ bool List<TL>::iterator::isSibling(const iterator& other) {
 	return false;
 }
 
-template<typename TL> typename 
-List<TL>::iterator& List<TL>::iterator::operator++() {
+template<typename TL> 
+template<typename IT> typename
+List<TL>::TEMPLATE_iterator<IT>& List<TL>::TEMPLATE_iterator<IT>::operator++() {
 	this->link = this->link->next;
 	return *this;
 }
 
 
-template<typename TL>  typename 
-List<TL>::iterator& List<TL>::iterator::operator--() {
+template<typename TL>  
+template<typename IT> typename
+List<TL>::TEMPLATE_iterator<IT>& List<TL>::TEMPLATE_iterator<IT>::operator--() {
 	this->link = this->link->prev;
 	return *this;
 }
 
-template<typename TL>  typename
-List<TL>::iterator List<TL>::iterator::operator++(int) {
-	iterator temp(*this);
+template<typename TL>  
+template<typename IT> typename
+List<TL>::TEMPLATE_iterator<IT> List<TL>::TEMPLATE_iterator<IT>::operator++(int) {
+	TEMPLATE_iterator temp(*this);
 	this->link = this->link->next;
 	return temp;
 }
 
-template<typename TL>  typename
-List<TL>::iterator List<TL>::iterator::operator--(int) {
-	iterator temp(*this);
+template<typename TL>  
+template<typename IT> typename
+List<TL>::TEMPLATE_iterator<IT> List<TL>::TEMPLATE_iterator<IT>::operator--(int) {
+	TEMPLATE_iterator temp(*this);
 	this->link = this->link->prev;
 	return temp;
 }
 
 template <typename TL>
-	TL& List<TL>::iterator::operator*() {
-	return link->get();
-}
-
-template <typename TL>
-const TL& List<TL>::const_iterator::operator*() const{
-	return iterator::link->get();
+template <typename IT>
+TL& List<TL>::TEMPLATE_iterator<IT>::operator*() const {
+	return (link->body);
 }
 
 template<typename TL>
-bool List<TL>::iterator::operator>(const List<TL>::iterator& other) {
+template<typename IT>
+bool List<TL>::TEMPLATE_iterator<IT>::operator>(const List<TL>::TEMPLATE_iterator<IT>& other) {
 	assert(isSibling(other));
-	iterator temp = *this;
+	TEMPLATE_iterator temp = *this;
 	while (temp.link != nullptr) {
 		if (temp.link == other.link)
 			return false; // other is righter from or on this
@@ -344,7 +323,8 @@ bool List<TL>::iterator::operator>(const List<TL>::iterator& other) {
 }
 
 template<typename TL>
-bool List<TL>::iterator::operator<(const List<TL>::iterator& other) {
+template<typename IT>
+bool List<TL>::TEMPLATE_iterator<IT>::operator<(const List<TL>::TEMPLATE_iterator<IT>& other) {
 	return (!((*this) > other));
 }
 
@@ -358,8 +338,6 @@ List<TL>::iterator List<TL>::end() {
 	return iterator(_tail);
 }
 
-// -=-=-=-=-=-=-
-
 template<typename TL> typename
 List<TL>::const_iterator List<TL>::begin() const {
 	return const_iterator(_head->next);
@@ -369,6 +347,8 @@ template<typename TL> typename
 List<TL>::const_iterator List<TL>::end() const{
 	return const_iterator(_tail);
 }
+
+// -=-=-=-=-=-=-
 
 template<typename TL> 
 void List<TL>::construct() {
