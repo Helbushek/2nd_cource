@@ -182,8 +182,13 @@ std::istream& operator>>(std::istream& is, Set &that) {
 	for (int i = 0; i < strlen(temp); ++i) {
 		char unit[5] = {};
 		int j = 0;
-		while (temp[i] != ' ' && i<strlen(temp)) {
+		while (temp[i] != ' ' && i<strlen(temp) && j<5) {
 			unit[j++] += temp[i++];
+		}
+		if (j >= 5) {
+			std::cerr << "TOO LONG FOR SYSTEM SYMBOL, WILL CLEAR DATA";
+			that = Set();
+			return is;
 		}
 		if (unit[0] == 's' && unit[1] == 'p') {
 			that[SpecCharToInt(unit)] = true;
