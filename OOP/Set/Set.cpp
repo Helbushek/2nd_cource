@@ -150,9 +150,11 @@ Set Set::operator-(const char element) const {
 
 std::ostream& operator<<(std::ostream& os, Set& that) {
 	for (int i=0; i<=ASCII_MAX_PRINTABLE; ++i) {
+		if (that[i])
 		os << "spec." << i << ' ';
 	}
 	for (int i=ASCII_MAX_PRINTABLE+1; i<ASCII_MAX; ++i) {
+		if (that[i])
 		os << static_cast<char>(i) << ' ';
 	}
 	return os;
@@ -180,7 +182,7 @@ std::istream& operator>>(std::istream& is, Set &that) {
 	for (int i = 0; i < strlen(temp); ++i) {
 		char unit[5] = {};
 		int j = 0;
-		while (temp[i] != ' ') {
+		while (temp[i] != ' ' && i<strlen(temp)) {
 			unit[j++] += temp[i++];
 		}
 		if (unit[0] == 's' && unit[1] == 'p') {
@@ -189,9 +191,8 @@ std::istream& operator>>(std::istream& is, Set &that) {
 		else {
 			j = strlen(unit) - 1;
 			while (j >= 0)
-				that[static_cast<int>(unit[j])] = true;
+				that[static_cast<int>(unit[j--])] = true;
 		}
 	}
-	
 	return is;
 }

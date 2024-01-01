@@ -3,7 +3,8 @@
 
 
 int main() {
-	Set temp;
+	Set temp = Set();
 	std::cin >> temp;
+	std::cout << temp;
 	return 0;
 }
