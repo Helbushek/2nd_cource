@@ -114,7 +114,7 @@ public:
 	bool operator>(const TEMPLATE_iterator& other);
 	bool operator<(const TEMPLATE_iterator& other);
 
-	TL& operator*() const;
+	IteratorType& operator*() const;
 
 	void move(TEMPLATE_iterator& to);
 
@@ -305,7 +305,7 @@ List<TL>::TEMPLATE_iterator<IT> List<TL>::TEMPLATE_iterator<IT>::operator--(int)
 
 template <typename TL>
 template <typename IT>
-TL& List<TL>::TEMPLATE_iterator<IT>::operator*() const {
+IT& List<TL>::TEMPLATE_iterator<IT>::operator*() const {
 	return (link->body);
 }
 
