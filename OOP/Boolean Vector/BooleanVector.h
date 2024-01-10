@@ -59,7 +59,7 @@ public:
 
     void setAll(bool value);
 
-    int weight();
+    int weight() const;
 
     // Реализация побитовых операций
 
@@ -83,9 +83,9 @@ public:
 
     BoolVector& operator^=(const BoolVector& other); 
 
-    bool operator==(const BoolVector& other);
+    bool operator==(const BoolVector& other) const;
 
-    bool operator!=(const BoolVector& other);
+    bool operator!=(const BoolVector& other) const;
 
     // Реализация побитовых сдвигов
 

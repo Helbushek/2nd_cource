@@ -26,10 +26,12 @@ class Set : BoolVector {
 public:
 	Set();
 	Set(const char*);
+	Set(const BoolVector&);
 	Set(const Set&);
 	~Set();
 
 	using BoolVector::operator[];
+	using BoolVector::weight;
 
 	bool find(const char) const;
 
@@ -38,13 +40,13 @@ public:
 
 	void print(int index);
 
-	int power() const;
+	int power() const { return weight(); }
 
 	Set& operator=(const Set& other);
 	
-	bool operator==(const Set& other);
-	bool operator!=(const Set& other);
-	
+	bool operator==(const Set& other) const;
+	bool operator!=(const Set& other) const;
+
 	Set& operator|=(const Set& other);
 	Set operator|(const Set& other) const;
 
@@ -61,6 +63,8 @@ public:
 
 	Set& operator-=(const char);
 	Set operator-(const char) const;	
+
+	operator BoolVector();
 private:
 	void construct();
 };

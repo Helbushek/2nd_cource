@@ -105,7 +105,7 @@ void BoolVector::setAll(bool value) {
     }
 }
 
-int BoolVector::weight() {
+int BoolVector::weight() const{
     int count = 0;
     for (int i = 0; i < size; i++) {
         if (((vector[i/ CELL_SIZE] >> (i% CELL_SIZE)) & 1) == 1) {
@@ -187,7 +187,7 @@ BoolVector& BoolVector::operator^=(const BoolVector& other) {
 }
 
 BoolVector BoolVector::operator~() const{
-    BoolVector temp = *this;
+    BoolVector temp(*this);
     for (int i = 0; i < cellNumber(); i+=CELL_SIZE) {
         temp.vector[i] = ~temp.vector[i];
     }
@@ -300,15 +300,15 @@ std::istream& operator>>(std::istream& is, BoolVector& vector) {
     return is;
 }
 
-bool BoolVector::operator==(const BoolVector& other) {
+bool BoolVector::operator==(const BoolVector& other) const{
     if (size != other.size) {
         return false;
     }
-    if (((*this) & ~other).weight() == 0)
+    if (((*this) & (~other)).weight() == 0)
         return true;
     return false;
 }
 
-bool BoolVector::operator!=(const BoolVector& other) {
+bool BoolVector::operator!=(const BoolVector& other) const{
     return !((*this) == other);
 }
