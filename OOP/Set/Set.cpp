@@ -1,12 +1,8 @@
+#include "Set.h"
 #include <assert.h>
 #include <stdio.h>
-#include "Set.h"
-const int ASCII_MAX = 256;
-const int ASCII_MAX_PRINTABLE = 32;
-
-int pow(int, int);
-
-int SpecCharToInt(const char*);
+#include <string>
+#include <sstream>
 
 void Set::construct() {
 	if (vector != nullptr)
@@ -19,45 +15,19 @@ void Set::construct() {
 Set::Set()
 	: BoolVector(ASCII_MAX, false)
 {}
+
 Set::Set(const char* temp)
 	: Set()
 {
-	for (int i = 0; i < strlen(temp); ++i) {
-		char unit[256] = {};
-		int j = 0;
-		while (temp[i] != ' ' && i < strlen(temp) && j < 5) {
-			unit[j++] += temp[i++];
-		}
-		if (unit[0] == 's' && unit[1] == 'p') {
-			if (j >= 5) {
-				std::cerr << "TOO LONG FOR SYSTEM SYMBOL, WILL CLEAR DATA";
-				(*this) = Set();
-				return;
-			}
-			(*this)[SpecCharToInt(unit)] = true;
-		}
-		else {
-			j = strlen(unit) - 1;
-			while (j >= 0)
-				(*this)[static_cast<int>(unit[j--])] = true;
-		}
+	int j = static_cast<int>(strlen(temp)) - 1;
+	while (j >= 0) {
+		(*this)[static_cast<int>(temp[j--])] = true;
 	}
 }
 
-Set::Set(const BoolVector& other)
-	: BoolVector(other)
-{}
-
 Set::Set(const Set& other)
 	: BoolVector(other)
-{
-	/*construct();
-	for (int i = 0; i < ASCII_MAX/CELL_SIZE ; ++i) {
-		vector[i] = other.vector[i];
-	}*/
-}
-
-Set::~Set() {}
+{}
 
 bool Set::find(const char symbol) const {
 	return (*this)[static_cast<int>(symbol)];
@@ -78,10 +48,10 @@ char Set::min() const {
 	return char();
 }
 
-void Set::print(int index) {
+void Set::print(int index) const{
 	assert(index >= 0 && index <= ASCII_MAX);
 	if (index >= 0 && index <= ASCII_MAX_PRINTABLE) {
-		std::cout << "spec." << index;
+		std::cout << "sp" << index;
 	}
 	else if (index > ASCII_MAX_PRINTABLE && index < ASCII_MAX) {
 		std::cout << static_cast<char>(index);
@@ -89,17 +59,14 @@ void Set::print(int index) {
 }
 
 Set& Set::operator=(const Set& other) {
-	delete vector;
-	vector = new unsigned char[other.cellNumber()];
-	for (int i = 0; i < ASCII_MAX/CELL_SIZE; i++) {
-		vector[i] = other.vector[i];
-	}
+	BoolVector::operator=(other);
 	return *this;
 }
 
 bool Set::operator==(const Set& other) const{
 	return ((*this) & (~other)).power() == 0;
 }
+
 bool Set::operator!=(const Set& other) const{
 	return !((*this) == other);
 }
@@ -167,11 +134,11 @@ Set Set::operator-(const char element) const {
 }
 
 std::ostream& operator<<(std::ostream& os, Set& that) {
-	for (int i=0; i<=ASCII_MAX_PRINTABLE; ++i) {
+	for (int i=0; i<=Set::ASCII_MAX_PRINTABLE; ++i) {
 		if (that[i])
 		os << "sp" << i << ' ';
 	}
-	for (int i=ASCII_MAX_PRINTABLE+1; i<ASCII_MAX; ++i) {
+	for (int i= Set::ASCII_MAX_PRINTABLE+1; i< Set::ASCII_MAX; ++i) {
 		if (that[i])
 		os << static_cast<char>(i) << ' ';
 	}
@@ -180,24 +147,19 @@ std::ostream& operator<<(std::ostream& os, Set& that) {
 
 std::istream& operator>>(std::istream& is, Set &that) {
 	that = Set();
-	char* temp = new char[ASCII_MAX*3]; 
-	is.getline(temp, ASCII_MAX*3);
-	for (int i = 0; i < strlen(temp); ++i) {
-		char unit[5] = {};
-		int j = 0;
-		while (temp[i] != ' ' && i<strlen(temp) && j<5) {
-			unit[j++] += temp[i++];
-		}
+	std::string temp; 
+	std::getline(is, temp);
+	std::istringstream string_stream(temp);
+	std::string unit;
+	while (std::getline(string_stream, unit, ' ')) {
 		if (unit[0] == 's' && unit[1] == 'p') {
-			if (j >= 5) {
-				std::cerr << "TOO LONG FOR SYSTEM SYMBOL, WILL CLEAR DATA";
-				that = Set();
-				return is;
+			if (unit.size()>=5) {
+				continue;
 			}
-			that[SpecCharToInt(unit)] = true;
+			that[Set::SpecCharToInt(unit)] = true;
 		}
 		else {
-			j = strlen(unit) - 1;
+			int j = unit.size() - 1;
 			while (j >= 0)
 				that[static_cast<int>(unit[j--])] = true;
 		}
@@ -205,18 +167,10 @@ std::istream& operator>>(std::istream& is, Set &that) {
 	return is;
 }
 
-int pow(int first, int second) {
-	int result = 1;
-	for (int i = 0; i < second; ++i) {
-		result *= first;
-	}
-	return result;
-}
-
-int SpecCharToInt(const char* number) {
+int Set::SpecCharToInt(const std::string& number){
 	int final = 0;
-	for (int i = strlen(number) - 1; static_cast<int>(number[i]) >= 48 && static_cast<int>(number[i]) <= 57; --i) {
-		final += (static_cast<int>(number[i]) - 48) * pow(10, strlen(number) - 1 - i);
+	for (int i = static_cast<int>(number.size()) - 1; static_cast<int>(number[i]) >= 48 && static_cast<int>(number[i]) <= 57; --i) {
+		final += (static_cast<int>(number[i]) - 48) * pow(10, static_cast<int>(number.size()) - 1 - i);
 	}
 	return final;
 }

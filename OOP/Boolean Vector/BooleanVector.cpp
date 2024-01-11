@@ -130,6 +130,9 @@ BoolRank BoolVector::operator[](int index){
 }
 
 BoolVector& BoolVector::operator=(const BoolVector& other) {
+    if (this == &other) {
+        return *this;
+    }
     if (size != other.size) {
         size = other.size;
         delete[] vector;

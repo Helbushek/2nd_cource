@@ -24,21 +24,22 @@
 
 class Set : BoolVector {
 public:
+	static const int ASCII_MAX = 256;
+	static const int ASCII_MAX_PRINTABLE = 32;
+
 	Set();
 	Set(const char*);
-	Set(const BoolVector&);
 	Set(const Set&);
-	~Set();
+	~Set() {};
 
 	using BoolVector::operator[];
-	using BoolVector::weight;
 
 	bool find(const char) const;
 
 	char max() const;
 	char min() const;
 
-	void print(int index);
+	void print(int index) const;
 
 	int power() const { return weight(); }
 
@@ -64,8 +65,10 @@ public:
 	Set& operator-=(const char);
 	Set operator-(const char) const;	
 
-	operator BoolVector();
+	static int SpecCharToInt(const std::string& number);
+
 private:
+
 	void construct();
 };
 

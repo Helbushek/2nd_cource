@@ -105,14 +105,14 @@ public:
 	bool operator==(const TEMPLATE_iterator& other) const;
 	bool operator!=(const TEMPLATE_iterator& other) const;
 
-	bool isSibling(const TEMPLATE_iterator& other);
+	bool isSibling(const TEMPLATE_iterator& other) const;
 
 	TEMPLATE_iterator& operator++();
 	TEMPLATE_iterator operator++(int);
 	TEMPLATE_iterator& operator--();
 	TEMPLATE_iterator operator--(int);
-	bool operator>(const TEMPLATE_iterator& other);
-	bool operator<(const TEMPLATE_iterator& other);
+	bool operator>(const TEMPLATE_iterator& other) const;
+	bool operator<(const TEMPLATE_iterator& other) const;
 
 	IteratorType& operator*() const;
 
